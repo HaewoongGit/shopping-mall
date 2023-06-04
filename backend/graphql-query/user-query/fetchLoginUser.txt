@@ -1,0 +1,13 @@
+query {
+  fetchLoginUser {
+    userId
+    userName
+    email
+    age
+  }
+}
+
+
+{
+  "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNmIxMGMxMi0zMjlkLTRkZGMtOTU4OC1kNWYzODgwYTQ4YjEiLCJlbWFpbCI6Imh3LmxlZTM1NDJAZ21haWwuY29tIiwiaWF0IjoxNjg1NTAyNTgxLCJleHAiOjE2ODU1MDYxODF9.9lQOdMC37DejdBrbBaTMHm2K453nm36OGmj9nQeK44g"
+}

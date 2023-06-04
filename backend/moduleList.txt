@@ -1,0 +1,1 @@
+yarn add @apollo/server @nestjs/apollo @nestjs/common @nestjs/config @nestjs/core @nestjs/graphql @nestjs/platform-express @nestjs/typeorm apollo-server-express class-transformer class-validator graphql mysql2 reflect-metadata rxjs typeorm

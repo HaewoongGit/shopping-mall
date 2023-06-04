@@ -1,0 +1,201 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  userId: String!
+  email: String!
+  userName: String!
+  age: Int
+}
+
+type ProductCategory {
+  productCategoryId: String!
+  categoryName: String!
+}
+
+type ProductTag {
+  productTagId: String!
+  products: [Product!]!
+  tagName: String!
+}
+
+type Product {
+  productId: String!
+  productName: String!
+  description: String!
+  price: Int!
+  isSoldOut: Boolean!
+  hits: Int!
+  user: User!
+  productCategory: ProductCategory!
+  productTags: [ProductTag!]!
+}
+
+type Dibs {
+  user: User!
+  product: Product!
+}
+
+type Review {
+  user: User!
+  product: Product!
+  reviewContent: String!
+  grade: Int!
+}
+
+type Cart {
+  user: User!
+  product: Product!
+  quantity: Int!
+}
+
+type Query {
+  fetchUser: String!
+  fetchLoginUser: User!
+  findUser(email: String!): User!
+  fetchDibs(findOneDibsInput: FindOneDibsInput!): Dibs!
+  fetchDibses(findDibsInput: FindDibsInput!): [Dibs!]!
+  fetchProduct(productId: String!): Product!
+  fetchProducts(findProductsInput: FindProductsInput!): [Product!]!
+  fetchProductTag(productTagId: String!): ProductTag!
+  fetchProductTags: [ProductTag!]!
+  fetchReview(findOneReviewInput: FindOneReviewInput!): Review!
+  fetchReviews(findReviewInput: FindReviewInput!): [Review!]!
+  fetchCart(findOneCartInput: FindOneCartInput!): Cart!
+  fetchCarts(findCartInput: FindCartInput!): [Cart!]!
+}
+
+input FindOneDibsInput {
+  productId: String!
+  userId: String!
+}
+
+input FindDibsInput {
+  productId: String
+  userId: String
+}
+
+input FindProductsInput {
+  userId: String
+  categoryName: String
+}
+
+input FindOneReviewInput {
+  productId: String!
+  userId: String!
+}
+
+input FindReviewInput {
+  productId: String
+  userId: String
+}
+
+input FindOneCartInput {
+  productId: String!
+  userId: String!
+}
+
+input FindCartInput {
+  productId: String
+  userId: String
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUserPwd(updateUserPwdInput: UpdateUserPwdInput!): User!
+  deleteLoginUser: Boolean!
+  createDibs(createDibsInput: CreateDibsInput!): Dibs!
+  deleteDibs(deleteDibsInput: DeleteDibsInput!): Boolean!
+  createProduct(createProductInput: CreateProductInput!): Product!
+  updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
+  deleteProduct(productId: String!): Boolean!
+  updateProductTag(productTagId: String!): ProductTag!
+  deleteProductTag(productTagId: String!): Boolean!
+  createProductCategory(categoryName: String!): ProductCategory!
+  updateProductCategory(productCategoryId: String!, categoryName: String!): ProductCategory!
+  login(email: String!, password: String!): String!
+  restoreAcessToken: String!
+  createReview(createReviewInput: CreateReviewInput!): Review!
+  updateReview(updateReviewInput: UpdateReviewInput!): Review!
+  deleteReview(deleteReviewInput: DeleteReviewInput!): Boolean!
+  createCart(createCartInput: CreateCartInput!): Cart!
+  updateCart(updateCartInput: UpdateCartInput!): Cart!
+  deleteCart(deleteCartInput: DeleteCartInput!): Boolean!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  userName: String!
+  age: Int!
+}
+
+input UpdateUserPwdInput {
+  email: String!
+  password: String!
+}
+
+input CreateDibsInput {
+  productId: String!
+  userId: String!
+}
+
+input DeleteDibsInput {
+  productId: String!
+  userId: String!
+}
+
+input CreateProductInput {
+  productName: String!
+  description: String
+  price: Int!
+  email: String!
+  categoryName: String!
+  productTags: [String!]
+}
+
+input UpdateProductInput {
+  productName: String
+  description: String
+  price: Int
+  categoryName: String
+  productTags: [String!]
+  isSoldOut: Boolean
+}
+
+input CreateReviewInput {
+  productId: String!
+  userId: String!
+  reviewContent: String!
+  grade: Int!
+}
+
+input UpdateReviewInput {
+  productId: String!
+  userId: String!
+  reviewContent: String!
+  grade: Int!
+}
+
+input DeleteReviewInput {
+  productId: String!
+  userId: String!
+}
+
+input CreateCartInput {
+  productId: String!
+  userId: String!
+  quantity: Int!
+}
+
+input UpdateCartInput {
+  productId: String!
+  userId: String!
+  quantity: Int!
+}
+
+input DeleteCartInput {
+  productId: String!
+  userId: String!
+}

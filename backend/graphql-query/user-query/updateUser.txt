@@ -1,0 +1,14 @@
+mutation {
+  updateUser(
+    userId: "lhw3542"
+    updateUserInput: {
+      password: "1234"
+      email: "gmail"
+      userName: "이해웅"
+    }
+  ) {
+    userId
+    userName
+    email
+  }
+}

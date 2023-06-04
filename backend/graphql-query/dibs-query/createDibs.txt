@@ -1,0 +1,13 @@
+mutation {
+  createDibs (createDibsInput: {
+    productId: "c7b553c7-0c1f-4dc7-89c1-50c5c7d3eae7"
+    userId: "lhw3542"
+  }) {
+    user {
+      userId
+    }
+    product {
+      productId
+    }
+  }
+}

@@ -1,0 +1,26 @@
+query {
+  fetchProducts(findProductsInput:{
+    # userId: "ee048602-e1e1-4e74-ac02-0c07f2aecf19"
+    # categoryName: "도서"
+  }) {
+    productId
+    productName
+    description
+    price
+    isSoldOut
+    hits
+    user {
+      userId
+      email
+      userName
+    }
+    productCategory {
+      productCategoryId
+      categoryName
+    }
+    productTags {
+      productTagId
+      tagName
+    }
+  }
+}

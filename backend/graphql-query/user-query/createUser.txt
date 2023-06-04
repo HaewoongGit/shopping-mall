@@ -1,0 +1,15 @@
+mutation {
+  createUser(
+    createUserInput: {
+      password: "1234"
+      email: "hw.lee3542@gmail.com"
+      userName: "이해웅"
+      age: 31
+    }
+  ) {
+    userId
+    userName
+    email
+    age
+  }
+}

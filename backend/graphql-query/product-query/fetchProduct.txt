@@ -1,0 +1,25 @@
+query {
+  fetchProduct(
+    productId: "84ac94f5-a253-4706-bc1c-ef811fda6a18"
+  ) {
+    productId
+    productName
+    description
+    price
+    isSoldOut
+    hits
+    user {
+      userId
+      email
+      userName
+    }
+    productCategory {
+      productCategoryId
+      categoryName
+    }
+    productTags {
+      productTagId
+      tagName
+    }
+  }
+}

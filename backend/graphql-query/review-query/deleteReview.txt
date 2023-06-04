@@ -1,0 +1,6 @@
+mutation {
+  deleteReview(deleteReviewInput:{
+    userId: "765079f5-2236-42fe-afcd-c096bfa63171"
+    productId: "64ae8977-0036-4747-93f0-52609d1407c4"
+  })
+}

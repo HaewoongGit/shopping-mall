@@ -1,0 +1,6 @@
+query {
+  fetchProductTag(productTagId:"3c4a046d-9e6e-4e90-a991-9fe6544af2fe") {
+    productTagId
+    tagName
+  }
+}

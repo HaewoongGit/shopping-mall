@@ -1,0 +1,30 @@
+mutation {
+  updateProduct(
+    productId: "84ac94f5-a253-4706-bc1c-ef811fda6a18"
+    updateProductInput: {
+    	productName: "바뀐 이름"
+      description: "변화된 설명"
+      price: 30405
+      isSoldOut: true
+      categoryName: "식품"
+      productTags: ["#변화된1", "#태그2"]
+    }) {
+    productId
+    productName
+    description
+    price
+    isSoldOut
+    hits
+    user {
+      userId
+      userName
+    }
+    productCategory {
+      productCategoryId
+      categoryName
+    }
+    productTags {
+      productTagId
+    }
+  }
+}

@@ -1,0 +1,17 @@
+query {
+  fetchDibs(
+    findOneDibsInput: {
+      productId: "9527277e-d052-4f90-be0a-580643056e55"
+			userId: "cdeb3437-c774-4b63-8de5-aa25b50f7bd6"
+    }
+  ) {
+    user {
+      userId
+      userName
+    }
+    product {
+      productId
+      productName
+    }
+  }
+}

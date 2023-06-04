@@ -1,0 +1,15 @@
+mutation {
+  updateUserPwd(updateUserPwdInput: {
+    email: "hw.lee3542@gmail.com"
+    password: "abcd"
+  }) {
+    userId
+    userName
+  }
+}
+
+
+
+{
+  "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YTJlOTIyNS1hZDIxLTQ0ZGMtYjkyMy1jOTkyODUxNTU3ZDYiLCJlbWFpbCI6Imh3LmxlZTM1NDJAZ21haWwuY29tIiwiaWF0IjoxNjg1NDYyNDUzLCJleHAiOjE2ODU0NjYwNTN9.6QkZJK2zsHDUZB4PfG0JCn_LTH4LwGJvSIk_Z8Mf2fk"
+}

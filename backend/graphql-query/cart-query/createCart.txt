@@ -1,0 +1,16 @@
+mutation {
+  createCart(createCartInput: {
+    productId: "d71a1bf8-a3b8-4ff8-b101-20ef271cd19e"
+    userId: "75a8d5d1-1ce9-4788-bc34-db383b4075df"
+    quantity: 2
+  }) {
+    product {
+      productId
+      productName
+    }
+    user {
+      userId
+    }
+    quantity
+  }
+}

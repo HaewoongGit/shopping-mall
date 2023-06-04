@@ -1,0 +1,21 @@
+# docker-compose.yaml
+
+version: '3.7'
+
+services:
+  campmoa-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/campmoa/src
+    ports:
+      - 3000:3000
+
+  campmoa-database:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: campmoa

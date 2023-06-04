@@ -1,0 +1,6 @@
+query {
+  fetchProductTags {
+    productTagId
+    tagName
+  }
+}
