@@ -1,5 +1,5 @@
 .bg-topBar {
-    background-color: #e3f2fd;
+    background-color: #cbe7ff;
 }
 
 .wrap {
@@ -11,4 +11,13 @@
 #goodsUrl {
     width: 100%;
     height: 250px;
+}
+
+.wrap-product-detail {
+    width: 100%;
+    max-width: 1000px;
+    margin: 10px auto;
+    margin-top: 200px;
+    background-color: #e9f3f7;
+    padding: 20px;
 }

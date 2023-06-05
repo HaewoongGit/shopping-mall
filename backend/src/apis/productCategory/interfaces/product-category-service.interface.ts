@@ -1,8 +1,10 @@
+import { CategoryName } from "../entities/productCategory.entity";
+
 export interface IProductCategoryServiceCreate {
-    categoryName: string;
+    categoryName: CategoryName;
 }
 
 export interface IProductCategoryServiceUpdate {
     productCategoryId: string;
-    categoryName: string;
+    categoryName: CategoryName;
 }

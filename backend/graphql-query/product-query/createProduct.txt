@@ -1,12 +1,46 @@
+# mutation {
+#   createProduct(
+#     createProductInput: {
+#       productName: "테스트 상품"
+#       description: "테스트 상품입니다."
+#       price: 10000
+#       email: "hw.lee3542@gmail.com"
+#       categoryName: "가전"
+#       productTags: ["#태그", "#태그2"]
+#     }
+#   ) {
+#     productId
+#     productName
+#     description
+#     price
+#     isSoldOut
+#     hits
+#     user {
+#       userId
+#       email
+#       userName
+#     }
+#     productCategory {
+#       productCategoryId
+#       categoryName
+#     }
+#     productTags {
+#       productTagId
+#     }
+#   }
+# }
+
+
+
 mutation {
   createProduct(
     createProductInput: {
-      productName: "테스트 상품"
-      description: "테스트 상품입니다."
+      productName: "테스트 상품2"
+      description: "테스트 상품2입니다."
       price: 10000
       email: "hw.lee3542@gmail.com"
-      categoryName: "가전"
-      productTags: ["#태그1", "#태그2", "#태그3"]
+      categoryName: "식품"
+      productTags: ["#태그3", "#태그4"]
     }
   ) {
     productId

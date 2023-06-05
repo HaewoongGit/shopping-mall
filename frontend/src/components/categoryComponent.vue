@@ -1,8 +1,8 @@
 <template>
     <div class="wrap">
-        <div class="form-group row mb-3">
+        <div class="form-group row mb-4" id="category">
             <label for="categorySelect" class="col-form-label w-25">카테고리</label>
-            <select @change="productsList($event.target.value)" class="form-select w-75" id="categorySelect">
+            <select @change="loadProducts({ categoryName: $event.target.value })" class="form-select w-75" id="categorySelect">
                 <option value="" selected>전체</option>
                 <option value="가전디지털">가전디지털</option>
                 <option value="도서">도서</option>
@@ -37,4 +37,11 @@ export default {
 
 <style>
 @import "../assets/mystyle.css";
+
+#category {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
 </style>

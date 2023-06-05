@@ -1,4 +1,5 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, InputType, Int } from "@nestjs/graphql";
+import { CategoryName } from "src/apis/productCategory/entities/productCategory.entity";
 
 @InputType()
 export class CreateProductInput {
@@ -15,7 +16,7 @@ export class CreateProductInput {
     email: string;
 
     @Field(() => String)
-    categoryName: string;
+    categoryName: CategoryName;
 
     @Field(() => [String], { nullable: true })
     productTags?: string[];
