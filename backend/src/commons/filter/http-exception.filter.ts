@@ -1,6 +1,6 @@
 // http-exception.filter.ts
 
-import { Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from "@nestjs/common";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -8,10 +8,26 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const status = exception.getStatus();
         const message = exception.message;
 
-        console.log('===========================');
-        console.log('예외가 발생!!');
-        console.log('예외내용:', message);
-        console.log('예외코드:', status);
-        console.log('===========================');
+        console.log("===========================");
+        console.log("예외가 발생!!");
+        console.log("예외내용:", message);
+        console.log("예외코드:", status);
+        console.log("===========================");
     }
 }
+
+// @Catch(HttpException)
+// export class HttpExceptionFilter implements ExceptionFilter {
+//     catch(exception: HttpException, host: ArgumentsHost) {
+//         const ctx = host.switchToHttp();
+//         const response = ctx.getResponse();
+//         const status = exception.getStatus();
+//         const message = exception.message;
+
+//         console.log("===========================");
+//         console.log("예외가 발생!!");
+//         console.log("예외내용:", message);
+//         console.log("예외코드:", status);
+//         console.log("===========================");
+//     }
+// }

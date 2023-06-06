@@ -38,7 +38,7 @@ import { ProductModule } from "./apis/product/product.module";
             password: process.env.DATABASE_PASSWORD,
             database: process.env.DATABASE_DATABASE,
             entities: [__dirname + "/apis/**/*.entity.*"],
-            synchronize: true,
+            // synchronize: true,
             logging: true,
         }),
     ],

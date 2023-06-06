@@ -7,12 +7,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-floating">
+                    <div class="form-floating mb-1">
                         <textarea v-model="email" class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
                         <label for="floatingTextarea">이메일</label>
                     </div>
                     <div class="form-floating">
-                        <textarea v-model="password" class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                        <input v-model="password" type="password" class="form-control" id="login-password" placeholder="영문과 숫자로 6자리 이상" />
                         <label for="floatingTextarea">비밀번호</label>
                     </div>
                 </div>
@@ -38,17 +38,25 @@ export default {
     },
 
     methods: {
-        ...mapActions(["signIn"]),
+        ...mapActions(["signIn", "restoreToken"]),
         loginAndCheck(obj) {
             this.signIn(obj)
                 .then((res) => {
                     if (res === "success") {
-                        this.$refs.logInModal.setAttribute("data-bs-dismiss", "modal");
+                        this.$refs.logInModal.setAttribute("data-bs-dismiss", "modal"); // "$refs" -> vue에서 제공하는 요소 접근 기능
                         this.$refs.logInModal.click();
+
+                        this.restoreToken()
+                            .then((res) => {
+                                if (res === "success") console.log("토큰이 재발행됨.");
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
                     }
                 })
                 .catch((error) => {
-                    alert(error.response.data);
+                    alert(error);
                 });
         },
     },

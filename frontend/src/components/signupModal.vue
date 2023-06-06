@@ -8,13 +8,10 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group d-flex mb-3">
-                            <label for="nickname" class="mr-3" style="width: 25%">닉네임</label>
-                            <input v-model="nickname" type="text" class="form-control" id="nickname" placeholder="닉네임" style="width: 75%" />
-                        </div>
-                        <div class="form-group d-flex mb-3">
                             <label for="email" class="mr-3" style="width: 25%">이메일</label>
                             <input v-model="email" type="email" class="form-control" id="email" placeholder="email@email.com" style="width: 75%" />
                         </div>
+
                         <div class="form-group d-flex mb-3">
                             <label for="password" class="mr-3" style="width: 25%">비밀번호</label>
                             <input
@@ -26,6 +23,7 @@
                                 style="width: 75%"
                             />
                         </div>
+
                         <div class="form-group d-flex mb-3">
                             <label for="password2" class="mr-3" style="width: 25%">비밀번호 확인</label>
                             <input
@@ -37,11 +35,29 @@
                                 style="width: 75%"
                             />
                         </div>
+
+                        <div class="form-group d-flex mb-3">
+                            <label for="userName" class="mr-3" style="width: 25%">이름</label>
+                            <input v-model="userName" type="name" class="form-control" id="userName" placeholder="이름을 입력하세요." style="width: 75%" />
+                        </div>
+
+                        <div class="form-group d-flex mb-3">
+                            <label for="age" class="mr-3" style="width: 25%">나이</label>
+                            <input
+                                v-model="age"
+                                @input="validateAge"
+                                type="text"
+                                class="form-control"
+                                id="age"
+                                placeholder="나이를 입력하세요."
+                                style="width: 75%"
+                            />
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button @click="signUpAndClose({ email, nickname, password, confirmPassword })" type="button" class="btn btn-primary">회원가입</button>
+                    <button @click="signUpAndClose({ email, age, userName, password, confirmPassword })" type="button" class="btn btn-primary">회원가입</button>
                 </div>
             </div>
         </div>
@@ -55,14 +71,19 @@ export default {
     data() {
         return {
             email: "",
-            nickname: "",
             password: "",
             confirmPassword: "",
+            userName: "",
+            age: "",
         };
     },
     methods: {
         ...mapActions(["signUp"]),
         signUpAndClose(obj) {
+            if (obj.password !== obj.confirmPassword) {
+                alert("비밀번호가 다릅니다.");
+                return;
+            }
             this.signUp(obj)
                 .then((res) => {
                     if (res === "success") {
@@ -72,8 +93,20 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    alert(error.response.data);
+                    alert(error);
                 });
+        },
+        validateAge() {
+            const parsedAge = parseInt(this.age);
+            if (isNaN(parsedAge)) {
+                this.age = "";
+                alert("숫자를 입력해주세요!");
+            }
+
+            if (parsedAge < 1) {
+                this.age = "";
+                alert("0보다 큰 숫자를 입력하세요.");
+            }
         },
     },
 };

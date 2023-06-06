@@ -4,6 +4,10 @@ import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client/core"
 
 const httpLink = new HttpLink({
     uri: 'http://localhost:3000/graphql',
+    fetchOptions: {
+        // credentials: 'include',
+        credentials: 'same-origin'
+    },
 })
 
 const apolloClient = new ApolloClient({
@@ -20,11 +24,16 @@ const store = createStore({
             token: "",
             totalPrice: 0,
             shoppingList: [],
-            orderHistory: []
+            orderHistory: [],
+            loggedinEmail: ""
         };
     },
 
     mutations: {
+        setEmail(state, email) {
+            state.loggedinEmail = email;
+        },
+
         setProducts(state, products) {
             state.products = products;
         },
@@ -82,8 +91,7 @@ const store = createStore({
                                 tagName
                             }
                         }
-                    }
-                `,
+                    }`,
                     variables: {
                         userId: userId || null,
                         categoryName: categoryName || null
@@ -94,6 +102,77 @@ const store = createStore({
                 console.error("Failed to load products: ", error);
             }
         },
+
+        async signIn({ commit }, { email, password }) {
+            try {
+                const result = await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($email: String!, $password: String!) {
+                        login(
+                            email: $email
+                            password: $password
+                        )
+                    }`,
+                    variables: {
+                        email: email,
+                        password: password
+                    }
+                });
+                commit('setToken', result.data.login);
+                commit('setEmail', email);
+                return "success";
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async signUp(_, { email, password, age, userName }) {
+            console.log(email, password, age, userName);
+            age = parseInt(age);
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($email: String!, $password: String!, $age: Int!, $userName: String!) {
+                        createUser(
+                            createUserInput: {
+                                email: $email
+                                password: $password
+                                userName: $userName
+                                age: $age
+                            }
+                        ) {
+                            userId
+                            email
+                        }
+                    }`,
+                    variables: {
+                        email,
+                        password,
+                        age,
+                        userName
+                    }
+                });
+                return "success";
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async restoreToken({ commit }) {
+            try {
+                const result = await apolloClient.mutate({
+                    mutation: gql`
+                    mutation {
+                        restoreAcessToken
+                    }`
+                });
+                commit('setToken', result.data.restoreAcessToken);
+                console.log("토큰이 제대로 실행됐는가? ", result.data.restoreAcessToken);
+                return "success";
+            } catch (error) {
+                throw new Error(error);
+            }
+        }
     },
 });
 

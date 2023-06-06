@@ -1,23 +1,19 @@
 // users.service.ts
 
-import {
-    ConflictException,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
-import { CreateUserInput } from './dto/createUser.input';
-import { IUserServiceFindOneByEmail } from './interfaces/user-service.interface';
-import { UpdateUserPwdInput } from './dto/updateUserPwd.input';
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { User } from "./entities/user.entity";
+import * as bcrypt from "bcrypt";
+import { CreateUserInput } from "./dto/createUser.input";
+import { IUserServiceFindOneByEmail } from "./interfaces/user-service.interface";
+import { UpdateUserPwdInput } from "./dto/updateUserPwd.input";
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        private readonly userRepository: Repository<User>
     ) {}
 
     async findOne(userId: string) {
@@ -40,7 +36,7 @@ export class UserService {
         const { email, password } = createUserInput;
 
         const user = await this.findOneByEmail({ email });
-        if (user) throw new ConflictException('이미 등록된 이메일입니다.');
+        if (user) throw new ConflictException("이미 등록된 이메일입니다.");
 
         if (password === null) {
             return this.userRepository.save({
@@ -55,12 +51,10 @@ export class UserService {
         });
     }
 
-    async updatePassword(
-        updateUserPwdInput: UpdateUserPwdInput,
-    ): Promise<User> {
+    async updatePassword(updateUserPwdInput: UpdateUserPwdInput): Promise<User> {
         const { email, password } = updateUserPwdInput;
 
-        console.log('email과 password', email, password);
+        console.log("email과 password", email, password);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -68,10 +62,7 @@ export class UserService {
             where: { email },
         });
 
-        if (!user)
-            throw new NotFoundException('입력한 email을 찾을 수 없습니다.');
-
-        console.log('user를 출력: ', user);
+        if (!user) throw new NotFoundException("입력한 email을 찾을 수 없습니다.");
 
         return await this.userRepository.save({
             ...user,
