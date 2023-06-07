@@ -1,33 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Review } from './entities/review.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Review } from "./entities/review.entity";
 import {
     IReviewServiceCreate,
     IReviewServiceDelete,
     IReviewServiceFind,
     IReviewServiceFindOne,
     IReviewServiceUpdate,
-} from './interface/review-service.interface';
-import { UpdateReviewInput } from './dto/updateReview.input';
+} from "./interface/review-service.interface";
+import { UpdateReviewInput } from "./dto/updateReview.input";
 
 @Injectable()
 export class ReviewService {
     constructor(
         @InjectRepository(Review)
-        private readonly reviewRepository: Repository<Review>,
+        private readonly reviewRepository: Repository<Review>
     ) {}
 
-    async findOne({
-        findOneReviewInput,
-    }: IReviewServiceFindOne): Promise<Review> {
+    async findOne({ findOneReviewInput }: IReviewServiceFindOne): Promise<Review> {
         const { productId, userId } = findOneReviewInput;
         return await this.reviewRepository
-            .createQueryBuilder('review')
-            .leftJoinAndSelect('review.product', 'reviewProduct')
-            .leftJoinAndSelect('review.user', 'reviewUser')
-            .where('reviewProduct.productId = :productId', { productId })
-            .andWhere('reviewuser.userId = :userId', { userId })
+            .createQueryBuilder("review")
+            .leftJoinAndSelect("review.product", "reviewProduct")
+            .leftJoinAndSelect("review.user", "reviewUser")
+            .where("reviewProduct.productId = :productId", { productId })
+            .andWhere("reviewuser.userId = :userId", { userId })
             .getOne();
     }
 
@@ -37,29 +35,29 @@ export class ReviewService {
 
         if (productId && userId) {
             result = await this.reviewRepository
-                .createQueryBuilder('review')
-                .leftJoinAndSelect('review.product', 'reviewProduct')
-                .leftJoinAndSelect('review.user', 'reviewUser')
-                .where('reviewProduct.productId = :productId', { productId })
-                .andWhere('reviewuser.userId = :userId', { userId })
+                .createQueryBuilder("review")
+                .leftJoinAndSelect("review.product", "reviewProduct")
+                .leftJoinAndSelect("review.user", "reviewUser")
+                .where("reviewProduct.productId = :productId", { productId })
+                .andWhere("reviewuser.userId = :userId", { userId })
                 .getMany();
         } else if (productId && !userId) {
             result = await this.reviewRepository
-                .createQueryBuilder('review')
-                .leftJoinAndSelect('review.product', 'reviewProduct')
-                .leftJoinAndSelect('review.user', 'reviewUser')
-                .where('reviewProduct.productId = :productId', { productId })
+                .createQueryBuilder("review")
+                .leftJoinAndSelect("review.product", "reviewProduct")
+                .leftJoinAndSelect("review.user", "reviewUser")
+                .where("reviewProduct.productId = :productId", { productId })
                 .getMany();
         } else if (userId && !productId) {
             result = await this.reviewRepository
-                .createQueryBuilder('review')
-                .leftJoinAndSelect('review.product', 'reviewProduct')
-                .leftJoinAndSelect('review.user', 'reviewUser')
-                .where('reviewUser.userId = :userId', { userId })
+                .createQueryBuilder("review")
+                .leftJoinAndSelect("review.product", "reviewProduct")
+                .leftJoinAndSelect("review.user", "reviewUser")
+                .where("reviewUser.userId = :userId", { userId })
                 .getMany();
         } else {
             result = await this.reviewRepository.find({
-                relations: ['product', 'user'],
+                relations: ["product", "user"],
             });
         }
         return result;
@@ -85,7 +83,6 @@ export class ReviewService {
     }
 
     async update({ updateReviewInput }: IReviewServiceUpdate): Promise<Review> {
-        console.log('updateReviewInput 출력', updateReviewInput);
         const { productId, userId, reviewContent, grade } = updateReviewInput;
         const findData = await this.findOne({
             findOneReviewInput: {
@@ -94,8 +91,7 @@ export class ReviewService {
             },
         });
 
-        if (!findData)
-            throw new NotFoundException('해당하는 리뷰를 찾을 수 없습니다.');
+        if (!findData) throw new NotFoundException("해당하는 리뷰를 찾을 수 없습니다.");
 
         const result = await this.reviewRepository.save({
             product: { productId },
@@ -107,9 +103,7 @@ export class ReviewService {
         return result;
     }
 
-    async delete({
-        deleteReviewInput,
-    }: IReviewServiceDelete): Promise<boolean> {
+    async delete({ deleteReviewInput }: IReviewServiceDelete): Promise<boolean> {
         const { productId, userId } = deleteReviewInput;
         const result = await this.reviewRepository.softDelete({
             product: { productId },

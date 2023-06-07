@@ -18,7 +18,7 @@ export class AuthService {
         private readonly userService: UserService
     ) {}
 
-    async login({ email, password, context }: IAuthServiceLogin): Promise<string> {
+    async login({ email, password, context }: IAuthServiceLogin): Promise<object> {
         const user = await this.userService.findOneByEmail({ email });
 
         if (!user) throw new UnprocessableEntityException("이메일이 없습니다.");
@@ -28,7 +28,9 @@ export class AuthService {
 
         this.setRefreshToken({ user, res: context.res });
 
-        return this.getAccessToken({ user });
+        const token = this.getAccessToken({ user });
+
+        return { token: token, userId: user.userId };
     }
 
     async loginOAuth({ req, res }: IAuthServiceLoginOAuth) {
@@ -39,7 +41,7 @@ export class AuthService {
         if (!user) user = await this.userService.create({ ...req.user });
 
         this.setRefreshToken({ user, res });
-        res.redirect("http://127.0.0.1:5500/campmoa/frontend/social-login.html");
+        res.redirect("http://localhost:8080/");
     }
 
     restoreAccessToken({ user }: IAuthServiceRestoreAccessToken): string {

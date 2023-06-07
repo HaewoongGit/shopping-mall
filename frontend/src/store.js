@@ -25,11 +25,16 @@ const store = createStore({
             totalPrice: 0,
             shoppingList: [],
             orderHistory: [],
-            loggedinEmail: ""
+            loggedinEmail: "",
+            userId: ""
         };
     },
 
     mutations: {
+        setUserId(state, userId) {
+            state.userId = userId;
+        },
+
         setEmail(state, email) {
             state.loggedinEmail = email;
         },
@@ -118,8 +123,9 @@ const store = createStore({
                         password: password
                     }
                 });
-                commit('setToken', result.data.login);
+                commit('setToken', result.data.login.token);
                 commit('setEmail', email);
+                commit('setUserId', result.data.login.userId);
                 return "success";
             } catch (error) {
                 throw new Error(error.message);

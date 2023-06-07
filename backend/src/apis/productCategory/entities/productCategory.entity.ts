@@ -8,6 +8,7 @@ export enum CategoryName {
     Household = "생활용품",
     Stationery = "문구",
     Sports = "스포츠",
+    clothes = "의류",
 }
 
 @Entity()

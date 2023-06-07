@@ -17,6 +17,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <a href="http://localhost:3000/login/google">
+                        <img
+                            src="../assets/Google_Logo.svg.png"
+                            alt="Google Logo"
+                            width="55"
+                            height="40"
+                            style="cursor: pointer; border: 1px solid #ccc; padding: 5px"
+                        />
+                    </a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                         회원가입
                     </button>

@@ -1,8 +1,7 @@
 mutation {
   createCart(createCartInput: {
-    productId: "d71a1bf8-a3b8-4ff8-b101-20ef271cd19e"
-    userId: "75a8d5d1-1ce9-4788-bc34-db383b4075df"
-    quantity: 2
+    productId: "697c0607-4cdb-4876-8774-49e4d59b3095"
+    quantity: 5
   }) {
     product {
       productId
@@ -13,4 +12,9 @@ mutation {
     }
     quantity
   }
+}
+
+
+{
+  "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzY2Y1OTUzNS02ZWU4LTRjMDEtODY0My1lNDJlOWE1ZWE4NmMiLCJlbWFpbCI6IjEiLCJpYXQiOjE2ODYxMTU4NzgsImV4cCI6MTY4NjExOTQ3OH0.veOp1Bjrc-oqAr0FgGWj8Lv4Yp8VuchlGigrdZBpKNs"
 }

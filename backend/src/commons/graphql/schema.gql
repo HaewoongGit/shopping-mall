@@ -37,6 +37,11 @@ type Dibs {
   product: Product!
 }
 
+type LoginResponse {
+  token: String!
+  userId: String!
+}
+
 type Review {
   user: User!
   product: Product!
@@ -63,7 +68,7 @@ type Query {
   fetchReview(findOneReviewInput: FindOneReviewInput!): Review!
   fetchReviews(findReviewInput: FindReviewInput!): [Review!]!
   fetchCart(findOneCartInput: FindOneCartInput!): Cart!
-  fetchCarts(findCartInput: FindCartInput!): [Cart!]!
+  fetchCarts(productId: String!): [Cart!]!
 }
 
 input FindOneDibsInput {
@@ -96,11 +101,6 @@ input FindOneCartInput {
   userId: String!
 }
 
-input FindCartInput {
-  productId: String
-  userId: String
-}
-
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUserPwd(updateUserPwdInput: UpdateUserPwdInput!): User!
@@ -114,14 +114,14 @@ type Mutation {
   deleteProductTag(productTagId: String!): Boolean!
   createProductCategory(categoryName: String!): ProductCategory!
   updateProductCategory(productCategoryId: String!, categoryName: String!): ProductCategory!
-  login(email: String!, password: String!): String!
+  login(email: String!, password: String!): LoginResponse!
   restoreAcessToken: String!
   createReview(createReviewInput: CreateReviewInput!): Review!
   updateReview(updateReviewInput: UpdateReviewInput!): Review!
   deleteReview(deleteReviewInput: DeleteReviewInput!): Boolean!
   createCart(createCartInput: CreateCartInput!): Cart!
   updateCart(updateCartInput: UpdateCartInput!): Cart!
-  deleteCart(deleteCartInput: DeleteCartInput!): Boolean!
+  deleteCart(productId: String!): Boolean!
 }
 
 input CreateUserInput {
@@ -185,17 +185,10 @@ input DeleteReviewInput {
 
 input CreateCartInput {
   productId: String!
-  userId: String!
   quantity: Int!
 }
 
 input UpdateCartInput {
   productId: String!
-  userId: String!
   quantity: Int!
-}
-
-input DeleteCartInput {
-  productId: String!
-  userId: String!
 }
