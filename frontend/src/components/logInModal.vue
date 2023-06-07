@@ -55,13 +55,13 @@ export default {
                         this.$refs.logInModal.setAttribute("data-bs-dismiss", "modal"); // "$refs" -> vue에서 제공하는 요소 접근 기능
                         this.$refs.logInModal.click();
 
-                        this.restoreToken()
-                            .then((res) => {
-                                if (res === "success") console.log("토큰이 재발행됨.");
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
+                        // this.restoreToken()
+                        //     .then((res) => {
+                        //         if (res === "success") console.log("토큰이 재발행됨.");
+                        //     })
+                        //     .catch((error) => {
+                        //         console.log(error);
+                        //     });
                     }
                 })
                 .catch((error) => {

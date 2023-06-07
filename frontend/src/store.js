@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client/core";
+import { setContext } from "@apollo/client/link/context";
 
 
 const httpLink = new HttpLink({
@@ -8,10 +9,22 @@ const httpLink = new HttpLink({
         // credentials: 'include',
         credentials: 'same-origin'
     },
-})
+});
+
+const authLink = setContext((_, { headers }) => {
+    const token = store.state.token;
+
+    return {
+        headers: {
+            ...headers,
+            authorization: token ? `Bearer ${token}` : "",
+        }
+    }
+});
+
 
 const apolloClient = new ApolloClient({
-    link: httpLink,
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache()
 });
 
@@ -108,6 +121,33 @@ const store = createStore({
             }
         },
 
+        async cartRegist(_, { productId, quantity }) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+            mutation($productId: String!, $quantity: Int!) {
+                createCart(createCartInput: {
+                    productId: $productId
+                    quantity: $quantity
+                }) {
+                    product {
+                        productId
+                        productName
+                    }
+                    quantity
+                }
+            }`,
+                    variables: {
+                        productId,
+                        quantity
+                    }
+                });
+                return "success";
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
         async signIn({ commit }, { email, password }) {
             try {
                 const result = await apolloClient.mutate({
@@ -116,7 +156,10 @@ const store = createStore({
                         login(
                             email: $email
                             password: $password
-                        )
+                        ) {
+                            token
+                            userId
+                        }
                     }`,
                     variables: {
                         email: email,
@@ -133,7 +176,6 @@ const store = createStore({
         },
 
         async signUp(_, { email, password, age, userName }) {
-            console.log(email, password, age, userName);
             age = parseInt(age);
             try {
                 await apolloClient.mutate({

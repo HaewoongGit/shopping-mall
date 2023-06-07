@@ -32,8 +32,8 @@
 
                     <div class="form-group row mr-0">
                         <label for="numberSelect" class="col-4 col-form-label">수량</label>
-                        <select @change="quantity = $event.target.value" class="custom-select col-4" id="numberSelect">
-                            <option selected value="1">1개</option>
+                        <select v-model.number="quantity" class="custom-select col-4" id="numberSelect">
+                            <option value="1">1개</option>
                             <option value="2">2개</option>
                             <option value="3">3개</option>
                             <option value="4">4개</option>
@@ -50,7 +50,7 @@
                     <div class="d-flex justify-content-around">
                         <button
                             v-if="token.length !== 0"
-                            @click="cartRegister(quantity)"
+                            @click="cartRegist({ productId: detail.productId, quantity })"
                             type="button"
                             class="btn btn-outline-primary col-5"
                             data-bs-toggle="modal"
@@ -96,7 +96,7 @@ export default {
         ...mapState(["token", "detail"]),
     },
     methods: {
-        ...mapActions(["cartRegister"]),
+        ...mapActions(["cartRegist"]),
         ...mapMutations(["setShoppingList", "setTotalPrice"]),
     },
 };

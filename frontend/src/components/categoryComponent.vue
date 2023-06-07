@@ -5,6 +5,7 @@
             <select @change="loadProducts({ categoryName: $event.target.value })" class="form-select w-75" id="categorySelect">
                 <option value="" selected>전체</option>
                 <option value="가전디지털">가전디지털</option>
+                <option value="의류">의류</option>
                 <option value="도서">도서</option>
                 <option value="식품">식품</option>
                 <option value="생활용품">생활용품</option>
