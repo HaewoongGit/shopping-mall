@@ -33,7 +33,7 @@ const store = createStore({
         return {
             products: [],
             detail: {},
-            cart: [],
+            cartList: [],
             token: "",
             totalPrice: 0,
             shoppingList: [],
@@ -60,8 +60,8 @@ const store = createStore({
             state.detail = detail;
         },
 
-        setCart(state, cart) {
-            state.cart = cart;
+        setCartList(state, cartList) {
+            state.cartList = cartList;
         },
 
         setTotalPrice(state, totalPrice) {
@@ -143,6 +143,35 @@ const store = createStore({
                     }
                 });
                 return "success";
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async loadCartList({ commit }) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query{
+                        fetchCarts{
+                            product {
+                                productId
+                                productName
+                                description
+                                isSoldOut
+                                price
+                            }
+                            user {
+                                userId
+                                userName
+                            }
+                            quantity
+                        }
+                    }`,
+                    variables: {
+                    },
+                });
+                commit('setCartList', result.data.fetchCarts);
             } catch (error) {
                 throw new Error(error.message);
             }

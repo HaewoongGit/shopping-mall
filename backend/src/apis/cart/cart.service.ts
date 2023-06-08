@@ -28,7 +28,7 @@ export class CartService {
             .getOne();
     }
 
-    async find(productId: string, context: IContext): Promise<Cart[]> {
+    async find(context: IContext, productId?: string): Promise<Cart[]> {
         let result = [];
         if (productId && context.req.user.userId) {
             result = await this.cartRepository
@@ -66,6 +66,7 @@ export class CartService {
             product: { productId },
             user: { userId: context.req.user.userId },
             quantity,
+            deletedAt: null,
         });
 
         const result = await this.findOne({ productId, userId: context.req.user.userId });

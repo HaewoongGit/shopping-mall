@@ -68,7 +68,7 @@ type Query {
   fetchReview(findOneReviewInput: FindOneReviewInput!): Review!
   fetchReviews(findReviewInput: FindReviewInput!): [Review!]!
   fetchCart(findOneCartInput: FindOneCartInput!): Cart!
-  fetchCarts(productId: String!): [Cart!]!
+  fetchCarts(productId: String): [Cart!]!
 }
 
 input FindOneDibsInput {

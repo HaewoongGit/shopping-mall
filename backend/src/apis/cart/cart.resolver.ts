@@ -21,8 +21,8 @@ export class CartResolver {
 
     @UseGuards(GqlAuthGuard("access"))
     @Query(() => [Cart])
-    fetchCarts(@Args("productId") productId: string, @Context() context: IContext): Promise<Cart[]> {
-        return this.cartService.find(productId, context);
+    fetchCarts(@Context() context: IContext, @Args("productId", { nullable: true }) productId?: string): Promise<Cart[]> {
+        return this.cartService.find(context, productId);
     }
 
     @UseGuards(GqlAuthGuard("access"))
