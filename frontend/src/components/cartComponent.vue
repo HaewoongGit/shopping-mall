@@ -20,13 +20,13 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <h5 class="card-title mb-1">{{ cart.product.productName }}</h5>
-                                    <p class="card-text mb-1">{{ cart.product.price }}</p>
+                                    <p class="card-text mb-1">${{ cart.product.price }}</p>
                                 </div>
                                 <p class="card-text">
                                     <small class="text-muted">장바구니에 담긴 수량: {{ cart.quantity }}</small>
                                 </p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn btn-danger btn-sm">삭제</button>
+                                    <button @click="cartDeleteAndList(cart.product.productId)" type="button" class="btn btn-danger btn-sm">삭제</button>
                                     <div style="width: 120px">
                                         <select class="form-select form-select-sm">
                                             <option selected>변경할 수량 선택</option>
@@ -89,10 +89,20 @@ export default {
             });
         },
 
-        cartDeleteAndList(data) {
-            this.cartDelete(data).then(() => {
-                this.loadCartList();
-            });
+        cartDeleteAndList(productId) {
+            console.log("cartDeleteAndList called");
+            this.cartDelete(productId)
+                .then((response) => {
+                    console.log("cartDelete resolved");
+                    if (response === "success") {
+                        console.log("calling loadCartList");
+                        this.loadCartList();
+                    }
+                })
+                .catch((error) => {
+                    console.error("cartDelete rejected", error);
+                    alert(error.message);
+                });
         },
 
         cartToShoppingList(data) {

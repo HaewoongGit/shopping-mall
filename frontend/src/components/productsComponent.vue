@@ -1,33 +1,24 @@
 <template>
     <div
+        class="mb-5"
         @click="
             setDetail(product);
             $router.push(`/detail/${product.productId}`);
         "
-        id="productsList"
-        class="mb-3"
     >
-        <div class="card mb-1" onclick="location.href='#'">
-            <div class="row g-0">
-                <div class="col-md-4" style="background: #868e96">
-                    <div class="ratio ratio-4x3">
-                        <img
-                            id="productsUrl"
-                            src="https://img.freepik.com/free-photo/black-friday-elements-assortment_23-2149074075.jpg?w=360"
-                            class="rounded-start"
-                            alt="..."
-                        />
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h5>{{ product.productName }}</h5>
-                            <span class="card-price ml-2">${{ product.price }}</span>
-                        </div>
-                        <span class="badge text-bg-secondary">{{ product.productCategory.categoryName }}</span>
-                        <p class="mt-2">{{ product.description }}</p>
-                    </div>
+        <div class="card h-100 d-flex flex-row">
+            <img
+                src="https://img.freepik.com/free-photo/black-friday-elements-assortment_23-2149074075.jpg?w=360"
+                class="card-img-left flex-shrink-0"
+                alt="product image"
+            />
+            <div class="card-body">
+                <h5 class="card-title">{{ product.productName }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${{ product.price }}</h6>
+                <span class="badge bg-primary">{{ product.productCategory.categoryName }}</span>
+                <p class="card-text">{{ product.description }}</p>
+                <div class="d-flex flex-wrap">
+                    <span class="badge bg-secondary me-2" v-for="tag in product.productTags" :key="tag.tagName"> #{{ tag.tagName }} </span>
                 </div>
             </div>
         </div>
@@ -48,5 +39,9 @@ export default {
 </script>
 
 <style>
-@import "../assets/mystyle.css";
+.card-img-top {
+    object-fit: cover;
+    height: 100%;
+    width: auto;
+}
 </style>

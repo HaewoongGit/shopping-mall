@@ -114,6 +114,7 @@ const store = createStore({
                         userId: userId || null,
                         categoryName: categoryName || null
                     },
+                    fetchPolicy: 'no-cache',
                 });
                 commit('setProducts', result.data.fetchProducts);
             } catch (error) {
@@ -149,6 +150,7 @@ const store = createStore({
         },
 
         async loadCartList({ commit }) {
+            console.log('loadCartList called');
             try {
                 const result = await apolloClient.query({
                     query: gql`
@@ -170,8 +172,27 @@ const store = createStore({
                     }`,
                     variables: {
                     },
+                    fetchPolicy: 'no-cache',
                 });
                 commit('setCartList', result.data.fetchCarts);
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async cartDelete(_, productId) {
+            console.log('cartDelete called');
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                        mutation($productId: String!) {
+                            deleteCart(productId: $productId)
+                        }`,
+                    variables: {
+                        productId
+                    }
+                });
+                return "success";
             } catch (error) {
                 throw new Error(error.message);
             }
@@ -254,81 +275,3 @@ const store = createStore({
 });
 
 export { store, apolloClient };
-
-
-
-
-
-
-// productsDetail(context, payload) {
-//     axios.get(`http://localhost:3000/api/products/${payload}`).then((res) => {
-//         context.commit("setDetail", res.data);
-//     });
-// },
-
-// cartRegister(context, payload) {
-//     axios.post(`http://localhost:3000/api/cart/${context.state.detail.productsId}`, { quantity: payload }, { headers: { token: this.state.token } }).catch(err => { alert("로그인 해주세요.", err) });
-// },
-
-// cartList(context) {
-//     axios.get(`http://localhost:3000/api/cart`, { headers: { token: this.state.token } }).then((res) => {
-//         context.commit("setCart", res.data);
-//     }).catch(err => {
-//         alert(err.response.data.errormessage)
-//         router.push("/")
-//     });
-// },
-
-// cartChange(context, payload) {
-//     axios.patch("http://localhost:3000/api/cart/update", payload, { headers: { token: this.state.token } })
-// },
-
-// cartDelete(context, payload) {
-//     axios.delete(`http://localhost:3000/api/cart/delete/${payload}`, { headers: { token: this.state.token } })
-// },
-
-// signUp(context, payload) {
-//     return new Promise((resolve, reject) => {
-//         axios.post("http://localhost:3000/api/users", payload).then((res) => {
-//             if (res.status === 201) {
-//                 resolve(res.data)
-//             }
-//         }).catch(error => {
-//             console.log(error);
-//             reject(error);
-//         })
-//     })
-// },
-
-// signIn(context, payload) {
-//     return new Promise((resolve, reject) => {
-//         axios.post("http://localhost:3000/api/auth", payload).then(res => {
-//             context.commit("setToken", res.data.token)
-
-//             resolve("success")
-//         }).catch(error => {
-//             reject(error)
-//         })
-//     })
-// },
-
-// shoppingListPost(context, payload) {
-//     return new Promise((resolve, reject) => {
-//         axios.post("http://localhost:3000/api/buy", payload, { headers: { token: this.state.token } }).then(() => {
-//             resolve("success")
-//         }).catch(error => {
-//             reject(error)
-//         })
-//     })
-// },
-
-// orderHistoryGet(context) {
-//     return new Promise((resolve, reject) => {
-//         axios.get("http://localhost:3000/api/buy", { headers: { token: this.state.token } }).then(res => {
-//             context.commit("setOrderHistory", res.data)
-//             resolve("success")
-//         }).catch(error => {
-//             reject(error)
-//         })
-//     })
-// }
