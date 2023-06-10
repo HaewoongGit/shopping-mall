@@ -28,7 +28,10 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <button @click="cartDeleteAndList(cart.product.productId)" type="button" class="btn btn-danger btn-sm">삭제</button>
                                     <div style="width: 120px">
-                                        <select class="form-select form-select-sm">
+                                        <select
+                                            class="form-select form-select-sm"
+                                            @change="cartChangeAndList(cart.product.productId, parseInt($event.target.value))"
+                                        >
                                             <option selected>변경할 수량 선택</option>
                                             <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
                                         </select>
@@ -83,10 +86,15 @@ export default {
             return sum;
         },
 
-        cartChangeAndList(data) {
-            this.cartChange(data).then(() => {
-                this.loadCartList();
-            });
+        cartChangeAndList(productId, quantity) {
+            console.log("cartChangeAndList called");
+            this.cartChange({ productId, quantity })
+                .then((response) => {
+                    if (response === "success") this.loadCartList();
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
         },
 
         cartDeleteAndList(productId) {

@@ -1,13 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Product } from './entities/product.entity';
-import { IProductServiceUpdate } from './interface/product-service.interface';
-import { CreateProductInput } from './dto/createProduct.input';
-import { UserService } from '../user/users.service';
-import { ProductTagService } from '../productTag/productTag.service';
-import { ProductCategoryService } from '../productCategory/productCategory.service';
-import { FindProductsInput } from './dto/findProducts.input';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Product } from "./entities/product.entity";
+import { IProductServiceUpdate } from "./interface/product-service.interface";
+import { CreateProductInput } from "./dto/createProduct.input";
+import { UserService } from "../user/users.service";
+import { ProductTagService } from "../productTag/productTag.service";
+import { ProductCategoryService } from "../productCategory/productCategory.service";
+import { FindProductsInput } from "./dto/findProducts.input";
 
 @Injectable()
 export class ProductService {
@@ -16,21 +16,17 @@ export class ProductService {
         private readonly productRepository: Repository<Product>,
         private readonly productTagService: ProductTagService,
         private readonly userService: UserService,
-        private readonly productCategoryService: ProductCategoryService,
+        private readonly productCategoryService: ProductCategoryService
     ) {}
 
     async create(createProductInput: CreateProductInput): Promise<Product> {
-        const { categoryName, productTags, email, ...product } =
-            createProductInput;
+        const { categoryName, productTags, email, ...product } = createProductInput;
 
         const user = await this.userService.findOneByEmail({ email });
 
-        if (user == undefined)
-            throw new NotFoundException('등록된 회원이 아닙니다.');
+        if (user == undefined) throw new NotFoundException("등록된 회원이 아닙니다.");
 
-        let productCategory = await this.productCategoryService.findOne(
-            categoryName,
-        );
+        let productCategory = await this.productCategoryService.findOne(categoryName);
 
         if (!productCategory) {
             productCategory = await this.productCategoryService.create({
@@ -38,7 +34,7 @@ export class ProductService {
             });
         }
 
-        const tagNames = productTags.map((elem) => elem.replace('#', ''));
+        const tagNames = productTags.map((elem) => elem.replace("#", ""));
         const prevTags = await this.productTagService.findByNames(tagNames);
 
         const temp = [];
@@ -66,7 +62,7 @@ export class ProductService {
     async findOne(productId): Promise<Product> {
         const result = await this.productRepository.findOne({
             where: { productId },
-            relations: ['productCategory', 'user', 'productTags'],
+            relations: ["productCategory", "user", "productTags"],
         });
 
         return result;
@@ -77,63 +73,59 @@ export class ProductService {
 
         const where = {};
         if (userId) {
-            where['user'] = { userId };
+            where["user"] = { userId };
         }
         if (categoryName) {
-            where['productCategory'] = { categoryName };
+            where["productCategory"] = { categoryName };
         }
 
         return await this.productRepository.find({
             where,
-            relations: ['productCategory', 'user', 'productTags'],
+            relations: ["productCategory", "user", "productTags"],
         });
     }
 
-    async update({
-        productId,
-        updateProductInput,
-    }: IProductServiceUpdate): Promise<Product> {
+    async increaseHits(productId: string): Promise<Product> {
+        const foundProduct = await this.findOne(productId);
+        foundProduct.hits++;
+        return await this.productRepository.save({ ...foundProduct });
+    }
+
+    async update({ productId, updateProductInput }: IProductServiceUpdate): Promise<Product> {
         const foundProduct = await this.productRepository.findOne({
             where: { productId },
-            relations: ['productCategory', 'productTags', 'user'],
+            relations: ["productCategory", "productTags", "user"],
         });
 
-        if (foundProduct == undefined)
-            throw new NotFoundException('등록된 상품이 아닙니다.');
+        if (foundProduct == undefined) throw new NotFoundException("등록된 상품이 아닙니다.");
 
         const { categoryName, productTags, ...product } = updateProductInput;
 
         let productCategoryResult = {};
         if (categoryName != undefined) {
-            const productCategory = await this.productCategoryService.findOne(
-                foundProduct.productCategory.categoryName,
-            );
+            const productCategory = await this.productCategoryService.findOne(foundProduct.productCategory.categoryName);
 
             if (productCategory) {
-                productCategoryResult =
-                    await this.productCategoryService.update({
-                        productCategoryId: productCategory.productCategoryId,
-                        categoryName: productCategory.categoryName,
-                    });
+                productCategoryResult = await this.productCategoryService.update({
+                    productCategoryId: productCategory.productCategoryId,
+                    categoryName: productCategory.categoryName,
+                });
             } else {
-                productCategoryResult =
-                    await this.productCategoryService.create({
-                        categoryName: productCategory.categoryName,
-                    });
+                productCategoryResult = await this.productCategoryService.create({
+                    categoryName: productCategory.categoryName,
+                });
             }
         } else productCategoryResult = foundProduct.productCategory;
 
         let tags = [];
 
         if (productTags != undefined) {
-            const tagNames = productTags.map((elem) => elem.replace('#', ''));
+            const tagNames = productTags.map((elem) => elem.replace("#", ""));
             const prevTags = await this.productTagService.findByNames(tagNames);
 
             const temp = [];
             tagNames.forEach((elem) => {
-                const exists = prevTags.find(
-                    (prevEl) => elem === prevEl.tagName,
-                );
+                const exists = prevTags.find((prevEl) => elem === prevEl.tagName);
                 if (!exists) temp.push({ tagName: elem });
             });
 

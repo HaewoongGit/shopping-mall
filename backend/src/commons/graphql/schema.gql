@@ -109,6 +109,7 @@ type Mutation {
   deleteDibs(deleteDibsInput: DeleteDibsInput!): Boolean!
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
+  increaseHits(productId: String!): Product!
   deleteProduct(productId: String!): Boolean!
   updateProductTag(productTagId: String!): ProductTag!
   deleteProductTag(productTagId: String!): Boolean!

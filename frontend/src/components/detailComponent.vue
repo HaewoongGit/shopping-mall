@@ -13,21 +13,21 @@
             </div>
             <div class="col-sm-7 card-body px-3">
                 <div class="d-flex justify-content-end" id="productHits">
-                    <span class="view-count" style="">조회 {{ detail.hits }}</span>
+                    <span class="view-count" style="">조회 {{ product.hits }}</span>
                 </div>
                 <div class="flex-fill">
-                    <h5 id="productName">{{ detail.productName }}</h5>
+                    <h5 id="productName">{{ product.productName }}</h5>
 
                     <div class="d-flex justify-content-between mb-2">
                         <div style="white-space: nowrap">상품 설명</div>
                         <div id="productDescriptionContainer">
-                            <div id="productDescription">{{ detail.description }}</div>
+                            <div id="productDescription">{{ product.description }}</div>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
                         <div style="white-space: nowrap">가격</div>
-                        <span class="card-price" id="productPrice">${{ detail.price }}</span>
+                        <span class="card-price" id="productPrice">${{ product.price }}</span>
                     </div>
 
                     <div class="form-group row mr-0">
@@ -38,19 +38,24 @@
                             <option value="3">3개</option>
                             <option value="4">4개</option>
                             <option value="5">5개</option>
+                            <option value="6">6개</option>
+                            <option value="7">7개</option>
+                            <option value="8">8개</option>
+                            <option value="9">9개</option>
+                            <option value="10">10개</option>
                         </select>
                     </div>
                     <hr />
                     <div class="row mb-3">
                         <div class="col-5">총 상품금액</div>
                         <div class="col-7 text-right" id="orderNumber">
-                            <small class="mr-2 text-muted">총 수량 {{ quantity }}개 </small>&nbsp; ${{ (detail.price * quantity).toFixed(1) }}
+                            <small class="mr-2 text-muted">총 수량 {{ quantity }}개 </small>&nbsp; ${{ (product.price * quantity).toFixed(1) }}
                         </div>
                     </div>
                     <div class="d-flex justify-content-around">
                         <button
                             v-if="token.length !== 0"
-                            @click="cartRegist({ productId: detail.productId, quantity })"
+                            @click="cartRegist({ productId: product.productId, quantity })"
                             type="button"
                             class="btn btn-outline-primary col-5"
                             data-bs-toggle="modal"
@@ -61,8 +66,9 @@
                         <button
                             v-if="token.length !== 0"
                             @click="
-                                setTotalPrice(product.price * quantity);
-                                setShoppingList([{ productId: product.productId, name: product.productName, quantity, price: product.price * quantity }]);
+                                setShoppingList([
+                                    { productId: product.productId, productName: product.productName, quantity, price: product.price * quantity },
+                                ]);
                                 $router.push('/buy');
                             "
                             type="button"
@@ -93,11 +99,24 @@ export default {
         };
     },
     computed: {
-        ...mapState(["token", "detail"]),
+        ...mapState(["token", "product"]),
     },
     methods: {
-        ...mapActions(["cartRegist"]),
-        ...mapMutations(["setShoppingList", "setTotalPrice"]),
+        ...mapActions(["cartRegist", "increaseHits", "loadProduct"]),
+        ...mapMutations(["setShoppingList"]),
+    },
+
+    beforeMount() {
+        console.log("this.product.productId를 출력:", this.product.productId);
+        this.increaseHits(this.product.productId)
+            .then((res) => {
+                if (res === "success") {
+                    this.loadProduct(this.product.productId);
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
     },
 };
 </script>

@@ -29,6 +29,10 @@ import { ProductModule } from "./apis/product/product.module";
             driver: ApolloDriver,
             autoSchemaFile: "src/commons/graphql/schema.gql",
             context: ({ req, res }) => ({ req, res }),
+            cors: {
+                origin: "http://localhost:8080", // 요청을 보내는 클라이언트의 주소를 명시
+                credentials: true,
+            },
         }),
         TypeOrmModule.forRoot({
             type: process.env.DATABASE_TYPE as "mysql",

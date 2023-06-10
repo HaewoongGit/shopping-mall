@@ -2,7 +2,7 @@
     <div
         class="mb-5"
         @click="
-            setDetail(product);
+            setProduct(product);
             $router.push(`/detail/${product.productId}`);
         "
     >
@@ -33,7 +33,7 @@ export default {
         i: Number,
     },
     methods: {
-        ...mapMutations(["setDetail"]),
+        ...mapMutations(["setProduct"]),
     },
 };
 </script>

@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button @click="setToken('')" type="button" class="btn btn-primary" data-bs-dismiss="modal">로그아웃하기</button>
+                    <button @click="logOut()" type="button" class="btn btn-primary" data-bs-dismiss="modal">로그아웃하기</button>
                 </div>
             </div>
         </div>
@@ -23,6 +23,10 @@ import { mapMutations } from "vuex";
 export default {
     methods: {
         ...mapMutations(["setToken"]),
+        logOut() {
+            this.setToken("");
+            this.$router.push("/");
+        },
     },
 };
 </script>

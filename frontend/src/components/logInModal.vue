@@ -17,15 +17,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="http://localhost:3000/login/google">
-                        <img
-                            src="../assets/Google_Logo.svg.png"
-                            alt="Google Logo"
-                            width="55"
-                            height="40"
-                            style="cursor: pointer; border: 1px solid #ccc; padding: 5px"
-                        />
-                    </a>
+                    <img
+                        src="../assets/Google_Logo.svg.png"
+                        alt="Google Logo"
+                        width="55"
+                        height="40"
+                        style="cursor: pointer; border: 1px solid #ccc; padding: 5px"
+                        @click="googleLogin"
+                    />
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#signupModal">
                         회원가입
                     </button>
@@ -37,7 +36,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 export default {
     data() {
         return {
@@ -46,8 +45,11 @@ export default {
         };
     },
 
+    computed: { ...mapState["token"] },
+
     methods: {
         ...mapActions(["signIn", "restoreToken"]),
+        ...mapMutations(["setToken"]),
         loginAndCheck(obj) {
             this.signIn(obj)
                 .then((res) => {
@@ -55,19 +57,50 @@ export default {
                         this.$refs.logInModal.setAttribute("data-bs-dismiss", "modal"); // "$refs" -> vue에서 제공하는 요소 접근 기능
                         this.$refs.logInModal.click();
 
-                        // this.restoreToken()
-                        //     .then((res) => {
-                        //         if (res === "success") console.log("토큰이 재발행됨.");
-                        //     })
-                        //     .catch((error) => {
-                        //         console.log(error);
-                        //     });
+                        if (this.token) {
+                            // 1시간 후에 시작하여 1시간마다 restoreToken 함수를 실행
+                            setTimeout(() => {
+                                setInterval(() => {
+                                    this.restoreToken()
+                                        .then((res) => {
+                                            if (res === "success") console.log("토큰이 재발행됨.");
+                                        })
+                                        .catch((error) => {
+                                            console.log(error.message);
+                                        });
+                                }, 3600000); // 3600000ms = 1시간
+                            }, 3600000);
+                        }
                     }
                 })
                 .catch((error) => {
-                    alert(error);
+                    alert(error.message);
                 });
         },
+        googleLogin() {
+            window.location.href = "http://localhost:3000/login/google";
+
+            if (this.token) {
+                setTimeout(() => {
+                    setInterval(() => {
+                        this.restoreToken()
+                            .then((res) => {
+                                if (res === "success") console.log("토큰이 재발행됨.");
+                            })
+                            .catch((error) => {
+                                console.log(error.message);
+                            });
+                    }, 3600000); // 3600000ms = 1시간
+                }, 3600000);
+            }
+        },
+    },
+
+    mounted() {
+        const token = new URL(window.location.href).searchParams.get("token");
+        if (token) {
+            this.setToken(token);
+        }
     },
 };
 </script>

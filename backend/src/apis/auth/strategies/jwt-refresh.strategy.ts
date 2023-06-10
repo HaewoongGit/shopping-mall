@@ -7,8 +7,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
     constructor() {
         super({
             jwtFromRequest: (req) => {
-                console.log("쿠키 추을려억!", req.headers.cookie);
-
                 const cookie = req.headers.cookie;
 
                 const refreshToken = cookie.replace("refreshToken=", "");

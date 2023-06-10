@@ -6,6 +6,7 @@ import {
     IAuthServiceLoginOAuth,
     IAuthServiceRestoreAccessToken,
     IAuthServiceSetRefreshToken,
+    IOAuthUser,
 } from "./interfaces/auth-service.interface";
 import * as bcrypt from "bcrypt";
 import { UserService } from "../user/users.service";
@@ -34,14 +35,17 @@ export class AuthService {
     }
 
     async loginOAuth({ req, res }: IAuthServiceLoginOAuth) {
+        console.log("req.user 출력: ", req.user);
+
         let user = await this.userService.findOneByEmail({
             email: req.user.email,
         });
 
         if (!user) user = await this.userService.create({ ...req.user });
 
-        this.setRefreshToken({ user, res });
-        res.redirect("http://localhost:8080/");
+        const token = await this.getAccessToken({ user });
+        await this.setRefreshToken({ user, res });
+        res.redirect(`http://localhost:8080/?token=${token}`);
     }
 
     restoreAccessToken({ user }: IAuthServiceRestoreAccessToken): string {
@@ -59,7 +63,7 @@ export class AuthService {
         // res.setHeader("Access-Control-Allow-Origin", "http://locahost:8080");
 
         res.setHeader("Set-Cookie", `refreshToken=${refreshToken}; path=/;`);
-        res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+        // res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
     }
 
     getAccessToken({ user }: IAuthServiceGetAccessToken): string {

@@ -6,8 +6,8 @@ import { setContext } from "@apollo/client/link/context";
 const httpLink = new HttpLink({
     uri: 'http://localhost:3000/graphql',
     fetchOptions: {
-        // credentials: 'include',
-        credentials: 'same-origin'
+        credentials: 'include',
+        // credentials: 'same-origin'
     },
 });
 
@@ -32,40 +32,31 @@ const store = createStore({
     state() {
         return {
             products: [],
-            detail: {},
+            product: {},
             cartList: [],
             token: "",
             totalPrice: 0,
             shoppingList: [],
-            orderHistory: [],
-            loggedinEmail: "",
-            userId: ""
+            orderList: [],
+            user: {}
         };
     },
 
     mutations: {
-        setUserId(state, userId) {
-            state.userId = userId;
-        },
-
-        setEmail(state, email) {
-            state.loggedinEmail = email;
+        setUser(state, user) {
+            state.user = user
         },
 
         setProducts(state, products) {
             state.products = products;
         },
 
-        setDetail(state, detail) {
-            state.detail = detail;
+        setProduct(state, product) {
+            state.product = product;
         },
 
         setCartList(state, cartList) {
             state.cartList = cartList;
-        },
-
-        setTotalPrice(state, totalPrice) {
-            state.totalPrice = totalPrice
         },
 
         setToken(state, token) {
@@ -122,6 +113,52 @@ const store = createStore({
             }
         },
 
+        async loadProduct({ commit }, productId) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query($productId: String!) {
+                        fetchProduct(
+                            productId: $productId
+                        ) {
+                            productId
+                            productName
+                            description
+                            price
+                            isSoldOut
+                            hits
+                        }
+                    }`,
+                    variables: {
+                        productId
+                    },
+                    fetchPolicy: 'no-cache',
+                });
+                commit('setProduct', result.data.fetchProduct);
+            } catch (error) {
+                console.error("Failed to load product: ", error);
+            }
+        },
+
+        async increaseHits(_, productId) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($productId: String!) {
+                        increaseHits(productId: $productId) {
+                            hits
+                        }
+                    }`,
+                    variables: {
+                        productId
+                    },
+                });
+                return "success";
+            } catch (error) {
+                console.error("Failed to increase hits: ", error);
+            }
+        },
+
         async cartRegist(_, { productId, quantity }) {
             try {
                 await apolloClient.mutate({
@@ -170,11 +207,37 @@ const store = createStore({
                             quantity
                         }
                     }`,
-                    variables: {
-                    },
+                    variables: {},
                     fetchPolicy: 'no-cache',
                 });
                 commit('setCartList', result.data.fetchCarts);
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async cartChange(_, { productId, quantity }) {
+            console.log('cartChange called');
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($productId: String!, $quantity: Int!) {
+                        updateCart(updateCartInput: {
+                            productId: $productId
+                            quantity: $quantity
+                            }) {
+                                product {
+                                    productId
+                                }
+                                quantity
+                            }   
+                        }`,
+                    variables: {
+                        productId,
+                        quantity
+                    }
+                });
+                return "success";
             } catch (error) {
                 throw new Error(error.message);
             }
@@ -217,8 +280,6 @@ const store = createStore({
                     }
                 });
                 commit('setToken', result.data.login.token);
-                commit('setEmail', email);
-                commit('setUserId', result.data.login.userId);
                 return "success";
             } catch (error) {
                 throw new Error(error.message);
@@ -265,12 +326,30 @@ const store = createStore({
                     }`
                 });
                 commit('setToken', result.data.restoreAcessToken);
-                console.log("토큰이 제대로 실행됐는가? ", result.data.restoreAcessToken);
                 return "success";
             } catch (error) {
                 throw new Error(error);
             }
-        }
+        },
+
+        async loadUser({ commit }) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query {
+                        fetchLoginUser {
+                            userId
+                            userName
+                            email
+                            age
+                        }
+                    }`
+                });
+                commit('setUser', result.data.fetchLoginUser);
+            } catch (error) {
+                console.error("Failed to load user: ", error);
+            }
+        },
     },
 });
 
