@@ -1,0 +1,25 @@
+mutation {
+  createPayment(
+    impUid: "dhtktlty"
+    amount: 12
+    deliveryAddress: "평택"
+    contactNumber: "010-7482-3542"
+    orderInformation: "오사시쇼"
+  ) {
+    impUid
+    amount
+    deliveryAddress
+    contactNumber
+    orderInformation
+    user {
+      userId
+      email
+    }
+  }
+}
+
+
+
+{
+  "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmODNjZjJhMy0wYzA0LTRmMTgtYTIyZS1iNTgxYWI2MDVhZTMiLCJlbWFpbCI6Imh3LmxlZTM1NDJAZ21haWwuY29tIiwiaWF0IjoxNjg2NDcwNzE1LCJleHAiOjE2ODY0NzQzMTV9.kwzJHBHQ2a7PCOcyM7MLyQYRa8CzAhffkHlXL-xvFBw"
+}

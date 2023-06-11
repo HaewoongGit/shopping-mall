@@ -41,7 +41,7 @@ export class AuthService {
             email: req.user.email,
         });
 
-        if (!user) user = await this.userService.create({ ...req.user });
+        if (!user) user = await this.userService.create({ ...req.user, userName: req.user.userName });
 
         const token = await this.getAccessToken({ user });
         await this.setRefreshToken({ user, res });

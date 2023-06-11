@@ -1,9 +1,12 @@
 // point-transaction-serviced.interface.ts
 
-import { IAuthUser } from 'src/commons/interfaces/context';
+import { IAuthUser } from "src/commons/interfaces/context";
 
-export interface IPointsTransactionsServiceCreate {
+export interface IPaymentTransactionsServiceCreate {
     impUid: string;
     amount: number;
-    user: IAuthUser['user'];
+    deliveryAddress: string;
+    contactNumber: string;
+    orderInformation: string;
+    user: IAuthUser["user"];
 }

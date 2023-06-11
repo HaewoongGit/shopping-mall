@@ -43,6 +43,10 @@ const store = createStore({
     },
 
     mutations: {
+        setTotalPrice(state, totalPrice) {
+            state.totalPrice = totalPrice;
+        },
+
         setUser(state, user) {
             state.user = user
         },
@@ -127,6 +131,14 @@ const store = createStore({
                             price
                             isSoldOut
                             hits
+                            productCategory {
+                                productCategoryId
+                                categoryName
+                            }
+                            productTags {
+                                productTagId
+                                tagName
+                            }
                         }
                     }`,
                     variables: {
@@ -348,6 +360,43 @@ const store = createStore({
                 commit('setUser', result.data.fetchLoginUser);
             } catch (error) {
                 console.error("Failed to load user: ", error);
+            }
+        },
+
+        async paymentRequest(_, { impUid, amount, deliveryAddress, contactNumber, orderInformation }) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($impUid: String!, $amount: Int!, $deliveryAddress: String!, $contactNumber: String!, $orderInformation: String!) {
+                        createPayment(
+                            impUid: $impUid
+                            amount: $amount
+                            deliveryAddress: $deliveryAddress
+                            contactNumber: $contactNumber
+                            orderInformation: $orderInformation
+                            ) {
+                                impUid
+                                amount
+                                deliveryAddress
+                                contactNumber
+                                orderInformation
+                                user {
+                                userId
+                                email
+                                }
+                            }
+                        }`,
+                    variables: {
+                        impUid,
+                        amount,
+                        deliveryAddress,
+                        contactNumber,
+                        orderInformation
+                    }
+                });
+                return "success";
+            } catch (error) {
+                throw new Error(error.message);
             }
         },
     },

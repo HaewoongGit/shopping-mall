@@ -27,15 +27,19 @@ export class Payment {
 
     @Column()
     @Field(() => Int)
-    paidAmount: number;
-
-    @Column()
-    @Field(() => Int)
-    orderQuantity: number;
+    amount: number;
 
     @Column()
     @Field(() => String)
-    deliveryAddr: string;
+    deliveryAddress: string;
+
+    @Column()
+    @Field(() => String)
+    contactNumber: string;
+
+    @Column()
+    @Field(() => String)
+    orderInformation: string;
 
     @Column({ type: "enum", enum: POINT_TRANSACTION_STATUS_ENUM })
     @Field(() => POINT_TRANSACTION_STATUS_ENUM)
@@ -45,11 +49,6 @@ export class Payment {
     @JoinColumn({ name: "userId" })
     @Field(() => User)
     user: User;
-
-    @ManyToOne(() => Product)
-    @JoinColumn({ name: "productId" })
-    @Field(() => Product)
-    product: Product;
 
     @CreateDateColumn()
     @Field(() => Date)

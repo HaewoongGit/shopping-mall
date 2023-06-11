@@ -16,7 +16,7 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, "google") {
 
         return {
             accessToken,
-            name: profile.displayName,
+            userName: profile.displayName,
             email: profile.emails[0].value,
             password: randomNumber,
         };

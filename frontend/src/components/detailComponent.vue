@@ -1,8 +1,8 @@
 <template>
-    <div class="wrap-product-detail">
-        <div class="row no-gutters">
-            <div class="col-sm-5">
-                <div class="ratio ratio-4x3">
+    <div class="wrapForDetail shadow-lg mt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-6 pr-3 d-flex align-items-center">
                     <img
                         id="productsUrl"
                         src="https://img.freepik.com/free-photo/black-friday-elements-assortment_23-2149074075.jpg?w=360"
@@ -10,54 +10,40 @@
                         alt="..."
                     />
                 </div>
-            </div>
-            <div class="col-sm-7 card-body px-3">
-                <div class="d-flex justify-content-end" id="productHits">
-                    <span class="view-count" style="">조회 {{ product.hits }}</span>
-                </div>
-                <div class="flex-fill">
-                    <h5 id="productName">{{ product.productName }}</h5>
+                <div class="col-6 pl-3">
+                    <div id="viewCount" class="text-end small">조회수 {{ product.hits }}</div>
 
-                    <div class="d-flex justify-content-between mb-2">
-                        <div style="white-space: nowrap">상품 설명</div>
-                        <div id="productDescriptionContainer">
-                            <div id="productDescription">{{ product.description }}</div>
-                        </div>
+                    <h4 id="productName" class="text-start">{{ product.productName }}</h4>
+
+                    <hr class="border-secondary my-2" />
+
+                    <span class="badge bg-primary">{{ product.productCategory.categoryName }}</span>
+
+                    <div id="tagContainer">
+                        <span class="badge bg-secondary me-2" v-for="tag in product.productTags" :key="tag.tagName"> #{{ tag.tagName }} </span>
                     </div>
 
-                    <div class="d-flex justify-content-between mb-2">
-                        <div style="white-space: nowrap">가격</div>
-                        <span class="card-price" id="productPrice">${{ product.price }}</span>
-                    </div>
+                    <div id="productDescription">{{ product.description }}</div>
 
-                    <div class="form-group row mr-0">
-                        <label for="numberSelect" class="col-4 col-form-label">수량</label>
-                        <select v-model.number="quantity" class="custom-select col-4" id="numberSelect">
-                            <option value="1">1개</option>
-                            <option value="2">2개</option>
-                            <option value="3">3개</option>
-                            <option value="4">4개</option>
-                            <option value="5">5개</option>
-                            <option value="6">6개</option>
-                            <option value="7">7개</option>
-                            <option value="8">8개</option>
-                            <option value="9">9개</option>
-                            <option value="10">10개</option>
+                    <span id="productPrice">{{ product.price }}원</span>
+
+                    <div>
+                        <label for="numberSelect">수량 &nbsp;&nbsp;</label>
+                        <select v-model.number="quantity" class="custom-select" id="numberSelect">
+                            <option v-for="number in 10" :key="number" :value="number">{{ number }}개</option>
                         </select>
                     </div>
-                    <hr />
-                    <div class="row mb-3">
-                        <div class="col-5">총 상품금액</div>
-                        <div class="col-7 text-right" id="orderNumber">
-                            <small class="mr-2 text-muted">총 수량 {{ quantity }}개 </small>&nbsp; ${{ (product.price * quantity).toFixed(1) }}
-                        </div>
+
+                    <div>총 상품금액</div>
+                    <div id="orderNumber">
+                        <small>총 수량 {{ quantity }}개 </small>&nbsp; ${{ Math.round(product.price * quantity) }}
                     </div>
-                    <div class="d-flex justify-content-around">
+
+                    <div class="d-flex justify-content-center mt-2">
                         <button
                             v-if="token.length !== 0"
                             @click="cartRegist({ productId: product.productId, quantity })"
-                            type="button"
-                            class="btn btn-outline-primary col-5"
+                            class="btn btn-outline-primary me-5"
                             data-bs-toggle="modal"
                             data-bs-target="#cartModal"
                         >
@@ -71,8 +57,7 @@
                                 ]);
                                 $router.push('/buy');
                             "
-                            type="button"
-                            class="btn btn-primary col-5"
+                            class="btn btn-primary"
                         >
                             바로 구매
                         </button>
@@ -96,6 +81,7 @@ export default {
     data() {
         return {
             quantity: 1,
+            hasIncreasedHits: false,
         };
     },
     computed: {
@@ -106,47 +92,28 @@ export default {
         ...mapMutations(["setShoppingList"]),
     },
 
-    beforeMount() {
-        console.log("this.product.productId를 출력:", this.product.productId);
-        this.increaseHits(this.product.productId)
-            .then((res) => {
+    async beforeMount() {
+        if (!this.hasIncreasedHits) {
+            try {
+                const res = await this.increaseHits(this.product.productId);
                 if (res === "success") {
-                    this.loadProduct(this.product.productId);
+                    await this.loadProduct(this.product.productId);
+                    this.hasIncreasedHits = true;
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 alert(error.message);
-            });
+            }
+        }
     },
 };
 </script>
 
 <style>
-@import "../assets/mystyle.css";
-#productPrice {
-    display: inline-block;
-    text-align: center;
+.wrapForDetail {
     width: 100%;
-}
-
-#productHits {
-    margin-right: 20px;
-    font-size: 14px;
-    color: #323231;
-}
-
-#productName {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-#productDescriptionContainer {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-
-#productDescription {
-    text-align: center;
+    max-width: 750px;
+    margin: 10px auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 </style>

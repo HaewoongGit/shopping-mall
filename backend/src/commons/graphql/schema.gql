@@ -49,6 +49,28 @@ type Review {
   grade: Int!
 }
 
+type Payment {
+  paymentId: String!
+  impUid: String!
+  amount: Int!
+  deliveryAddress: String!
+  contactNumber: String!
+  orderInformation: String!
+  status: POINT_TRANSACTION_STATUS_ENUM!
+  user: User!
+  createdAt: DateTime!
+}
+
+enum POINT_TRANSACTION_STATUS_ENUM {
+  PAYMENT
+  CANCEL
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Cart {
   user: User!
   product: Product!
@@ -120,6 +142,7 @@ type Mutation {
   createReview(createReviewInput: CreateReviewInput!): Review!
   updateReview(updateReviewInput: UpdateReviewInput!): Review!
   deleteReview(deleteReviewInput: DeleteReviewInput!): Boolean!
+  createPayment(impUid: String!, amount: Int!, deliveryAddress: String!, contactNumber: String!, orderInformation: String!): Payment!
   createCart(createCartInput: CreateCartInput!): Cart!
   updateCart(updateCartInput: UpdateCartInput!): Cart!
   deleteCart(productId: String!): Boolean!
