@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { QueryRunner, Repository } from "typeorm";
 import { CategoryName, ProductCategory } from "./entities/productCategory.entity";
 import { IProductCategoryServiceCreate, IProductCategoryServiceUpdate } from "./interfaces/product-category-service.interface";
 
@@ -17,12 +17,12 @@ export class ProductCategoryService {
         });
     }
 
-    create({ categoryName }: IProductCategoryServiceCreate): Promise<ProductCategory> {
-        return this.productCategoryRepository.save({ categoryName });
+    async create({ categoryName }: IProductCategoryServiceCreate, queryRunner: QueryRunner): Promise<ProductCategory> {
+        return await queryRunner.manager.getRepository(ProductCategory).save({ categoryName });
     }
 
-    update({ productCategoryId, categoryName }: IProductCategoryServiceUpdate): Promise<ProductCategory> {
-        return this.productCategoryRepository.save({
+    async update({ productCategoryId, categoryName }: IProductCategoryServiceUpdate, queryRunner: QueryRunner): Promise<ProductCategory> {
+        return await queryRunner.manager.getRepository(ProductCategory).save({
             productCategoryId,
             categoryName,
         });

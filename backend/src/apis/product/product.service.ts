@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Product } from "./entities/product.entity";
 import { IProductServiceUpdate } from "./interface/product-service.interface";
 import { CreateProductInput } from "./dto/createProduct.input";
@@ -8,6 +8,7 @@ import { UserService } from "../user/users.service";
 import { ProductTagService } from "../productTag/productTag.service";
 import { ProductCategoryService } from "../productCategory/productCategory.service";
 import { FindProductsInput } from "./dto/findProducts.input";
+import { ProductCategory } from "../productCategory/entities/productCategory.entity";
 
 @Injectable()
 export class ProductService {
@@ -16,47 +17,66 @@ export class ProductService {
         private readonly productRepository: Repository<Product>,
         private readonly productTagService: ProductTagService,
         private readonly userService: UserService,
-        private readonly productCategoryService: ProductCategoryService
+        private readonly productCategoryService: ProductCategoryService,
+
+        private readonly dataSource: DataSource
     ) {}
 
     async create(createProductInput: CreateProductInput): Promise<Product> {
-        const { categoryName, productTags, email, ...product } = createProductInput;
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction("READ COMMITTED");
+        try {
+            const { categoryName, productTags, email, ...product } = createProductInput;
 
-        const user = await this.userService.findOneByEmail({ email });
+            const user = await this.userService.findOneByEmail({ email });
 
-        if (user == undefined) throw new NotFoundException("등록된 회원이 아닙니다.");
+            if (user == undefined) throw new NotFoundException("등록된 회원이 아닙니다.");
 
-        let productCategory = await this.productCategoryService.findOne(categoryName);
+            let productCategory = await this.productCategoryService.findOne(categoryName);
 
-        if (!productCategory) {
-            productCategory = await this.productCategoryService.create({
-                categoryName,
+            if (!productCategory) {
+                productCategory = await this.productCategoryService.create(
+                    {
+                        categoryName,
+                    },
+                    queryRunner
+                );
+            }
+
+            const tagNames = productTags.map((elem) => elem.replace("#", ""));
+            const prevTags = await this.productTagService.findByNames(tagNames);
+
+            const temp = [];
+            tagNames.forEach((elem) => {
+                const exists = prevTags.find((prevEl) => elem === prevEl.tagName);
+                if (!exists) temp.push({ tagName: elem });
             });
+
+            const newTags = await this.productTagService.bulkInsert(
+                {
+                    names: temp,
+                },
+                queryRunner
+            );
+
+            const tags = [...prevTags, ...newTags.identifiers];
+
+            const result = await this.productRepository.save({
+                ...product,
+                user,
+                productCategory,
+                productTags: tags,
+            });
+
+            await queryRunner.commitTransaction();
+
+            return result;
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+        } finally {
+            await queryRunner.release();
         }
-
-        const tagNames = productTags.map((elem) => elem.replace("#", ""));
-        const prevTags = await this.productTagService.findByNames(tagNames);
-
-        const temp = [];
-        tagNames.forEach((elem) => {
-            const exists = prevTags.find((prevEl) => elem === prevEl.tagName);
-            if (!exists) temp.push({ tagName: elem });
-        });
-
-        const newTags = await this.productTagService.bulkInsert({
-            names: temp,
-        });
-
-        const tags = [...prevTags, ...newTags.identifiers];
-
-        const result = await this.productRepository.save({
-            ...product,
-            user,
-            productCategory,
-            productTags: tags,
-        });
-
-        return result;
     }
 
     async findOne(productId): Promise<Product> {
@@ -92,60 +112,79 @@ export class ProductService {
     }
 
     async update({ productId, updateProductInput }: IProductServiceUpdate): Promise<Product> {
-        const foundProduct = await this.productRepository.findOne({
-            where: { productId },
-            relations: ["productCategory", "productTags", "user"],
-        });
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction("READ COMMITTED");
 
-        if (foundProduct == undefined) throw new NotFoundException("등록된 상품이 아닙니다.");
+        try {
+            const foundProduct = await this.productRepository.findOne({
+                where: { productId },
+                relations: ["productCategory", "productTags", "user"],
+            });
 
-        const { categoryName, productTags, ...product } = updateProductInput;
+            if (foundProduct == undefined) throw new NotFoundException("등록된 상품이 아닙니다.");
 
-        let productCategoryResult = {};
-        if (categoryName != undefined) {
-            const productCategory = await this.productCategoryService.findOne(foundProduct.productCategory.categoryName);
+            const { categoryName, productTags, ...product } = updateProductInput;
 
-            if (productCategory) {
-                productCategoryResult = await this.productCategoryService.update({
-                    productCategoryId: productCategory.productCategoryId,
-                    categoryName: productCategory.categoryName,
-                });
-            } else {
-                productCategoryResult = await this.productCategoryService.create({
-                    categoryName: productCategory.categoryName,
-                });
+            let productCategoryResult = {};
+            if (categoryName != undefined) {
+                const productCategory = await this.productCategoryService.findOne(foundProduct.productCategory.categoryName);
+
+                if (!productCategory) {
+                    productCategoryResult = await this.productCategoryService.create(
+                        {
+                            categoryName,
+                        },
+                        queryRunner
+                    );
+                } else {
+                    productCategoryResult = await this.productCategoryService.update(
+                        {
+                            productCategoryId: productCategory.productCategoryId,
+                            categoryName,
+                        },
+                        queryRunner
+                    );
+                }
             }
-        } else productCategoryResult = foundProduct.productCategory;
 
-        let tags = [];
+            let tags = [];
 
-        if (productTags != undefined) {
-            const tagNames = productTags.map((elem) => elem.replace("#", ""));
-            const prevTags = await this.productTagService.findByNames(tagNames);
+            if (productTags != undefined) {
+                const tagNames = productTags.map((elem) => elem.replace("#", ""));
+                const prevTags = await this.productTagService.findByNames(tagNames);
 
-            const temp = [];
-            tagNames.forEach((elem) => {
-                const exists = prevTags.find((prevEl) => elem === prevEl.tagName);
-                if (!exists) temp.push({ tagName: elem });
+                const temp = [];
+                tagNames.forEach((elem) => {
+                    const exists = prevTags.find((prevEl) => elem === prevEl.tagName);
+                    if (!exists) temp.push({ tagName: elem });
+                });
+
+                const newTags = await this.productTagService.bulkInsert(
+                    {
+                        names: temp,
+                    },
+                    queryRunner
+                );
+
+                tags = [...prevTags, ...newTags.identifiers];
+            } else {
+                tags = foundProduct.productTags;
+            }
+
+            const result = await this.productRepository.save({
+                ...foundProduct,
+                ...product,
+                user: foundProduct.user,
+                productTags: tags,
             });
 
-            const newTags = await this.productTagService.bulkInsert({
-                names: temp,
-            });
+            await queryRunner.commitTransaction();
 
-            tags = [...prevTags, ...newTags.identifiers];
-        } else {
-            tags = foundProduct.productTags;
+            return result;
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
         }
-        const result = await this.productRepository.save({
-            ...foundProduct,
-            ...product,
-            user: foundProduct.user,
-            productCategory: productCategoryResult,
-            productTags: tags,
-        });
-
-        return result;
     }
 
     async delete(productId: string): Promise<boolean> {

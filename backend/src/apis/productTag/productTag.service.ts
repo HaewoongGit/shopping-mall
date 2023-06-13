@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ProductTag } from './entities/productTag.entity';
-import { In, InsertResult, Repository } from 'typeorm';
-import { IProductTagServiceBulkInsert } from './interface/product-tag-service.interface';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ProductTag } from "./entities/productTag.entity";
+import { In, InsertResult, QueryRunner, Repository } from "typeorm";
+import { IProductTagServiceBulkInsert } from "./interface/product-tag-service.interface";
 
 @Injectable()
 export class ProductTagService {
     constructor(
         @InjectRepository(ProductTag)
-        private readonly productTagRepository: Repository<ProductTag>,
+        private readonly productTagRepository: Repository<ProductTag>
     ) {}
 
     async findByNames(tagNames: string[]): Promise<ProductTag[]> {
@@ -17,10 +17,8 @@ export class ProductTagService {
         });
     }
 
-    async bulkInsert({
-        names,
-    }: IProductTagServiceBulkInsert): Promise<InsertResult> {
-        return await this.productTagRepository.insert([...names]);
+    async bulkInsert({ names }: IProductTagServiceBulkInsert, queryRunner: QueryRunner): Promise<InsertResult> {
+        return await queryRunner.manager.getRepository(ProductTag).insert([...names]);
     }
 
     async findOne(productTagId: string): Promise<ProductTag> {

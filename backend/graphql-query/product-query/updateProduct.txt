@@ -1,6 +1,6 @@
 mutation {
   updateProduct(
-    productId: "84ac94f5-a253-4706-bc1c-ef811fda6a18"
+    productId: "259138f3-f6fe-468f-8d06-6f1892937c7f"
     updateProductInput: {
     	productName: "바뀐 이름"
       description: "변화된 설명"
@@ -18,10 +18,6 @@ mutation {
     user {
       userId
       userName
-    }
-    productCategory {
-      productCategoryId
-      categoryName
     }
     productTags {
       productTagId
