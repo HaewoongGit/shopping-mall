@@ -62,7 +62,7 @@ export class ProductService {
 
             const tags = [...prevTags, ...newTags.identifiers];
 
-            const result = await this.productRepository.save({
+            const result = await queryRunner.manager.save(Product, {
                 ...product,
                 user,
                 productCategory,
@@ -172,7 +172,7 @@ export class ProductService {
                 tags = foundProduct.productTags;
             }
 
-            const result = await this.productRepository.save({
+            const result = await queryRunner.manager.save(Product, {
                 ...foundProduct,
                 ...product,
                 user: foundProduct.user,
