@@ -35,8 +35,6 @@ export class AuthService {
     }
 
     async loginOAuth({ req, res }: IAuthServiceLoginOAuth) {
-        console.log("req.user 출력: ", req.user);
-
         let user = await this.userService.findOneByEmail({
             email: req.user.email,
         });

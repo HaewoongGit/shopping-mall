@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { QueryRunner, Repository } from "typeorm";
 import { Cart } from "./entities/cart.entity";
 import { FindCartInput } from "./dto/findCart.input";
 import { CreateCartInput } from "./dto/createCart.input";
@@ -94,6 +94,14 @@ export class CartService {
         const result = await this.cartRepository.softDelete({
             product: { productId },
             user: { userId: context.req.user.userId },
+        });
+
+        return result.affected ? true : false;
+    }
+
+    async deleteForTransaction(userId: string, queryRunner: QueryRunner): Promise<boolean> {
+        const result = await queryRunner.manager.getRepository(Cart).softDelete({
+            user: { userId },
         });
 
         return result.affected ? true : false;

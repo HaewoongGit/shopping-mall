@@ -2,7 +2,6 @@ import { createStore } from "vuex";
 import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client/core";
 import { setContext } from "@apollo/client/link/context";
 
-
 const httpLink = new HttpLink({
     uri: 'http://localhost:3000/graphql',
     fetchOptions: {
@@ -36,7 +35,7 @@ const store = createStore({
             cartList: [],
             token: "",
             totalPrice: 0,
-            shoppingList: [],
+            waitingListForPurchase: [],
             orderList: [],
             user: {}
         };
@@ -66,11 +65,11 @@ const store = createStore({
         setToken(state, token) {
             state.token = token
         },
-        setShoppingList(state, shoppingList) {
-            state.shoppingList = shoppingList
+        setWaitingListForPurchase(state, waitingListForPurchase) {
+            state.waitingListForPurchase = waitingListForPurchase
         },
-        setOrderHistory(state, orderHistory) {
-            state.orderHistory = orderHistory
+        setOrderList(state, orderList) {
+            state.orderList = orderList
         }
     },
 
@@ -363,42 +362,90 @@ const store = createStore({
             }
         },
 
-        async paymentRequest(_, { impUid, amount, deliveryAddress, contactNumber, orderInformation }) {
+        async paymentRequest(_, { waitingListForPurchase, impUid, merchantUid, amount, deliveryAddress, contactNumber, orderInformation }) {
             try {
                 await apolloClient.mutate({
                     mutation: gql`
-                    mutation($impUid: String!, $amount: Int!, $deliveryAddress: String!, $contactNumber: String!, $orderInformation: String!) {
-                        createPayment(
-                            impUid: $impUid
-                            amount: $amount
-                            deliveryAddress: $deliveryAddress
-                            contactNumber: $contactNumber
-                            orderInformation: $orderInformation
-                            ) {
-                                impUid
-                                amount
-                                deliveryAddress
-                                contactNumber
-                                orderInformation
-                                user {
-                                userId
-                                email
-                                }
-                            }
-                        }`,
+            mutation($createPaymentInput: CreatePaymentInput!) {
+                createPayment(createPaymentInput: $createPaymentInput) {
+                    impUid
+                    merchantUid
+                    amount
+                    deliveryAddress
+                    contactNumber
+                    orderInformation
+                }
+            }`,
                     variables: {
-                        impUid,
-                        amount,
-                        deliveryAddress,
-                        contactNumber,
-                        orderInformation
-                    }
+                        createPaymentInput: {
+                            waitingListForPurchase,
+                            impUid,
+                            merchantUid,
+                            amount,
+                            deliveryAddress,
+                            contactNumber,
+                            orderInformation,
+                        },
+                    },
                 });
                 return "success";
             } catch (error) {
                 throw new Error(error.message);
             }
         },
+
+        async paymentCancel(_, merchantUid) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($merchantUid: String!) {
+                        deletePayment(merchantUid: $merchantUid)
+                    }`,
+                    variables: {
+                        merchantUid
+                    },
+                });
+
+                return "success";
+            } catch (error) {
+                return error.message;
+            }
+        },
+
+        async loadOrderList({ commit }) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query{
+                        fetchOrderList {
+                            orderListId
+                            product {
+                                productId
+                                productName
+                            }
+                            user {
+                                userId
+                                userName
+                            }
+                            payment {
+                                merchantUid
+                            }
+                            orderQuantity
+                            deliveryAddress
+                            contactNumber
+                            price
+                            createdAt
+                            deletedAt
+                        }
+                    }`,
+                    variables: {},
+                    fetchPolicy: 'no-cache',
+                });
+                commit('setOrderList', result.data.fetchOrderList);
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        }
     },
 });
 

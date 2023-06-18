@@ -1,0 +1,17 @@
+query {
+  fetchPayments{
+    paymentId
+    impUid
+    amount
+    deliveryAddress
+    contactNumber
+    orderInformation
+    status
+    user {
+      userId
+      userName
+      email
+    }
+    createdAt
+  }
+}

@@ -1,10 +1,20 @@
 mutation {
   createPayment(
-    impUid: "dhtktlty"
+    createPaymentInput: {
+      waitingListForPurchase: {
+        productId: "f2cd3651-8115-4516-9512-370802d79034"
+        productName: "테스트 상품2"
+        quantity: 4
+        price: 10000
+        isCart: false
+      }
+      impUid: "dhtktlty"
+    merchantUid: "nlph3250"
     amount: 12
     deliveryAddress: "평택"
     contactNumber: "010-7482-3542"
     orderInformation: "오사시쇼"
+    }
   ) {
     impUid
     amount
@@ -15,11 +25,7 @@ mutation {
       userId
       email
     }
+    status
+    createdAt
   }
-}
-
-
-
-{
-  "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmODNjZjJhMy0wYzA0LTRmMTgtYTIyZS1iNTgxYWI2MDVhZTMiLCJlbWFpbCI6Imh3LmxlZTM1NDJAZ21haWwuY29tIiwiaWF0IjoxNjg2NDcwNzE1LCJleHAiOjE2ODY0NzQzMTV9.kwzJHBHQ2a7PCOcyM7MLyQYRa8CzAhffkHlXL-xvFBw"
 }

@@ -3,29 +3,28 @@ import categoryComponent from "./components/categoryComponent";
 import detailComponent from "./components/detailComponent";
 import cartComponent from "./components/cartComponent";
 import buyComponent from "./components/buyComponent"
-import orderHistoryComponent from "./components/orderHistoryComponent";
+import orderListComponent from "./components/orderListComponent";
 
-const routes = [
-    {
-        path: "/",
-        component: categoryComponent,
-    },
-    {
-        path: '/detail/:productId',
-        component: detailComponent,
-    },
-    {
-        path: "/cart",
-        component: cartComponent
-    },
-    {
-        path: "/buy",
-        component: buyComponent
-    },
-    {
-        path: "/orderHistory",
-        component: orderHistoryComponent
-    }
+const routes = [{
+    path: "/",
+    component: categoryComponent,
+},
+{
+    path: '/detail/:productId',
+    component: detailComponent,
+},
+{
+    path: "/cart",
+    component: cartComponent
+},
+{
+    path: "/buy",
+    component: buyComponent
+},
+{
+    path: "/orderList",
+    component: orderListComponent
+}
 ];
 
 const router = createRouter({

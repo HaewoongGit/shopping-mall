@@ -1,0 +1,19 @@
+fetchOrderList {
+    orderListId
+    product {
+        productId
+        productName
+    }
+    user {
+        userId
+        userName
+    }
+    payment {
+        merchantUid
+    }
+    orderQuantity
+    deliveryAddress
+    contactNumber
+    price
+    createdAt
+}

@@ -52,8 +52,8 @@
                         <button
                             v-if="token.length !== 0"
                             @click="
-                                setShoppingList([
-                                    { productId: product.productId, productName: product.productName, quantity, price: product.price * quantity },
+                                setWaitingListForPurchase([
+                                    { productId: product.productId, productName: product.productName, quantity, price: product.price, isCart: false },
                                 ]);
                                 $router.push('/buy');
                             "
@@ -89,7 +89,7 @@ export default {
     },
     methods: {
         ...mapActions(["cartRegist", "increaseHits", "loadProduct"]),
-        ...mapMutations(["setShoppingList"]),
+        ...mapMutations(["setWaitingListForPurchase"]),
     },
 
     async beforeMount() {

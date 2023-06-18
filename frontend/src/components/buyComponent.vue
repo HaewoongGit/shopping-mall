@@ -8,17 +8,35 @@
             </div>
             <div class="col-12 mb-3">
                 <label for="contactNumber" class="form-label">연락처</label>
-                <input v-model="contactNumber" type="text" class="form-control" id="contactNumber" placeholder="010-xxx-xxxx" />
+                <input
+                    v-model="contactNumber"
+                    type="text"
+                    class="form-control"
+                    id="contactNumber"
+                    placeholder="010-xxx-xxxx"
+                />
             </div>
             <div class="col-12 mb-3">
                 <label for="inputAddress" class="form-label">주소</label>
-                <input v-model="address1" type="text" class="form-control mb-2" id="inputAddress" placeholder="도로명, 건물명, 번지" />
+                <input
+                    v-model="address1"
+                    type="text"
+                    class="form-control mb-2"
+                    id="inputAddress"
+                    placeholder="도로명, 건물명, 번지"
+                />
                 <input v-model="address2" type="text" class="form-control" id="inputAddress2" placeholder="상세주소" />
             </div>
-            <div class="d-grid gap-2 mb-3">
-                <button @click="requestPay({ recipient, contactNumber, address: address1 + ' ' + address2 })" class="btn btn-primary">
+            <div class="d-grid mb-3 justify-content-center">
+                <button
+                    @click="requestPay({ recipient, contactNumber, address: address1 + ' ' + address2 })"
+                    class="btn btn-primary"
+                >
                     $ {{ totalPirceReturn }} 결제
                 </button>
+                <div class="text-center">
+                    <small style="color: gray">PG사 테스트 연동만 돼있으므로 실제로 결제되진 않습니다!</small>
+                </div>
             </div>
         </div>
     </div>
@@ -37,15 +55,14 @@ export default {
         };
     },
     computed: {
-        ...mapState(["shoppingList", "user", "totalPrice"]),
+        ...mapState(["waitingListForPurchase", "user", "totalPrice"]),
         totalPirceReturn() {
             let totalPrice = 0;
-            this.shoppingList.forEach((product) => {
-                totalPrice += product.price;
+            this.waitingListForPurchase.forEach((product) => {
+                totalPrice += product.price * product.quantity;
             });
 
             this.setTotalPrice(totalPrice);
-            console.log("this.totalPrice의 값은?", this.totalPrice);
 
             return totalPrice;
         },
@@ -60,13 +77,15 @@ export default {
 
             let information = "";
 
-            for (let i = 0; i < this.shoppingList.length; i++) information += this.shoppingList[i].productName + " " + this.shoppingList[i].quantity + ",";
+            for (let i = 0; i < this.waitingListForPurchase.length; i++)
+                information +=
+                    this.waitingListForPurchase[i].productName + " " + this.waitingListForPurchase[i].quantity + ",";
 
             IMP.request_pay(
                 {
                     pg: "kakaopay",
                     pay_method: "card",
-                    // merchant_uid: "ORD20180131-0000011", // 주문번호 겹치면 에러남(주석하면 랜덤으로 생성됨)
+                    // merchant_uid 없으면 자동으로 생성함
                     name: information,
                     amount: this.totalPrice,
                     buyer_email: this.user.email,
@@ -77,20 +96,22 @@ export default {
                 (rsp) => {
                     if (rsp.success) {
                         this.paymentRequest({
+                            waitingListForPurchase: this.waitingListForPurchase,
                             impUid: rsp.imp_uid,
+                            merchantUid: rsp.merchant_uid,
                             amount: rsp.paid_amount,
                             deliveryAddress: rsp.buyer_addr,
                             contactNumber: rsp.buyer_tel,
                             orderInformation: rsp.name,
                         })
                             .then((response) => {
-                                if (response === "success") console.log(rsp.name + " 결제 완료!");
+                                if (response === "success") alert(rsp.name + " 결제 완료!");
+                                this.$router.push("/");
                             })
                             .catch((err) => {
                                 console.log(err.message);
                                 alert(err.message);
                             });
-                        alert("결제에 성공했습니다!!");
                     } else {
                         alert("결제에 실패했습니다!! 다시 시도해 주세요!!");
                     }

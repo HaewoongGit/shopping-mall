@@ -1,9 +1,9 @@
 // payment.entity.ts
 
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Product } from "src/apis/product/entities/product.entity";
+import { IsPositive } from "class-validator";
 import { User } from "src/apis/user/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 export enum POINT_TRANSACTION_STATUS_ENUM {
     PAYMENT = "PAYMENT",
@@ -21,12 +21,17 @@ export class Payment {
     @Field(() => String)
     paymentId: string;
 
-    @Column()
+    @Column({ unique: true })
     @Field(() => String)
     impUid: string;
 
+    @Column({ unique: true })
+    @Field(() => String)
+    merchantUid: string;
+
     @Column()
     @Field(() => Int)
+    @IsPositive()
     amount: number;
 
     @Column()
@@ -53,4 +58,8 @@ export class Payment {
     @CreateDateColumn()
     @Field(() => Date)
     createdAt: Date;
+
+    @DeleteDateColumn()
+    @Field(() => Date, { nullable: true })
+    deletedAt: Date;
 }

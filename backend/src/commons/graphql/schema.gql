@@ -52,6 +52,7 @@ type Review {
 type Payment {
   paymentId: String!
   impUid: String!
+  merchantUid: String!
   amount: Int!
   deliveryAddress: String!
   contactNumber: String!
@@ -59,6 +60,7 @@ type Payment {
   status: POINT_TRANSACTION_STATUS_ENUM!
   user: User!
   createdAt: DateTime!
+  deletedAt: DateTime
 }
 
 enum POINT_TRANSACTION_STATUS_ENUM {
@@ -77,6 +79,19 @@ type Cart {
   quantity: Int!
 }
 
+type OrderList {
+  orderListId: String!
+  product: Product!
+  user: User!
+  payment: Payment!
+  orderQuantity: Int!
+  deliveryAddress: String!
+  contactNumber: String!
+  price: Int!
+  createdAt: DateTime!
+  deletedAt: DateTime
+}
+
 type Query {
   fetchUser: String!
   fetchLoginUser: User!
@@ -89,8 +104,10 @@ type Query {
   fetchProductTags: [ProductTag!]!
   fetchReview(findOneReviewInput: FindOneReviewInput!): Review!
   fetchReviews(findReviewInput: FindReviewInput!): [Review!]!
+  fetchPayments: [Payment!]!
   fetchCart(findOneCartInput: FindOneCartInput!): Cart!
   fetchCarts(productId: String): [Cart!]!
+  fetchOrderList: [OrderList!]!
 }
 
 input FindOneDibsInput {
@@ -142,7 +159,8 @@ type Mutation {
   createReview(createReviewInput: CreateReviewInput!): Review!
   updateReview(updateReviewInput: UpdateReviewInput!): Review!
   deleteReview(deleteReviewInput: DeleteReviewInput!): Boolean!
-  createPayment(impUid: String!, amount: Int!, deliveryAddress: String!, contactNumber: String!, orderInformation: String!): Payment!
+  createPayment(createPaymentInput: CreatePaymentInput!): Payment!
+  deletePayment(merchantUid: String!): Boolean!
   createCart(createCartInput: CreateCartInput!): Cart!
   updateCart(updateCartInput: UpdateCartInput!): Cart!
   deleteCart(productId: String!): Boolean!
@@ -205,6 +223,24 @@ input UpdateReviewInput {
 input DeleteReviewInput {
   productId: String!
   userId: String!
+}
+
+input CreatePaymentInput {
+  waitingListForPurchase: [PurchaseItem!]!
+  impUid: String!
+  merchantUid: String!
+  amount: Int!
+  deliveryAddress: String!
+  contactNumber: String!
+  orderInformation: String!
+}
+
+input PurchaseItem {
+  productId: String!
+  productName: String!
+  quantity: Int!
+  price: Int!
+  isCart: Boolean
 }
 
 input CreateCartInput {

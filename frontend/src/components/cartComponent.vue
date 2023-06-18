@@ -27,7 +27,7 @@
                                 </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <button @click="cartDeleteAndList(cart.product.productId)" type="button" class="btn btn-danger btn-sm">삭제</button>
-                                    <div style="width: 120px">
+                                    <div style="width: 150px">
                                         <select
                                             class="form-select form-select-sm"
                                             @change="cartChangeAndList(cart.product.productId, parseInt($event.target.value))"
@@ -52,8 +52,8 @@
             </div>
             <button
                 @click="
+                    cartToWaitingListForPurchase();
                     $router.push('/buy');
-                    cartToShoppingList(cart);
                 "
                 type="button"
                 class="btn btn-primary w-100"
@@ -77,7 +77,7 @@ export default {
     },
     methods: {
         ...mapActions(["cartChange", "loadCartList", "cartDelete"]),
-        ...mapMutations(["setTotalPrice", "setShoppingList"]),
+        ...mapMutations(["setTotalPrice", "setWaitingListForPurchase", "setCartList"]),
         cartPriceSum() {
             let sum = 0;
             for (let i = 0; i < this.cartList.length; i++) sum += this.cartList[i].quantity * this.cartList[i].product.price;
@@ -113,18 +113,17 @@ export default {
                 });
         },
 
-        cartToShoppingList(data) {
+        cartToWaitingListForPurchase() {
             let list = [];
-            for (const product of data) {
+            for (const cart of this.cartList) {
                 list.push({
-                    goodsId: product.goods.goodsId,
-                    name: product.goods.name,
-                    quantity: product.quantity,
-                    price: product.goods.price * product.quantity,
+                    productId: cart.product.productId,
+                    productName: cart.product.productName,
+                    quantity: cart.quantity,
+                    price: cart.product.price,
                 });
-                this.cartDelete(product.goods.goodsId);
             }
-            this.setShoppingList(list);
+            this.setWaitingListForPurchase(list);
         },
     },
     beforeMount() {

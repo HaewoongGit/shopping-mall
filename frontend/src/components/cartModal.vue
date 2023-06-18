@@ -10,8 +10,17 @@
                     <p>장바구니에 담았습니다. 장바구니로 갈까요?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button @click="$router.push('/cart')" type="button" class="btn btn-primary" data-bs-dismiss="modal">장바구니</button>
+                    <button @click="$router.push('/')" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        홈으로
+                    </button>
+                    <button
+                        @click="$router.push('/cart')"
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-dismiss="modal"
+                    >
+                        장바구니
+                    </button>
                 </div>
             </div>
         </div>
@@ -19,8 +28,7 @@
 </template>
 
 <script>
-export default {
-};
+export default {};
 </script>
 
 <style></style>

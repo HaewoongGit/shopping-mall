@@ -1,0 +1,3 @@
+mutation {
+  deletePayment(merchantUid: "nobody_1687075064576")
+}

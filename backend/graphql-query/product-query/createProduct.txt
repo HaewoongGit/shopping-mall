@@ -63,3 +63,38 @@ mutation {
     }
   }
 }
+
+
+
+
+mutation {
+  createProduct(
+    createProductInput: {
+      productName: "좋은 가전"
+      description: "좋은 가전입니다."
+      price: 3000
+      email: "1"
+      categoryName: "가전디지털"
+      productTags: ["#애플", "#제품임", "상상초월"]
+    }
+  ) {
+    productId
+    productName
+    description
+    price
+    isSoldOut
+    hits
+    user {
+      userId
+      email
+      userName
+    }
+    productCategory {
+      productCategoryId
+      categoryName
+    }
+    productTags {
+      productTagId
+    }
+  }
+}

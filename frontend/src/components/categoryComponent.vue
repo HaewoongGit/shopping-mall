@@ -1,8 +1,12 @@
 <template>
-    <div class="wrap">
+    <div class="wrap" style="background-color: #eff5fb">
         <div class="form-group row mb-4" id="category">
             <label for="categorySelect" class="col-form-label w-25">카테고리</label>
-            <select @change="loadProducts({ categoryName: $event.target.value })" class="form-select w-75" id="categorySelect">
+            <select
+                @change="loadProducts({ categoryName: $event.target.value })"
+                class="form-select w-75"
+                id="categorySelect"
+            >
                 <option value="" selected>전체</option>
                 <option value="가전디지털">가전디지털</option>
                 <option value="의류">의류</option>
@@ -13,7 +17,9 @@
                 <option value="스포츠">스포츠</option>
             </select>
         </div>
-        <productsComponent v-for="(product, i) in products" :key="i" :product="product" :i="i" />
+        <div class="d-flex flex-column align-items-center">
+            <productsComponent v-for="(product, i) in products" :key="i" :product="product" :i="i" />
+        </div>
     </div>
 </template>
 
@@ -44,5 +50,11 @@ export default {
     display: flex;
     justify-content: center;
     margin: 0 auto;
+}
+
+.wrap {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
 }
 </style>

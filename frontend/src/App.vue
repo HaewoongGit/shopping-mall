@@ -20,7 +20,7 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a v-if="token.length !== 0" @click="$router.push('/orderHistory')" class="nav-link active" style="cursor: pointer" aria-current="page"
+                        <a v-if="token.length !== 0" @click="$router.push('/orderList')" class="nav-link active" style="cursor: pointer" aria-current="page"
                             ><font-awesome-icon icon="bag-shopping" /> 주문목록</a
                         >
                     </li>

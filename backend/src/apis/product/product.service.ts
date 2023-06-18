@@ -26,6 +26,7 @@ export class ProductService {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction("READ COMMITTED");
+
         try {
             const { categoryName, productTags, email, ...product } = createProductInput;
 
@@ -74,6 +75,9 @@ export class ProductService {
             return result;
         } catch (error) {
             await queryRunner.rollbackTransaction();
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
         } finally {
             await queryRunner.release();
         }
@@ -184,6 +188,11 @@ export class ProductService {
             return result;
         } catch (error) {
             await queryRunner.rollbackTransaction();
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+        } finally {
+            await queryRunner.release();
         }
     }
 
