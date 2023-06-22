@@ -7,7 +7,7 @@ export class CreateOrderListInput {
     productId: string;
 
     @Field(() => String)
-    merchantUid: string;
+    impUid: string;
 
     @Field(() => Int)
     @IsPositive()

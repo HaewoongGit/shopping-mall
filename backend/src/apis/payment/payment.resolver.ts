@@ -24,7 +24,7 @@ export class PaymentResolver {
 
     @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Boolean)
-    deletePayment(@Args("merchantUid") merchantUid: string) {
-        return this.paymentService.delete(merchantUid);
+    deletePayment(@Args("impUid") impUid: string) {
+        return this.paymentService.delete(impUid);
     }
 }

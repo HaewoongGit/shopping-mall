@@ -7,7 +7,27 @@ import { CartService } from "../cart/cart.service";
 import { IContext } from "src/commons/interfaces/context";
 import { OrderListService } from "../orderList/orderList.service";
 import { ProductService } from "../product/product.service";
-import { query } from "express";
+
+const Iamport = require("iamport");
+
+const iamport = new Iamport({
+    impKey: "8262212864876018",
+    impSecret: "cUTQDxXF5i5z70FJZ9j2cwhPyFzy0SkEmpU4K4uvGM4jqmaYcKS8cXG2MZyxydX4tGYgCLhSl0B28MpP",
+});
+
+async function verifyPayment(impUid, expectedAmount) {
+    const paymentData = await iamport.payment.getByImpUid({ imp_uid: impUid });
+
+    if (paymentData.status !== "paid") {
+        throw new NotFoundException("결제되지 않은 거래입니다.");
+    }
+
+    if (paymentData.amount !== expectedAmount) {
+        throw new NotFoundException("결제 금액이 일치하지 않습니다.");
+    }
+
+    return paymentData;
+}
 
 @Injectable()
 export class PaymentService {
@@ -40,9 +60,9 @@ export class PaymentService {
         await queryRunner.connect();
         await queryRunner.startTransaction("READ COMMITTED");
 
-        try {
-            const { waitingListForPurchase, impUid, merchantUid, amount, deliveryAddress, contactNumber, orderInformation } = createPaymentInput;
+        const { waitingListForPurchase, impUid, merchantUid, amount, deliveryAddress, contactNumber, orderInformation } = createPaymentInput;
 
+        try {
             const payment = this.paymentRepository.create({
                 impUid,
                 merchantUid,
@@ -63,6 +83,8 @@ export class PaymentService {
                 if (!cart) throw new NotFoundException("해당 유저의 장바구니 목록을 찾을 수 없습니다.");
             }
 
+            let totalPrice: number = 0;
+
             for (const productList of waitingListForPurchase) {
                 const product = await this.productService.findOne(productList.productId);
 
@@ -72,7 +94,7 @@ export class PaymentService {
                     {
                         createOrderListInput: {
                             productId: productList.productId,
-                            merchantUid: createdPayment.merchantUid,
+                            impUid: createdPayment.impUid,
                             orderQuantity: productList.quantity,
                             price: productList.price,
                             deliveryAddress,
@@ -84,7 +106,11 @@ export class PaymentService {
                 );
 
                 if (!orderList) throw new InternalServerErrorException("주문목록 생성 실패");
+
+                totalPrice += product.price * productList.quantity;
             }
+
+            await verifyPayment(impUid, totalPrice);
 
             await queryRunner.commitTransaction();
 
@@ -92,24 +118,33 @@ export class PaymentService {
         } catch (error) {
             await queryRunner.rollbackTransaction();
             if (error instanceof NotFoundException || error instanceof InternalServerErrorException) throw error;
+
+            iamport.payment.cancel({
+                imp_uid: impUid,
+                reason: "결제 검증 실패",
+            });
         } finally {
             await queryRunner.release();
         }
     }
 
-    async delete(merchantUid: string) {
+    async delete(impUid: string) {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction("READ COMMITTED");
 
         try {
-            const deleteOrderListResult = await this.orderListService.deleteForTransaction(merchantUid, queryRunner);
+            const deleteOrderListResult = await this.orderListService.deleteForTransaction(impUid, queryRunner);
 
             if (!deleteOrderListResult) throw new InternalServerErrorException("주문목록 삭제 실패.");
 
-            const result = await queryRunner.manager.softDelete(Payment, { merchantUid });
+            const result = await queryRunner.manager.softDelete(Payment, { impUid });
 
             await queryRunner.commitTransaction();
+
+            iamport.payment.cancel({
+                imp_uid: impUid,
+            });
 
             return (await result).affected;
         } catch (error) {

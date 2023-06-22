@@ -12,9 +12,11 @@ import { PaymentModule } from "./apis/payment/payment.module";
 import { CartModule } from "./apis/cart/cart.module";
 import { ProductTagModule } from "./apis/productTag/productTag.module";
 import { ProductModule } from "./apis/product/product.module";
+import { FileModule } from "./apis/file/file.module";
 
 @Module({
     imports: [
+        FileModule,
         UserModule,
         DibsModule,
         AuthModule,

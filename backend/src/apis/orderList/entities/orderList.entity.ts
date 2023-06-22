@@ -22,8 +22,8 @@ export class OrderList {
     @Field(() => User)
     user: User;
 
-    @ManyToOne(() => Payment, (payment) => payment.merchantUid)
-    @JoinColumn({ name: "merchantUid", referencedColumnName: "merchantUid" })
+    @ManyToOne(() => Payment, (payment) => payment.impUid)
+    @JoinColumn({ name: "impUid", referencedColumnName: "impUid" })
     @Field(() => Payment)
     payment: Payment;
 

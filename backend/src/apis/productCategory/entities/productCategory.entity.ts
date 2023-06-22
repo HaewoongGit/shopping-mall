@@ -18,7 +18,7 @@ export class ProductCategory {
     @Field(() => String)
     productCategoryId: string;
 
-    @Column({ type: "enum", enum: CategoryName, unique: true })
+    @Column({ type: "enum", enum: CategoryName })
     @Field(() => String)
     categoryName: CategoryName;
 }

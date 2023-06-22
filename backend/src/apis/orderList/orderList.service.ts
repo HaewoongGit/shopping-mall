@@ -25,12 +25,12 @@ export class OrderListService {
     }
 
     async createForTransaction({ createOrderListInput, user }: IOrderListCreate, queryRunner: QueryRunner): Promise<OrderList> {
-        const { productId, merchantUid, orderQuantity, deliveryAddress, contactNumber, price } = createOrderListInput;
+        const { productId, impUid, orderQuantity, deliveryAddress, contactNumber, price } = createOrderListInput;
 
         const orderList = this.orderListRepository.create({
             product: { productId },
             user,
-            payment: { merchantUid },
+            payment: { impUid },
             orderQuantity,
             deliveryAddress,
             contactNumber,
@@ -42,9 +42,9 @@ export class OrderListService {
         return orderList;
     }
 
-    async deleteForTransaction(merchantUid: string, queryRunner: QueryRunner): Promise<boolean> {
+    async deleteForTransaction(impUid: string, queryRunner: QueryRunner): Promise<boolean> {
         const result = await queryRunner.manager.getRepository(OrderList).softDelete({
-            payment: { merchantUid },
+            payment: { impUid },
         });
 
         return result.affected ? true : false;

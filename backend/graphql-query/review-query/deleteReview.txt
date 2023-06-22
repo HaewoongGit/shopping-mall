@@ -1,6 +1,10 @@
 mutation {
   deleteReview(deleteReviewInput:{
-    userId: "765079f5-2236-42fe-afcd-c096bfa63171"
-    productId: "64ae8977-0036-4747-93f0-52609d1407c4"
+    productId: "7db541f0-01bd-4ad0-8c58-f15ca8c8748d"
   })
+}
+
+
+{
+  "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MGExYmMxOS1iODg0LTQwNWUtYTE3My1kNWEyZmUxMWZhNDciLCJlbWFpbCI6IjEiLCJpYXQiOjE2ODcxNzM3MjEsImV4cCI6MTY4NzE3NzMyMX0.GNkZGUjRu_hZEADLQ9m4QmKdnQFfMxbxGEvtCHUZVok"
 }

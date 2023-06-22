@@ -19,7 +19,7 @@
                     <span v-if="orders[0].deletedAt" style="color: red"> 취소된 주문 </span>
                     <button
                         v-if="!orders[0].deletedAt"
-                        @click="cancelAndLoadOrderList(orders[0].payment.merchantUid)"
+                        @click="cancelAndLoadOrderList(orders[0].payment.impUid)"
                         class="btn btn-outline-danger btn-sm"
                     >
                         구매 취소하기
@@ -54,7 +54,15 @@
                                         class="col-md-6 d-flex justify-content-end"
                                         style="padding-top: 20px; padding-bottom: 20px"
                                     >
-                                        <button class="btn btn-primary btn-sm me-2">리뷰 작성하기</button>
+                                        <button
+                                            @click="
+                                                $router.push('/review');
+                                                setProductForReview(order.product);
+                                            "
+                                            class="btn btn-primary btn-sm me-2"
+                                        >
+                                            리뷰 작성하기
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -67,7 +75,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 export default {
     data() {
         return {
@@ -76,13 +84,16 @@ export default {
     },
     methods: {
         ...mapActions(["loadOrderList", "paymentCancel"]),
+        ...mapMutations(["setProductForReview"]),
+
         formatDate(dateString) {
             const date = new Date(dateString);
             return date.toISOString().split("T")[0];
         },
+
         groupedOrders() {
             const result = this.orderList.reduce((grouped, order) => {
-                const uid = order.payment.merchantUid;
+                const uid = order.payment.impUid;
                 if (!grouped[uid]) grouped[uid] = [];
 
                 grouped[uid].push(order);
@@ -92,8 +103,9 @@ export default {
 
             return result;
         },
-        cancelAndLoadOrderList(marchantUid) {
-            this.paymentCancel(marchantUid)
+
+        cancelAndLoadOrderList(impUid) {
+            this.paymentCancel(impUid)
                 .then((res) => {
                     if (res === "success") {
                         alert("주문이 취소되었습니다.");

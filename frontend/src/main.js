@@ -13,12 +13,9 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 /* import specific icons */
-import { faUserSecret, faCartShopping, faRightFromBracket, faTruckFast, faBagShopping } from "@fortawesome/free-solid-svg-icons";
+import { faUserSecret, faCartShopping, faRightFromBracket, faTruckFast, faBagShopping, faStar } from "@fortawesome/free-solid-svg-icons";
 
 /* add icons to the library */
-library.add(faUserSecret, faCartShopping, faRightFromBracket, faTruckFast, faBagShopping);
-// library.add(faCartShopping);
-// library.add(faRightFromBracket);
-// library.add(faTruckFast);
+library.add(faUserSecret, faCartShopping, faRightFromBracket, faTruckFast, faBagShopping, faStar);
 
 createApp(App).use(router).use(store).provide('apolloClient', apolloClient).component("font-awesome-icon", FontAwesomeIcon).mount("#app");

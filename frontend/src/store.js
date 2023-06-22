@@ -37,17 +37,27 @@ const store = createStore({
             totalPrice: 0,
             waitingListForPurchase: [],
             orderList: [],
-            user: {}
+            user: {},
+            userId: "",
+            productForReview: {}
         };
     },
 
     mutations: {
+        setProductForReview(state, productForReview) {
+            state.productForReview = productForReview;
+        },
+
         setTotalPrice(state, totalPrice) {
             state.totalPrice = totalPrice;
         },
 
         setUser(state, user) {
-            state.user = user
+            state.user = user;
+        },
+
+        setUserId(state, userId) {
+            state.userId = userId;
         },
 
         setProducts(state, products) {
@@ -174,18 +184,18 @@ const store = createStore({
             try {
                 await apolloClient.mutate({
                     mutation: gql`
-            mutation($productId: String!, $quantity: Int!) {
-                createCart(createCartInput: {
-                    productId: $productId
-                    quantity: $quantity
-                }) {
-                    product {
-                        productId
-                        productName
-                    }
-                    quantity
-                }
-            }`,
+                    mutation($productId: String!, $quantity: Int!) {
+                        createCart(createCartInput: {
+                            productId: $productId
+                            quantity: $quantity
+                        }) {
+                            product {
+                                productId
+                                productName
+                            }
+                            quantity
+                        }
+                    }`,
                     variables: {
                         productId,
                         quantity
@@ -291,6 +301,7 @@ const store = createStore({
                     }
                 });
                 commit('setToken', result.data.login.token);
+                commit('setUserId', result.data.login.userId);
                 return "success";
             } catch (error) {
                 throw new Error(error.message);
@@ -394,15 +405,15 @@ const store = createStore({
             }
         },
 
-        async paymentCancel(_, merchantUid) {
+        async paymentCancel(_, impUid) {
             try {
                 await apolloClient.mutate({
                     mutation: gql`
-                    mutation($merchantUid: String!) {
-                        deletePayment(merchantUid: $merchantUid)
+                    mutation($impUid: String!) {
+                        deletePayment(impUid: $impUid)
                     }`,
                     variables: {
-                        merchantUid
+                        impUid
                     },
                 });
 
@@ -428,7 +439,7 @@ const store = createStore({
                                 userName
                             }
                             payment {
-                                merchantUid
+                                impUid
                             }
                             orderQuantity
                             deliveryAddress
@@ -442,6 +453,95 @@ const store = createStore({
                     fetchPolicy: 'no-cache',
                 });
                 commit('setOrderList', result.data.fetchOrderList);
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async reviewRegist(_, { productId, reviewContent, rating }) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($productId: String!, $reviewContent: String!, $rating: Int!) {
+                        createReview(createReviewInput:{
+                            productId: $productId
+                            reviewContent: $reviewContent
+                            rating: $rating
+                        }) {
+                            user {
+                                userId
+                            }
+                            product {
+                                productId
+                            }
+                            reviewContent
+                            rating
+                        }
+                    }`,
+                    variables: {
+                        productId,
+                        reviewContent,
+                        rating
+                    }
+                });
+                return "success"
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async loadRating(_, productId) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query($productId: String) {
+                        fetchReviews(
+                            findReviewsInput: {
+                                productId: $productId
+                            }
+                        ){
+                            rating
+                        }
+                    }`,
+                    variables: {
+                        productId
+                    }
+                })
+                return result.data.fetchReviews;
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async loadProductReviews(_, productId) {
+            try {
+                console.log("loadProductReviews called");
+                const result = await apolloClient.query({
+                    query: gql`
+                    query($productId: String) {
+                        fetchReviews(
+                            findReviewsInput: {
+                                productId: $productId
+                            }
+                        ){
+                            product {
+                                productName
+                            }
+                            user {
+                                userName
+                            }
+                            reviewContent
+                            rating
+                            createdAt
+                        }
+                    }`,
+                    variables: {
+                        productId
+                    }
+                })
+
+                console.log(result.data.fetchReviews);
+                return result.data.fetchReviews;
             } catch (error) {
                 throw new Error(error.message);
             }

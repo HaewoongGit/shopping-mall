@@ -1,11 +1,14 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Review } from './entities/review.entity';
-import { FindReviewInput } from './dto/findReview.input';
-import { ReviewService } from './review.service';
-import { CreateReviewInput } from './dto/createReview.input';
-import { DeleteReviewInput } from './dto/deleteReview.input';
-import { FindOneReviewInput } from './dto/findOneReview.input';
-import { UpdateReviewInput } from './dto/updateReview.input';
+import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Review } from "./entities/review.entity";
+import { ReviewService } from "./review.service";
+import { CreateReviewInput } from "./dto/createReview.input";
+import { DeleteReviewInput } from "./dto/deleteReview.input";
+import { FindOneReviewInput } from "./dto/findOneReview.input";
+import { UpdateReviewInput } from "./dto/updateReview.input";
+import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
+import { UseGuards } from "@nestjs/common";
+import { IContext } from "src/commons/interfaces/context";
+import { FindReviewsInput } from "./dto/findReviews.input";
 
 @Resolver()
 export class ReviewResolver {
@@ -13,41 +16,50 @@ export class ReviewResolver {
 
     @Query(() => Review)
     fetchReview(
-        @Args('findOneReviewInput')
-        findOneReviewInput: FindOneReviewInput,
+        @Args("findOneReviewInput")
+        findOneReviewInput: FindOneReviewInput
     ): Promise<Review> {
-        return this.reviewService.findOne({ findOneReviewInput });
+        return this.reviewService.findOne(findOneReviewInput);
     }
 
     @Query(() => [Review])
     fetchReviews(
-        @Args('findReviewInput')
-        findReviewInput: FindReviewInput,
+        @Args("findReviewsInput")
+        findReviewsInput: FindReviewsInput
     ): Promise<Review[]> {
-        return this.reviewService.find({ findReviewInput });
+        return this.reviewService.find(findReviewsInput);
     }
 
+    @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Review)
     createReview(
-        @Args('createReviewInput')
+        @Args("createReviewInput")
         createReviewInput: CreateReviewInput,
+        @Context()
+        context: IContext
     ): Promise<Review> {
-        return this.reviewService.create({ createReviewInput });
+        return this.reviewService.create(createReviewInput, context.req.user.userId);
     }
 
+    @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Review)
     updateReview(
-        @Args('updateReviewInput')
+        @Args("updateReviewInput")
         updateReviewInput: UpdateReviewInput,
+        @Context()
+        context: IContext
     ): Promise<Review> {
-        return this.reviewService.update({ updateReviewInput });
+        return this.reviewService.update(updateReviewInput, context.req.user.userId);
     }
 
+    @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Boolean)
     deleteReview(
-        @Args('deleteReviewInput')
+        @Args("deleteReviewInput")
         deleteReviewInput: DeleteReviewInput,
+        @Context()
+        context: IContext
     ): Promise<boolean> {
-        return this.reviewService.delete({ deleteReviewInput });
+        return this.reviewService.delete(deleteReviewInput, context.req.user.userId);
     }
 }
