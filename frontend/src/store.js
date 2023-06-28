@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import axios from "axios";
 import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client/core";
 import { setContext } from "@apollo/client/link/context";
 
@@ -112,6 +113,11 @@ const store = createStore({
                                 productTagId
                                 tagName
                             }
+                            files {
+                                fileId
+                                fileName
+                                fileURL
+                            }
                         }
                     }`,
                     variables: {
@@ -148,6 +154,11 @@ const store = createStore({
                                 productTagId
                                 tagName
                             }
+                            files {
+                                fileId
+                                fileName
+                                fileURL
+                            }
                         }
                     }`,
                     variables: {
@@ -160,6 +171,40 @@ const store = createStore({
                 console.error("Failed to load product: ", error);
             }
         },
+
+        async productRegist(_, { file, categoryName, productName, price, description, productTags }) {
+            try {
+                let formData = new FormData();
+                formData.append("operations", JSON.stringify({
+                    query: `mutation ($file: Upload!) { createProduct(createProductInput: { productName: "${productName}", description: "${description}", price: ${price}, categoryName: "${categoryName}", productTags: ${JSON.stringify(productTags)}, file: $file }) { productId productName description price isSoldOut hits user { userId email userName } productCategory { productCategoryId categoryName } productTags { productTagId } } }`,
+                    variables: {
+                        file: null
+                    }
+                }));
+                formData.append("map", JSON.stringify({
+                    "0": ["variables.file"]
+                }));
+                formData.append("0", file);
+
+                const response = await axios.post('http://localhost:3000/graphql', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Apollo-Require-Preflight': 'true',
+                        'Authorization': `Bearer ${this.state.token}`
+                    },
+                });
+                if (Object.prototype.hasOwnProperty.call(response.data, 'errors')) {
+                    throw new Error('로그인 인증이 되지 않습니다.')
+                }
+            } catch (error) {
+                if (error.response) {
+                    console.log("서버에서 반환하는 에러메세지: ", error.response.data);
+                }
+
+                throw error.message;
+            }
+        },
+
 
         async increaseHits(_, productId) {
             try {
@@ -208,7 +253,6 @@ const store = createStore({
         },
 
         async loadCartList({ commit }) {
-            console.log('loadCartList called');
             try {
                 const result = await apolloClient.query({
                     query: gql`
@@ -220,6 +264,9 @@ const store = createStore({
                                 description
                                 isSoldOut
                                 price
+                                files {
+                                    fileURL
+                                }
                             }
                             user {
                                 userId
@@ -308,16 +355,17 @@ const store = createStore({
             }
         },
 
-        async signUp(_, { email, password, age, userName }) {
+        async signUp(_, { email, password, phoneNumber, age, userName }) {
             age = parseInt(age);
             try {
                 await apolloClient.mutate({
                     mutation: gql`
-                    mutation($email: String!, $password: String!, $age: Int!, $userName: String!) {
+                    mutation($email: String!, $password: String!, $phoneNumber: String!, $age: Int!, $userName: String!) {
                         createUser(
                             createUserInput: {
                                 email: $email
                                 password: $password
+                                phoneNumber: $phoneNumber
                                 userName: $userName
                                 age: $age
                             }
@@ -329,6 +377,7 @@ const store = createStore({
                     variables: {
                         email,
                         password,
+                        phoneNumber,
                         age,
                         userName
                     }
@@ -362,14 +411,45 @@ const store = createStore({
                         fetchLoginUser {
                             userId
                             userName
+                            phoneNumber
                             email
                             age
                         }
-                    }`
+                    }`,
+                    variables: {},
                 });
+                console.log(result.data.fetchLoginUser);
                 commit('setUser', result.data.fetchLoginUser);
             } catch (error) {
                 console.error("Failed to load user: ", error);
+            }
+        },
+
+        async userInfoChange(_, { password, phoneNumber, userName, age }) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+            mutation($updateUserInput: UpdateUserInput!) {
+                updateUser(updateUserInput: $updateUserInput) {
+                    userId
+                    userName
+                    email
+                    phoneNumber
+                    age
+                }
+            }`,
+                    variables: {
+                        updateUserInput: {
+                            password,
+                            phoneNumber,
+                            userName,
+                            age
+                        },
+                    },
+                });
+                return "success";
+            } catch (error) {
+                throw new Error(error.message);
             }
         },
 
@@ -433,6 +513,9 @@ const store = createStore({
                             product {
                                 productId
                                 productName
+                                files {
+                                    fileURL
+                                }
                             }
                             user {
                                 userId
@@ -486,7 +569,7 @@ const store = createStore({
                 });
                 return "success"
             } catch (error) {
-                throw new Error(error.message);
+                throw new Error(error);
             }
         },
 
@@ -515,7 +598,7 @@ const store = createStore({
 
         async loadProductReviews(_, productId) {
             try {
-                console.log("loadProductReviews called");
+                console.log("productId: ", productId);
                 const result = await apolloClient.query({
                     query: gql`
                     query($productId: String) {
@@ -539,8 +622,6 @@ const store = createStore({
                         productId
                     }
                 })
-
-                console.log(result.data.fetchReviews);
                 return result.data.fetchReviews;
             } catch (error) {
                 throw new Error(error.message);

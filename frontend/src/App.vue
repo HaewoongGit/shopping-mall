@@ -20,20 +20,60 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a v-if="token.length !== 0" @click="$router.push('/orderList')" class="nav-link active" style="cursor: pointer" aria-current="page"
-                            ><font-awesome-icon icon="bag-shopping" /> 주문목록</a
+                        <a
+                            v-if="token.length !== 0"
+                            @click="$router.push('/createProduct')"
+                            class="nav-link active"
+                            style="cursor: pointer"
+                            aria-current="page"
+                            ><font-awesome-icon icon="fa-plus" /> 상품 등록</a
                         >
                     </li>
                     <li class="nav-item">
-                        <a v-if="token.length !== 0" @click="$router.push('/cart')" class="nav-link active" style="cursor: pointer" aria-current="page"
+                        <a
+                            v-if="token.length !== 0"
+                            @click="$router.push('/orderList')"
+                            class="nav-link active"
+                            style="cursor: pointer"
+                            aria-current="page"
+                            ><font-awesome-icon icon="bag-shopping" /> 주문 목록</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            v-if="token.length !== 0"
+                            @click="$router.push('/cart')"
+                            class="nav-link active"
+                            style="cursor: pointer"
+                            aria-current="page"
                             ><font-awesome-icon icon="cart-shopping" /> 장바구니</a
                         >
                     </li>
                     <li class="nav-item">
-                        <a v-if="token.length === 0" class="nav-link active" style="cursor: pointer" data-bs-toggle="modal" data-bs-target="#logInModal"
+                        <a
+                            v-if="token.length !== 0"
+                            @click="$router.push('/user-info')"
+                            class="nav-link active"
+                            style="cursor: pointer"
+                            aria-current="page"
+                            ><font-awesome-icon icon="fa-user" /> 내 정보</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            v-if="token.length === 0"
+                            class="nav-link active"
+                            style="cursor: pointer"
+                            data-bs-toggle="modal"
+                            data-bs-target="#logInModal"
                             ><font-awesome-icon icon="fa-solid fa-right-from-bracket" /> 로그인</a
                         >
-                        <a v-if="token.length !== 0" class="nav-link active" style="cursor: pointer" data-bs-toggle="modal" data-bs-target="#logOutModal"
+                        <a
+                            v-if="token.length !== 0"
+                            class="nav-link active"
+                            style="cursor: pointer"
+                            data-bs-toggle="modal"
+                            data-bs-target="#logOutModal"
                             ><font-awesome-icon icon="fa-solid fa-right-from-bracket" /> 로그아웃</a
                         >
                     </li>

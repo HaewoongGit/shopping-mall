@@ -16,13 +16,28 @@ export class FileService {
         private readonly fileRepository: Repository<File>
     ) {}
 
-    async uploadFile(uploadFileInput: UploadFileInput, queryRunner: QueryRunner): Promise<File> {
-        const { file, email, productId, userId } = uploadFileInput;
+    async uploadFileForTransaction(uploadFileInput: UploadFileInput, queryRunner: QueryRunner): Promise<File> {
+        const { file: filePromise, email, productId, userId } = uploadFileInput;
         const emailAddress = email.split("@");
         const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1; // JavaScript에서는 월을 0부터 시작하므로 1을 더해줍니다.
+        const date = now.getDate();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+
+        const timestamp = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
         let publicURL = "";
 
-        file.filename = emailAddress[0] + now;
+        let file;
+        if (filePromise instanceof Promise) {
+            file = await filePromise;
+        } else {
+            file = filePromise;
+        }
+
+        file.filename = emailAddress[0] + timestamp;
 
         // 1-1) 스토리지 셋팅하기
         const bucketName = "shopping-mall";
@@ -53,7 +68,7 @@ export class FileService {
         });
     }
 
-    async deleteFile(fileName: string, queryRunner: QueryRunner): Promise<boolean> {
+    async deleteFileForTransaction(fileName: string, queryRunner: QueryRunner): Promise<boolean> {
         const bucketName = "shopping-mall";
         const storage = new Storage({
             projectId: "utility-operand-388205",
@@ -75,5 +90,25 @@ export class FileService {
         });
 
         return result.affected ? true : false;
+    }
+
+    async deleteFile(fileName: string): Promise<boolean> {
+        const bucketName = "shopping-mall";
+        const storage = new Storage({
+            projectId: "utility-operand-388205",
+            keyFilename: "/Users/lhw/Documents/GitHub/gcp-file-storage.json",
+        }).bucket(bucketName);
+
+        const file = storage.file(fileName);
+        const [exists] = await file.exists();
+
+        if (exists) {
+            await file.delete();
+            console.log(`${bucketName} 버킷의 ${fileName} 파일이 지워졌습니다.`);
+            return true;
+        } else {
+            console.log(`${bucketName} 버킷에서 '${fileName}'라는 파일을 찾을 수 없습니다.`);
+            return false;
+        }
     }
 }

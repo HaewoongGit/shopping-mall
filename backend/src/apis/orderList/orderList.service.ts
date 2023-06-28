@@ -16,7 +16,7 @@ export class OrderListService {
         const orderList = await this.orderListRepository.find({
             withDeleted: true,
             where: { user: { userId: context.req.user.userId } },
-            relations: ["product", "user", "payment"],
+            relations: ["product", "user", "payment", "product.files"],
         });
 
         if (!orderList) throw new NotFoundException("구매 내역을 찾을 수 없습니다.");

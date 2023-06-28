@@ -18,7 +18,7 @@ export class File {
     @Field(() => String)
     fileURL: string;
 
-    @ManyToOne(() => Product)
+    @ManyToOne(() => Product, (product) => product.files)
     @JoinColumn({ name: "productId" })
     @Field(() => Product)
     product: Product;

@@ -1,17 +1,12 @@
 // user.entity.ts
 
-import { Field, Int, ObjectType } from '@nestjs/graphql';
-import {
-    Column,
-    DeleteDateColumn,
-    Entity,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 @ObjectType()
 export class User {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn("uuid")
     @Field(() => String)
     userId: string;
 
@@ -20,14 +15,18 @@ export class User {
     email: string;
 
     @Column()
-    // @Field(() => String)
+    @Field(() => String)
     password: string;
+
+    @Column({ nullable: true, default: "empty" })
+    @Field(() => String)
+    phoneNumber: string;
 
     @Column()
     @Field(() => String)
     userName: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: 0 })
     @Field(() => Int, { nullable: true })
     age: number;
 

@@ -2,21 +2,23 @@
     <div class="wrap">
         <div class="mb-3">
             <h4>
-                <i class="fa fa-shopping-cart mr-1" aria-hidden="true"><font-awesome-icon icon="cart-shopping" /></i> 장바구니
+                <i class="fa fa-shopping-cart mr-1" aria-hidden="true"><font-awesome-icon icon="cart-shopping" /></i>
+                장바구니
             </h4>
         </div>
         <div v-for="(cart, i) in cartList" :key="i" style="margin-bottom: 10px">
             <div id="cartList">
                 <div class="card">
                     <div class="row g-0 h-100">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <img
-                                src="https://img.freepik.com/free-photo/black-friday-elements-assortment_23-2149074075.jpg?w=360"
-                                class="img-fluid rounded-start card-img"
+                                :src="cart.product.files[0].fileURL"
+                                class="img-fluid rounded-start"
+                                id="product-image"
                                 alt="..."
                             />
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-7">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <h5 class="card-title mb-1">{{ cart.product.productName }}</h5>
@@ -26,11 +28,19 @@
                                     <small class="text-muted">장바구니에 담긴 수량: {{ cart.quantity }}</small>
                                 </p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <button @click="cartDeleteAndList(cart.product.productId)" type="button" class="btn btn-danger btn-sm">삭제</button>
+                                    <button
+                                        @click="cartDeleteAndList(cart.product.productId)"
+                                        type="button"
+                                        class="btn btn-danger btn-sm"
+                                    >
+                                        삭제
+                                    </button>
                                     <div style="width: 150px">
                                         <select
                                             class="form-select form-select-sm"
-                                            @change="cartChangeAndList(cart.product.productId, parseInt($event.target.value))"
+                                            @change="
+                                                cartChangeAndList(cart.product.productId, parseInt($event.target.value))
+                                            "
                                         >
                                             <option selected>변경할 수량 선택</option>
                                             <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
@@ -80,7 +90,8 @@ export default {
         ...mapMutations(["setTotalPrice", "setWaitingListForPurchase", "setCartList"]),
         cartPriceSum() {
             let sum = 0;
-            for (let i = 0; i < this.cartList.length; i++) sum += this.cartList[i].quantity * this.cartList[i].product.price;
+            for (let i = 0; i < this.cartList.length; i++)
+                sum += this.cartList[i].quantity * this.cartList[i].product.price;
 
             this.setTotalPrice(sum);
             return sum;
@@ -132,14 +143,10 @@ export default {
 };
 </script>
 
-<style>
-.card {
-    height: 220px;
-}
-
-.card-img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
+<style scoped>
+#product-image {
+    width: 280px;
+    height: 230px;
+    object-fit: contain;
 }
 </style>

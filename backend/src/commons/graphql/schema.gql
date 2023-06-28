@@ -5,6 +5,8 @@
 type User {
   userId: String!
   email: String!
+  password: String!
+  phoneNumber: String!
   userName: String!
   age: Int
 }
@@ -20,6 +22,14 @@ type ProductTag {
   tagName: String!
 }
 
+type File {
+  fileId: String!
+  fileName: String!
+  fileURL: String!
+  product: Product!
+  user: User!
+}
+
 type Product {
   productId: String!
   productName: String!
@@ -27,7 +37,7 @@ type Product {
   price: Int!
   isSoldOut: Boolean!
   hits: Int!
-  imageURL: String!
+  files: [File!]!
   user: User!
   productCategory: ProductCategory!
   productTags: [ProductTag!]!
@@ -144,6 +154,7 @@ input FindOneCartInput {
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
   updateUserPwd(updateUserPwdInput: UpdateUserPwdInput!): User!
   deleteLoginUser: Boolean!
   createDibs(createDibsInput: CreateDibsInput!): Dibs!
@@ -171,13 +182,22 @@ type Mutation {
 input CreateUserInput {
   email: String!
   password: String!
+  phoneNumber: String!
   userName: String!
   age: Int!
+}
+
+input UpdateUserInput {
+  password: String
+  phoneNumber: String
+  userName: String
+  age: Int
 }
 
 input UpdateUserPwdInput {
   email: String!
   password: String!
+  phoneNumber: String!
 }
 
 input CreateDibsInput {
@@ -194,10 +214,13 @@ input CreateProductInput {
   productName: String!
   description: String
   price: Int!
-  email: String!
   categoryName: String!
   productTags: [String!]
+  file: Upload!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input UpdateProductInput {
   productName: String
@@ -205,6 +228,7 @@ input UpdateProductInput {
   price: Int
   categoryName: String
   productTags: [String!]
+  file: Upload
   isSoldOut: Boolean
 }
 

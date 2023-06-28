@@ -3,12 +3,7 @@
         <div class="container mb-4">
             <div class="row align-items-center">
                 <div class="col-6 pr-3 d-flex align-items-center">
-                    <img
-                        id="productsUrl"
-                        src="https://img.freepik.com/free-photo/black-friday-elements-assortment_23-2149074075.jpg?w=360"
-                        class="rounded-start"
-                        alt="..."
-                    />
+                    <img id="product-image" :src="product.files[0].fileURL" class="rounded-start" alt="..." />
                 </div>
                 <div class="col-6 pl-3">
                     <div id="viewCount" class="text-end small">조회수 {{ product.hits }}</div>
@@ -97,6 +92,7 @@
                             year: "numeric",
                             month: "2-digit",
                             day: "2-digit",
+                            day: "2-digit",
                         })
                     }}
                 </div>
@@ -163,17 +159,23 @@ export default {
         }
 
         await this.ratingSave();
-        this.reviews = await this.loadProductReviews();
+        this.reviews = await this.loadProductReviews(this.product.productId);
     },
 };
 </script>
 
-<style>
+<style scoped>
 .wrapForDetail {
     width: 100%;
     max-width: 750px;
     margin: 10px auto;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+#product-image {
+    width: 350px;
+    height: 280px;
+    object-fit: contain;
 }
 </style>

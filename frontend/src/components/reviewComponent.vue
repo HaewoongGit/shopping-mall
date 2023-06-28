@@ -63,7 +63,7 @@ export default {
                     this.$router.push("/orderList");
                 })
                 .catch((error) => {
-                    alert(error);
+                    alert(error.message);
                     this.$router.push("/orderList");
                 });
         },

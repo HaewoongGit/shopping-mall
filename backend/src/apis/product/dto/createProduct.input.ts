@@ -14,9 +14,6 @@ export class CreateProductInput {
     price: number;
 
     @Field(() => String)
-    email: string;
-
-    @Field(() => String)
     categoryName: CategoryName;
 
     @Field(() => [String], { nullable: true })

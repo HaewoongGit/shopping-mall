@@ -9,27 +9,32 @@ import { ProductTagService } from "../productTag/productTag.service";
 import { ProductCategoryService } from "../productCategory/productCategory.service";
 import { FindProductsInput } from "./dto/findProducts.input";
 import { ProductCategory } from "../productCategory/entities/productCategory.entity";
+import { FileService } from "../file/file.service";
 
 @Injectable()
 export class ProductService {
     constructor(
         @InjectRepository(Product)
         private readonly productRepository: Repository<Product>,
+
         private readonly productTagService: ProductTagService,
         private readonly userService: UserService,
         private readonly productCategoryService: ProductCategoryService,
+        private readonly fileService: FileService,
 
         private readonly dataSource: DataSource
     ) {}
 
-    async create(createProductInput: CreateProductInput): Promise<Product> {
+    async create(createProductInput: CreateProductInput, email): Promise<Product> {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction("READ COMMITTED");
 
-        try {
-            const { categoryName, productTags, email, ...product } = createProductInput;
+        const { categoryName, productTags, file, ...product } = createProductInput;
 
+        console.log(file);
+
+        try {
             const user = await this.userService.findOneByEmail({ email });
 
             if (user == undefined) throw new NotFoundException("등록된 회원이 아닙니다.");
@@ -70,11 +75,14 @@ export class ProductService {
                 productTags: tags,
             });
 
+            await this.fileService.uploadFileForTransaction({ file, email, productId: result.productId, userId: user.userId }, queryRunner);
+
             await queryRunner.commitTransaction();
 
             return result;
         } catch (error) {
             await queryRunner.rollbackTransaction();
+            await this.fileService.deleteFile(file.filename);
             if (error instanceof NotFoundException) {
                 throw error;
             }
@@ -86,7 +94,7 @@ export class ProductService {
     async findOne(productId): Promise<Product> {
         const result = await this.productRepository.findOne({
             where: { productId },
-            relations: ["productCategory", "user", "productTags"],
+            relations: ["productCategory", "user", "productTags", "files"],
         });
 
         return result;
@@ -105,7 +113,7 @@ export class ProductService {
 
         return await this.productRepository.find({
             where,
-            relations: ["productCategory", "user", "productTags"],
+            relations: ["productCategory", "user", "productTags", "files"],
         });
     }
 

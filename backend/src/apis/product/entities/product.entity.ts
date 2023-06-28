@@ -1,8 +1,9 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/apis/user/entities/user.entity";
 import { ProductCategory } from "src/apis/productCategory/entities/productCategory.entity";
 import { ProductTag } from "src/apis/productTag/entities/productTag.entity";
+import { File } from "src/apis/file/entities/file.entity";
 
 @Entity()
 @ObjectType()
@@ -31,9 +32,9 @@ export class Product {
     @Field(() => Int)
     hits: number;
 
-    @Column({ nullable: true })
-    @Field(() => String)
-    imageURL: string;
+    @OneToMany(() => File, (file) => file.product)
+    @Field(() => [File])
+    files: File[];
 
     @Field(() => User)
     @JoinColumn({ name: "userId" })

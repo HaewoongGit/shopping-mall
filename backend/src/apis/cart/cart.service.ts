@@ -22,6 +22,7 @@ export class CartService {
         return await this.cartRepository
             .createQueryBuilder("cart")
             .leftJoinAndSelect("cart.product", "cartProduct")
+            .leftJoinAndSelect("cartProduct.files", "productFiles")
             .leftJoinAndSelect("cart.user", "cartUser")
             .where("cartProduct.productId = :productId", { productId })
             .andWhere("cartUser.userId = :userId", { userId })
@@ -34,6 +35,7 @@ export class CartService {
             result = await this.cartRepository
                 .createQueryBuilder("cart")
                 .leftJoinAndSelect("cart.product", "cartProduct")
+                .leftJoinAndSelect("cartProduct.files", "productFiles")
                 .leftJoinAndSelect("cart.user", "cartUser")
                 .where("cartProduct.productId = :productId", { productId })
                 .andWhere("cartUser.userId = :userId", { userId: context.req.user.userId })
@@ -42,6 +44,7 @@ export class CartService {
             result = await this.cartRepository
                 .createQueryBuilder("cart")
                 .leftJoinAndSelect("cart.product", "cartProduct")
+                .leftJoinAndSelect("cartProduct.files", "productFiles")
                 .leftJoinAndSelect("cart.user", "cartUser")
                 .where("cartProduct.productId = :productId", { productId })
                 .getMany();
@@ -49,12 +52,13 @@ export class CartService {
             result = await this.cartRepository
                 .createQueryBuilder("cart")
                 .leftJoinAndSelect("cart.product", "cartProduct")
+                .leftJoinAndSelect("cartProduct.files", "productFiles")
                 .leftJoinAndSelect("cart.user", "cartUser")
                 .where("cartUser.userId = :userId", { userId: context.req.user.userId })
                 .getMany();
         } else {
             result = await this.cartRepository.find({
-                relations: ["product", "user"],
+                relations: ["product", "product.files", "user"],
             });
         }
         return result;

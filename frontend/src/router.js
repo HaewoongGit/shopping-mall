@@ -5,6 +5,11 @@ import cartComponent from "./components/cartComponent";
 import buyComponent from "./components/buyComponent"
 import orderListComponent from "./components/orderListComponent";
 import reviewComponent from "./components/reviewComponent";
+import createProductComponent from "./components/createProductComponent";
+import myInformationComponent from "./components/myInformationComponent";
+import UserInfoComponent from "./components/UserInfoComponent";
+import RegisteredProductsComponent from "./components/RegisteredProductsComponent";
+import RegisteredReviewsComponent from "./components/RegisteredReviewsComponent";
 
 const routes = [{
     path: "/",
@@ -29,6 +34,27 @@ const routes = [{
 {
     path: "/review",
     component: reviewComponent
+},
+{
+    path: "/createProduct",
+    component: createProductComponent
+},
+{
+    path: "/my-info",
+    component: myInformationComponent,
+    children: [{
+        path: "/user-info",
+        component: UserInfoComponent
+    },
+    {
+        path: "/registered-products",
+        component: RegisteredProductsComponent
+    },
+    {
+        path: "/registered-reviews",
+        component: RegisteredReviewsComponent
+    }
+    ]
 }
 ];
 

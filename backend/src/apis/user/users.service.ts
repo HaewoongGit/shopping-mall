@@ -8,6 +8,8 @@ import * as bcrypt from "bcrypt";
 import { CreateUserInput } from "./dto/createUser.input";
 import { IUserServiceFindOneByEmail } from "./interfaces/user-service.interface";
 import { UpdateUserPwdInput } from "./dto/updateUserPwd.input";
+import { UpdateUserInput } from "./dto/updateUser.input";
+import { log } from "console";
 
 @Injectable()
 export class UserService {
@@ -38,11 +40,7 @@ export class UserService {
         const user = await this.findOneByEmail({ email });
         if (user) throw new ConflictException("이미 등록된 이메일입니다.");
 
-        if (password === null) {
-            return this.userRepository.save({
-                ...createUserInput,
-            });
-        }
+        if (password === null) throw new ConflictException("비밀번호를 입력하세요.");
 
         const hashedPassword = await bcrypt.hash(password, 10);
         return this.userRepository.save({
@@ -51,10 +49,30 @@ export class UserService {
         });
     }
 
+    async update(updateUserInput: UpdateUserInput, userId: string): Promise<User> {
+        const { password, phoneNumber, userName, age } = updateUserInput;
+
+        const user = await this.findOne(userId);
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        console.log("뭐야 왜 출력이 안돼?");
+
+        console.log("hashedPassword: ", hashedPassword);
+
+        const result = await this.userRepository.save({
+            ...user,
+            ...updateUserInput,
+            password: hashedPassword,
+        });
+
+        console.log("result 출력: ", result);
+
+        return result;
+    }
+
     async updatePassword(updateUserPwdInput: UpdateUserPwdInput): Promise<User> {
         const { email, password } = updateUserPwdInput;
-
-        console.log("email과 password", email, password);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -64,10 +82,12 @@ export class UserService {
 
         if (!user) throw new NotFoundException("입력한 email을 찾을 수 없습니다.");
 
-        return await this.userRepository.save({
+        const result = await this.userRepository.save({
             ...user,
             password: hashedPassword,
         });
+
+        return result;
     }
 
     async findLoginUser(email: string): Promise<User> {

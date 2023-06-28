@@ -1,5 +1,12 @@
 <template>
-    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true" ref="signupModal">
+    <div
+        class="modal fade"
+        id="signupModal"
+        tabindex="-1"
+        aria-labelledby="signupModalLabel"
+        aria-hidden="true"
+        ref="signupModal"
+    >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -9,7 +16,14 @@
                     <form>
                         <div class="form-group d-flex mb-3">
                             <label for="email" class="mr-3" style="width: 25%">이메일</label>
-                            <input v-model="email" type="email" class="form-control" id="email" placeholder="email@email.com" style="width: 75%" />
+                            <input
+                                v-model="email"
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                placeholder="email@email.com"
+                                style="width: 75%"
+                            />
                         </div>
 
                         <div class="form-group d-flex mb-3">
@@ -38,7 +52,26 @@
 
                         <div class="form-group d-flex mb-3">
                             <label for="userName" class="mr-3" style="width: 25%">이름</label>
-                            <input v-model="userName" type="name" class="form-control" id="userName" placeholder="이름을 입력하세요." style="width: 75%" />
+                            <input
+                                v-model="userName"
+                                type="name"
+                                class="form-control"
+                                id="userName"
+                                placeholder="이름을 입력하세요."
+                                style="width: 75%"
+                            />
+                        </div>
+
+                        <div class="form-group d-flex mb-3">
+                            <label for="phoneNumber" class="mr-3" style="width: 25%">휴대폰 번호</label>
+                            <input
+                                v-model="phoneNumber"
+                                type="tel"
+                                class="form-control"
+                                id="phoneNumber"
+                                placeholder="010-xxxx-xxxx"
+                                style="width: 75%"
+                            />
                         </div>
 
                         <div class="form-group d-flex mb-3">
@@ -57,7 +90,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button @click="signUpAndClose({ email, age, userName, password, confirmPassword })" type="button" class="btn btn-primary">회원가입</button>
+                    <button
+                        @click="signUpAndClose({ email, age, phoneNumber, userName, password, confirmPassword })"
+                        type="button"
+                        class="btn btn-primary"
+                    >
+                        회원가입
+                    </button>
                 </div>
             </div>
         </div>
@@ -73,6 +112,7 @@ export default {
             email: "",
             password: "",
             confirmPassword: "",
+            phoneNumber: "",
             userName: "",
             age: "",
         };

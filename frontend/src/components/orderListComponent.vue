@@ -32,13 +32,13 @@
                     v-for="order in orders"
                     :key="order.orderListId"
                     class="card mb-2"
-                    style="max-height: 153px"
+                    style="max-height: 200px"
                 >
                     <div class="row g-0">
                         <div class="col-md-4">
                             <img
-                                src="https://img.freepik.com/free-photo/black-friday-elements-assortment_23-2149074075.jpg?w=360"
-                                class="img-fluid"
+                                :src="order.product.files[0].fileURL"
+                                id="product-image"
                                 alt="..."
                                 style="border-radius: 5px"
                             />
@@ -127,7 +127,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import "../assets/mystyle.css";
 
 .wrap-order-list {
@@ -138,5 +138,11 @@ export default {
 #outside-card {
     border: 1px solid #ccc;
     border-radius: 10px;
+}
+
+#product-image {
+    width: 220px;
+    height: 180px;
+    object-fit: contain;
 }
 </style>
