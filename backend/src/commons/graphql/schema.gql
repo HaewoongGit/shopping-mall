@@ -9,17 +9,25 @@ type User {
   phoneNumber: String!
   userName: String!
   age: Int
+  createdAt: DateTime!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type ProductCategory {
   productCategoryId: String!
   categoryName: String!
+  createdAt: DateTime!
 }
 
 type ProductTag {
   productTagId: String!
   products: [Product!]!
   tagName: String!
+  createdAt: DateTime!
 }
 
 type File {
@@ -28,6 +36,7 @@ type File {
   fileURL: String!
   product: Product!
   user: User!
+  createdAt: DateTime!
 }
 
 type Product {
@@ -41,11 +50,13 @@ type Product {
   user: User!
   productCategory: ProductCategory!
   productTags: [ProductTag!]!
+  createdAt: DateTime!
 }
 
 type Dibs {
   user: User!
   product: Product!
+  createdAt: DateTime!
 }
 
 type LoginResponse {
@@ -60,11 +71,6 @@ type Review {
   rating: Int!
   createdAt: DateTime!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Payment {
   paymentId: String!
@@ -89,6 +95,7 @@ type Cart {
   user: User!
   product: Product!
   quantity: Int!
+  createdAt: DateTime!
 }
 
 type OrderList {

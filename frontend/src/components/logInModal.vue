@@ -1,5 +1,12 @@
 <template>
-    <div class="modal fade" id="logInModal" tabindex="-1" aria-labelledby="logInModalLabel" aria-hidden="true" ref="logInModal">
+    <div
+        class="modal fade"
+        id="logInModal"
+        tabindex="-1"
+        aria-labelledby="logInModalLabel"
+        aria-hidden="true"
+        ref="logInModal"
+    >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -8,11 +15,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-1">
-                        <textarea v-model="email" class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                        <textarea
+                            v-model="email"
+                            class="form-control"
+                            placeholder="Leave a comment here"
+                            id="floatingTextarea"
+                        ></textarea>
                         <label for="floatingTextarea">이메일</label>
                     </div>
                     <div class="form-floating">
-                        <input v-model="password" type="password" class="form-control" id="login-password" placeholder="영문과 숫자로 6자리 이상" />
+                        <input
+                            v-model="password"
+                            type="password"
+                            class="form-control"
+                            id="login-password"
+                            placeholder="영문과 숫자로 6자리 이상"
+                        />
                         <label for="floatingTextarea">비밀번호</label>
                     </div>
                 </div>
@@ -25,10 +43,18 @@
                         style="cursor: pointer; border: 1px solid #ccc; padding: 5px"
                         @click="googleLogin"
                     />
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#signupModal">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                        data-bs-toggle="modal"
+                        data-bs-target="#signupModal"
+                    >
                         회원가입
                     </button>
-                    <button @click="loginAndCheck({ email, password })" type="button" class="btn btn-primary">로그인</button>
+                    <button @click="loginAndCheck({ email, password })" type="button" class="btn btn-primary">
+                        로그인
+                    </button>
                 </div>
             </div>
         </div>
@@ -48,7 +74,7 @@ export default {
     computed: { ...mapState["token"] },
 
     methods: {
-        ...mapActions(["signIn", "restoreToken"]),
+        ...mapActions(["signIn", "restoreToken", "googleLogin"]),
         ...mapMutations(["setToken"]),
         loginAndCheck(obj) {
             this.signIn(obj)
@@ -79,6 +105,8 @@ export default {
         },
         googleLogin() {
             window.location.href = "http://localhost:3000/login/google";
+
+            this.googleLogin().catch((err) => alert(err));
 
             if (this.token) {
                 setTimeout(() => {

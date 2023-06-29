@@ -6,6 +6,7 @@ import buyComponent from "./components/buyComponent"
 import orderListComponent from "./components/orderListComponent";
 import reviewComponent from "./components/reviewComponent";
 import createProductComponent from "./components/createProductComponent";
+import updateProductComponent from "./components/updateProductComponent";
 import myInformationComponent from "./components/myInformationComponent";
 import UserInfoComponent from "./components/UserInfoComponent";
 import RegisteredProductsComponent from "./components/RegisteredProductsComponent";
@@ -53,7 +54,11 @@ const routes = [{
     {
         path: "/registered-reviews",
         component: RegisteredReviewsComponent
-    }
+    },
+    {
+        path: "/updateProduct",
+        component: updateProductComponent
+    },
     ]
 }
 ];

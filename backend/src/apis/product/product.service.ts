@@ -32,8 +32,6 @@ export class ProductService {
 
         const { categoryName, productTags, file, ...product } = createProductInput;
 
-        console.log(file);
-
         try {
             const user = await this.userService.findOneByEmail({ email });
 
@@ -128,6 +126,8 @@ export class ProductService {
         await queryRunner.connect();
         await queryRunner.startTransaction("READ COMMITTED");
 
+        const { categoryName, productTags, file, ...product } = updateProductInput;
+
         try {
             const foundProduct = await this.productRepository.findOne({
                 where: { productId },
@@ -135,8 +135,6 @@ export class ProductService {
             });
 
             if (foundProduct == undefined) throw new NotFoundException("등록된 상품이 아닙니다.");
-
-            const { categoryName, productTags, ...product } = updateProductInput;
 
             let productCategoryResult = {};
             if (categoryName != undefined) {
@@ -149,20 +147,12 @@ export class ProductService {
                         },
                         queryRunner
                     );
-                } else {
-                    productCategoryResult = await this.productCategoryService.update(
-                        {
-                            productCategoryId: productCategory.productCategoryId,
-                            categoryName,
-                        },
-                        queryRunner
-                    );
                 }
             }
 
             let tags = [];
 
-            if (productTags != undefined) {
+            if (productTags !== undefined) {
                 const tagNames = productTags.map((elem) => elem.replace("#", ""));
                 const prevTags = await this.productTagService.findByNames(tagNames);
 
@@ -187,15 +177,26 @@ export class ProductService {
             const result = await queryRunner.manager.save(Product, {
                 ...foundProduct,
                 ...product,
-                user: foundProduct.user,
                 productTags: tags,
             });
+
+            if (file) {
+                await this.fileService.uploadFileForTransaction(
+                    { file, email: foundProduct.user.email, productId: result.productId, userId: foundProduct.user.userId },
+                    queryRunner
+                );
+            }
 
             await queryRunner.commitTransaction();
 
             return result;
         } catch (error) {
             await queryRunner.rollbackTransaction();
+
+            if (file) {
+                await this.fileService.deleteFile(file.filename);
+            }
+
             if (error instanceof NotFoundException) {
                 throw error;
             }

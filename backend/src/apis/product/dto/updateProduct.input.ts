@@ -5,7 +5,4 @@ import { CreateProductInput } from "./createProduct.input";
 export class UpdateProductInput extends PartialType(CreateProductInput) {
     @Field(() => Boolean, { nullable: true })
     isSoldOut?: boolean;
-
-    @Field(() => [String], { nullable: true })
-    productTags?: string[];
 }

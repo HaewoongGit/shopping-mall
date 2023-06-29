@@ -78,7 +78,6 @@
         </form>
     </div>
     <div class="footer d-flex justify-content-center">
-        <button type="button" class="btn btn-secondary me-2">취소</button>
         <button @click="infoUpdate()" type="button" class="btn btn-primary">정보 변경</button>
     </div>
 </template>

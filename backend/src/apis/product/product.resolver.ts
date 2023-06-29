@@ -32,6 +32,7 @@ export class ProductResolver {
         return this.productService.findAll(findProductsInput);
     }
 
+    @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Product)
     updateProduct(
         @Args("productId") productId: string,

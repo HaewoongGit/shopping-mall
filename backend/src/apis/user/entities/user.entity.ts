@@ -1,7 +1,7 @@
 // user.entity.ts
 
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 @ObjectType()
@@ -29,6 +29,10 @@ export class User {
     @Column({ nullable: true, default: 0 })
     @Field(() => Int, { nullable: true })
     age: number;
+
+    @CreateDateColumn()
+    @Field(() => Date)
+    createdAt: Date;
 
     @DeleteDateColumn()
     deletedAt: Date;

@@ -100,6 +100,7 @@ const store = createStore({
                             price
                             isSoldOut
                             hits
+                            createdAt
                             user {
                                 userId
                                 email
@@ -324,6 +325,16 @@ const store = createStore({
                     }
                 });
                 return "success";
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async googleLogin({ commit }) {
+            try {
+                const response = await axios.get('http://localhost:3000/login/google');
+                const userId = response.data;
+                commit('setUserId', userId)
             } catch (error) {
                 throw new Error(error.message);
             }

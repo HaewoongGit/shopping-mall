@@ -1,17 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Product } from 'src/apis/product/entities/product.entity';
-import {
-    Column,
-    DeleteDateColumn,
-    Entity,
-    ManyToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Field, ObjectType } from "@nestjs/graphql";
+import { Product } from "src/apis/product/entities/product.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 @ObjectType()
 export class ProductTag {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn("uuid")
     @Field(() => String)
     productTagId: string;
 
@@ -22,6 +16,10 @@ export class ProductTag {
     @Column({ nullable: false })
     @Field(() => String)
     tagName: string;
+
+    @CreateDateColumn()
+    @Field(() => Date)
+    createdAt: Date;
 
     @DeleteDateColumn()
     deletedAt: Date;

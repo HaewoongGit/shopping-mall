@@ -56,17 +56,11 @@ export class UserService {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        console.log("뭐야 왜 출력이 안돼?");
-
-        console.log("hashedPassword: ", hashedPassword);
-
         const result = await this.userRepository.save({
             ...user,
             ...updateUserInput,
             password: hashedPassword,
         });
-
-        console.log("result 출력: ", result);
 
         return result;
     }

@@ -10,6 +10,7 @@ import {
 } from "./interfaces/auth-service.interface";
 import * as bcrypt from "bcrypt";
 import { UserService } from "../user/users.service";
+import { User } from "../user/entities/user.entity";
 
 @Injectable()
 export class AuthService {
@@ -34,7 +35,7 @@ export class AuthService {
         return { token: token, userId: user.userId };
     }
 
-    async loginOAuth({ req, res }: IAuthServiceLoginOAuth) {
+    async loginOAuth({ req, res }: IAuthServiceLoginOAuth): Promise<User> {
         let user = await this.userService.findOneByEmail({
             email: req.user.email,
         });
@@ -44,6 +45,8 @@ export class AuthService {
         const token = await this.getAccessToken({ user });
         await this.setRefreshToken({ user, res });
         res.redirect(`http://localhost:8080/?token=${token}`);
+
+        return user;
     }
 
     restoreAccessToken({ user }: IAuthServiceRestoreAccessToken): string {

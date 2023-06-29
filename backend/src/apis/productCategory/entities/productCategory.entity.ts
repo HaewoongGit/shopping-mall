@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum CategoryName {
     Electronics = "가전디지털",
@@ -21,4 +21,8 @@ export class ProductCategory {
     @Column({ type: "enum", enum: CategoryName })
     @Field(() => String)
     categoryName: CategoryName;
+
+    @CreateDateColumn()
+    @Field(() => Date)
+    createdAt: Date;
 }
