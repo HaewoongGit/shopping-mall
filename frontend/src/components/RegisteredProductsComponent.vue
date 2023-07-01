@@ -18,15 +18,18 @@
                     >
                         <img :src="product.files[0].fileURL" class="product-image" alt="Product Image" />
                         <h5 class="ms-5">{{ product.productName }}</h5>
-                        <div class="d-flex justify-content-end align-items-center">
+                        <div class="d-flex flex-column justify-content-end align-items-center">
                             <button
-                                class="btn btn-primary"
+                                class="btn btn-primary mb-3"
                                 @click="
                                     setProduct(product);
                                     $router.push('/updateProduct');
                                 "
                             >
                                 상품 정보 변경
+                            </button>
+                            <button class="btn btn-danger" @click="productDeleteAndResult(product.productId)">
+                                상품 삭제
                             </button>
                         </div>
                     </div>
@@ -55,15 +58,24 @@ export default {
     },
 
     methods: {
-        ...mapActions(["loadProducts"]),
+        ...mapActions(["loadProducts", "productDelete"]),
         ...mapMutations(["setProduct"]),
-        changeProductInfo(productId) {
-            console.log(productId);
+
+        productDeleteAndResult(productId) {
+            this.productDelete(productId)
+                .then(() => {
+                    this.loadProducts(this.userId);
+                    alert("삭제 완료");
+                })
+                .catch((err) => {
+                    alert(err);
+                });
         },
     },
 
     beforeMount() {
-        this.loadProducts(this.userId);
+        console.log(this.userId);
+        this.loadProducts({ userId: this.userId });
     },
 };
 </script>

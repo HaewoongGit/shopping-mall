@@ -1,5 +1,5 @@
 query {
-  fetchReviews(findReviewInput:{
+  fetchReviews(findReviewsInput:{
     productId: "7db541f0-01bd-4ad0-8c58-f15ca8c8748d"
   }) {
     user {

@@ -25,7 +25,7 @@
 
 <script>
 import productsComponent from "./productsComponent.vue";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 export default {
     components: { productsComponent },
     computed: {
@@ -33,11 +33,22 @@ export default {
     },
 
     methods: {
-        ...mapActions(["loadProducts"]),
+        ...mapActions(["loadProducts", "loadUser"]),
+        ...mapMutations(["setToken"]),
     },
 
     beforeMount() {
         this.loadProducts({});
+
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get("token");
+
+            if (token) {
+                this.setToken(token);
+                this.loadUser();
+            }
+        };
     },
 };
 </script>

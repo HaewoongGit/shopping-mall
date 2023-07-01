@@ -88,6 +88,7 @@ export default {
 
             this.productUpdate({
                 file: this.file,
+                productId: this.productId,
                 categoryName: this.categoryName,
                 productName: this.productName,
                 price: this.price,

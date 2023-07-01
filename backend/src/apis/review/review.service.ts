@@ -34,6 +34,7 @@ export class ReviewService {
             result = await this.reviewRepository
                 .createQueryBuilder("review")
                 .leftJoinAndSelect("review.product", "reviewProduct")
+                .leftJoinAndSelect("reviewProduct.files", "productFiles")
                 .leftJoinAndSelect("review.user", "reviewUser")
                 .where("reviewProduct.productId = :productId", { productId })
                 .andWhere("reviewuser.userId = :userId", { userId })
@@ -42,6 +43,7 @@ export class ReviewService {
             result = await this.reviewRepository
                 .createQueryBuilder("review")
                 .leftJoinAndSelect("review.product", "reviewProduct")
+                .leftJoinAndSelect("reviewProduct.files", "productFiles")
                 .leftJoinAndSelect("review.user", "reviewUser")
                 .where("reviewProduct.productId = :productId", { productId })
                 .getMany();
@@ -49,12 +51,13 @@ export class ReviewService {
             result = await this.reviewRepository
                 .createQueryBuilder("review")
                 .leftJoinAndSelect("review.product", "reviewProduct")
+                .leftJoinAndSelect("reviewProduct.files", "productFiles")
                 .leftJoinAndSelect("review.user", "reviewUser")
                 .where("reviewUser.userId = :userId", { userId })
                 .getMany();
         } else {
             result = await this.reviewRepository.find({
-                relations: ["product", "user"],
+                relations: ["product", "user", "product.files"],
             });
         }
         return result;

@@ -59,6 +59,7 @@ const store = createStore({
 
         setUserId(state, userId) {
             state.userId = userId;
+            console.log("유저아이디가 ", userId, "로 세팅됨!");
         },
 
         setProducts(state, products) {
@@ -86,6 +87,7 @@ const store = createStore({
 
     actions: {
         async loadProducts({ commit }, { userId = '', categoryName = '' }) {
+            console.log("actions에서 받은 userId:", userId);
             try {
                 const result = await apolloClient.query({
                     query: gql`
@@ -206,6 +208,55 @@ const store = createStore({
             }
         },
 
+        async productUpdate(_, { file, productId, categoryName, productName, price, description, productTags, isSoldOut }) {
+            try {
+                let formData = new FormData();
+                formData.append("operations", JSON.stringify({
+                    query: `mutation ($file: Upload!) { updateProduct(productId: "${productId}",updateProductInput: { productName: "${productName}", description: "${description}", price: ${price}, categoryName: "${categoryName}", productTags: ${JSON.stringify(productTags)}, file: $file, isSoldOut:${isSoldOut} }) { productId productName } }`,
+                    variables: {
+                        file: null
+                    }
+                }));
+                formData.append("map", JSON.stringify({
+                    "0": ["variables.file"]
+                }));
+                formData.append("0", file);
+
+                const response = await axios.post('http://localhost:3000/graphql', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Apollo-Require-Preflight': 'true',
+                        'Authorization': `Bearer ${this.state.token}`
+                    },
+                });
+                if (Object.prototype.hasOwnProperty.call(response.data, 'errors')) {
+                    throw new Error('로그인 인증이 되지 않습니다.')
+                }
+            } catch (error) {
+                if (error.response) {
+                    console.log("서버에서 반환하는 에러메세지: ", error.response.data);
+                }
+
+                throw error.message;
+            }
+        },
+
+        async productDelete(_, productId) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                        mutation($productId: String!) {
+                            deleteProduct(productId: $productId)
+                        }
+                    `,
+                    variables: {
+                        productId
+                    }
+                });
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
 
         async increaseHits(_, productId) {
             try {
@@ -330,17 +381,8 @@ const store = createStore({
             }
         },
 
-        async googleLogin({ commit }) {
-            try {
-                const response = await axios.get('http://localhost:3000/login/google');
-                const userId = response.data;
-                commit('setUserId', userId)
-            } catch (error) {
-                throw new Error(error.message);
-            }
-        },
-
         async signIn({ commit }, { email, password }) {
+            console.log("signIn 호출됨");
             try {
                 const result = await apolloClient.mutate({
                     mutation: gql`
@@ -431,6 +473,7 @@ const store = createStore({
                 });
                 console.log(result.data.fetchLoginUser);
                 commit('setUser', result.data.fetchLoginUser);
+                commit('setUserId', result.data.fetchLoginUser.userId);
             } catch (error) {
                 console.error("Failed to load user: ", error);
             }

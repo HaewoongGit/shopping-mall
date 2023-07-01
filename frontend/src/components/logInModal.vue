@@ -41,7 +41,7 @@
                         width="55"
                         height="40"
                         style="cursor: pointer; border: 1px solid #ccc; padding: 5px"
-                        @click="googleLogin"
+                        @click="tryGoogleLogin()"
                     />
                     <button
                         type="button"
@@ -103,10 +103,8 @@ export default {
                     alert(error.message);
                 });
         },
-        googleLogin() {
+        tryGoogleLogin() {
             window.location.href = "http://localhost:3000/login/google";
-
-            this.googleLogin().catch((err) => alert(err));
 
             if (this.token) {
                 setTimeout(() => {
@@ -122,13 +120,6 @@ export default {
                 }, 3600000);
             }
         },
-    },
-
-    mounted() {
-        const token = new URL(window.location.href).searchParams.get("token");
-        if (token) {
-            this.setToken(token);
-        }
     },
 };
 </script>

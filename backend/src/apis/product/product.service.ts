@@ -100,6 +100,7 @@ export class ProductService {
 
     async findAll(findProductsInput: FindProductsInput): Promise<Product[]> {
         const { userId, categoryName } = findProductsInput;
+        console.log("userId가 뭘로 왔을까? ", userId);
 
         const where = {};
         if (userId) {
@@ -136,12 +137,12 @@ export class ProductService {
 
             if (foundProduct == undefined) throw new NotFoundException("등록된 상품이 아닙니다.");
 
-            let productCategoryResult = {};
+            let productCategory = {};
             if (categoryName != undefined) {
-                const productCategory = await this.productCategoryService.findOne(foundProduct.productCategory.categoryName);
+                productCategory = await this.productCategoryService.findOne(categoryName);
 
                 if (!productCategory) {
-                    productCategoryResult = await this.productCategoryService.create(
+                    productCategory = await this.productCategoryService.create(
                         {
                             categoryName,
                         },
@@ -177,6 +178,7 @@ export class ProductService {
             const result = await queryRunner.manager.save(Product, {
                 ...foundProduct,
                 ...product,
+                productCategory,
                 productTags: tags,
             });
 
