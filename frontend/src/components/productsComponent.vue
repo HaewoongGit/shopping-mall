@@ -63,11 +63,6 @@ export default {
     beforeMount() {
         this.ratingSave();
     },
-
-    beforeRouteEnter(to, from, next) {
-        this.ratingSave();
-        next();
-    },
 };
 </script>
 

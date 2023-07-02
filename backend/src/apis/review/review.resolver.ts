@@ -14,11 +14,11 @@ import { FindReviewsInput } from "./dto/findReviews.input";
 export class ReviewResolver {
     constructor(private readonly reviewService: ReviewService) {}
 
-    @Query(() => Review)
+    @Query(() => Review, { nullable: true })
     fetchReview(
         @Args("findOneReviewInput")
         findOneReviewInput: FindOneReviewInput
-    ): Promise<Review> {
+    ): Promise<Review | null> {
         return this.reviewService.findOne(findOneReviewInput);
     }
 

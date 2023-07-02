@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Review } from "./entities/review.entity";
@@ -15,15 +15,21 @@ export class ReviewService {
         private readonly reviewRepository: Repository<Review>
     ) {}
 
-    async findOne(findOneReviewInput: FindOneReviewInput): Promise<Review> {
+    async findOne(findOneReviewInput: FindOneReviewInput): Promise<Review | null> {
         const { productId, userId } = findOneReviewInput;
-        return await this.reviewRepository
+        console.log(productId, userId);
+
+        const result = await this.reviewRepository
             .createQueryBuilder("review")
             .leftJoinAndSelect("review.product", "reviewProduct")
             .leftJoinAndSelect("review.user", "reviewUser")
             .where("reviewProduct.productId = :productId", { productId })
             .andWhere("reviewuser.userId = :userId", { userId })
             .getOne();
+
+        console.log(result);
+
+        return result;
     }
 
     async find(findReviewsInput: FindReviewsInput): Promise<Review[]> {
@@ -48,6 +54,8 @@ export class ReviewService {
                 .where("reviewProduct.productId = :productId", { productId })
                 .getMany();
         } else if (userId && !productId) {
+            console.log("이거 실행됐음?");
+
             result = await this.reviewRepository
                 .createQueryBuilder("review")
                 .leftJoinAndSelect("review.product", "reviewProduct")
@@ -60,10 +68,15 @@ export class ReviewService {
                 relations: ["product", "user", "product.files"],
             });
         }
+
+        console.log("findReviews의 결과: ", result);
+
         return result;
     }
 
     async create(createReviewInput: CreateReviewInput, userId: string): Promise<Review> {
+        console.log(createReviewInput, userId);
+
         const { productId, reviewContent, rating } = createReviewInput;
         const isData = await this.findOne({
             productId,
@@ -72,17 +85,21 @@ export class ReviewService {
 
         if (isData) throw new ConflictException("이미 해당 상품의 리뷰가 존재합니다.");
 
-        await this.reviewRepository.save({
+        const createResult = await this.reviewRepository.save({
             product: { productId },
             user: { userId },
             reviewContent,
             rating,
         });
 
+        if (!createResult) throw new InternalServerErrorException("리뷰 데이터 생성 실패");
+
         const result = await this.findOne({
             productId,
             userId,
         });
+
+        if (!result) throw new NotFoundException("리뷰를 생성했으나 조회가 되지 않습니다.");
 
         return result;
     }

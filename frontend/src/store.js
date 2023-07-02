@@ -40,11 +40,16 @@ const store = createStore({
             orderList: [],
             user: {},
             userId: "",
-            productForReview: {}
+            productForReview: {},
+            review: {}
         };
     },
 
     mutations: {
+        setReview(state, review) {
+            state.review = review;
+        },
+
         setProductForReview(state, productForReview) {
             state.productForReview = productForReview;
         },
@@ -59,7 +64,6 @@ const store = createStore({
 
         setUserId(state, userId) {
             state.userId = userId;
-            console.log("유저아이디가 ", userId, "로 세팅됨!");
         },
 
         setProducts(state, products) {
@@ -87,7 +91,6 @@ const store = createStore({
 
     actions: {
         async loadProducts({ commit }, { userId = '', categoryName = '' }) {
-            console.log("actions에서 받은 userId:", userId);
             try {
                 const result = await apolloClient.query({
                     query: gql`
@@ -337,7 +340,6 @@ const store = createStore({
         },
 
         async cartChange(_, { productId, quantity }) {
-            console.log('cartChange called');
             try {
                 await apolloClient.mutate({
                     mutation: gql`
@@ -364,7 +366,6 @@ const store = createStore({
         },
 
         async cartDelete(_, productId) {
-            console.log('cartDelete called');
             try {
                 await apolloClient.mutate({
                     mutation: gql`
@@ -382,7 +383,6 @@ const store = createStore({
         },
 
         async signIn({ commit }, { email, password }) {
-            console.log("signIn 호출됨");
             try {
                 const result = await apolloClient.mutate({
                     mutation: gql`
@@ -470,8 +470,8 @@ const store = createStore({
                         }
                     }`,
                     variables: {},
+                    fetchPolicy: 'no-cache',
                 });
-                console.log(result.data.fetchLoginUser);
                 commit('setUser', result.data.fetchLoginUser);
                 commit('setUserId', result.data.fetchLoginUser.userId);
             } catch (error) {
@@ -596,11 +596,44 @@ const store = createStore({
         },
 
         async reviewRegist(_, { productId, reviewContent, rating }) {
+            console.log("reviewRegist확인", productId, reviewContent, rating);
             try {
                 await apolloClient.mutate({
                     mutation: gql`
                     mutation($productId: String!, $reviewContent: String!, $rating: Int!) {
                         createReview(createReviewInput:{
+                            productId: $productId
+                            reviewContent: $reviewContent
+                            rating: $rating
+                        }) {
+                            user {
+                                userId
+                            }
+                            product {
+                                productId
+                            }
+                            reviewContent
+                            rating
+                        }
+                    }`,
+                    variables: {
+                        productId,
+                        reviewContent,
+                        rating
+                    }
+                });
+                return "success"
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+
+        async reviewUpdate(_, { productId, reviewContent, rating }) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($productId: String!, $reviewContent: String!, $rating: Int!) {
+                        updateReview(updateReviewInput:{
                             productId: $productId
                             reviewContent: $reviewContent
                             rating: $rating
@@ -642,7 +675,8 @@ const store = createStore({
                     }`,
                     variables: {
                         productId
-                    }
+                    },
+                    fetchPolicy: 'no-cache',
                 })
                 return result.data.fetchReviews;
             } catch (error) {
@@ -652,7 +686,6 @@ const store = createStore({
 
         async loadProductReviews(_, productId) {
             try {
-                console.log("productId: ", productId);
                 const result = await apolloClient.query({
                     query: gql`
                     query($productId: String) {
@@ -674,9 +707,69 @@ const store = createStore({
                     }`,
                     variables: {
                         productId
-                    }
+                    },
+                    fetchPolicy: 'no-cache',
                 })
                 return result.data.fetchReviews;
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async loadMyReviews(context) {
+            const userId = context.state.userId;
+            console.log("loadMyReviews에서 userId: ", userId);
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query($userId: String) {
+                        fetchReviews(
+                            findReviewsInput: {
+                                userId: $userId
+                            }
+                        ){
+                            user {
+                                userId
+                                userName
+                            }
+                            product {
+                                productId
+                                productName
+                                files {
+                                    fileName
+                                    fileURL
+                                }
+                            }
+                            reviewContent
+                            rating
+                            createdAt
+                        }
+                    }`,
+                    variables: {
+                        userId
+                    },
+                    fetchPolicy: 'no-cache',
+                })
+                return result.data.fetchReviews;
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async reviewDelete(_, productId) {
+            try {
+                await apolloClient.mutate({
+                    mutation: gql`
+                        mutation($productId: String!) {
+                            deleteReview(deleteReviewInput: {
+                                productId: $productId
+                            })
+                        }
+                    `,
+                    variables: {
+                        productId
+                    }
+                });
             } catch (error) {
                 throw new Error(error.message);
             }

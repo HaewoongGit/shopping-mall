@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h1 class="my-3 font-weight-bold">등록한 상품</h1>
+        <h2 class="my-3 font-weight-bold">등록한 상품</h2>
 
         <div v-if="products.length === 0" class="text-center">
             <h2>Empty</h2>
@@ -73,9 +73,13 @@ export default {
         },
     },
 
-    beforeMount() {
-        console.log(this.userId);
-        this.loadProducts({ userId: this.userId });
+    watch: {
+        userId: {
+            handler(newUserId) {
+                this.loadProducts({ userId: newUserId });
+            },
+            immediate: true,
+        },
     },
 };
 </script>

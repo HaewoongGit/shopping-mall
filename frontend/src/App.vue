@@ -52,7 +52,7 @@
                     <li class="nav-item">
                         <a
                             v-if="token.length !== 0"
-                            @click="$router.push('/user-info')"
+                            @click="$router.push('/userInfo')"
                             class="nav-link active"
                             style="cursor: pointer"
                             aria-current="page"

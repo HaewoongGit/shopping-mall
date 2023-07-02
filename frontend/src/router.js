@@ -11,6 +11,7 @@ import myInformationComponent from "./components/myInformationComponent";
 import UserInfoComponent from "./components/UserInfoComponent";
 import RegisteredProductsComponent from "./components/RegisteredProductsComponent";
 import RegisteredReviewsComponent from "./components/RegisteredReviewsComponent";
+import updateReviewComponent from "./components/updateReviewComponent";
 
 const routes = [{
     path: "/",
@@ -44,21 +45,25 @@ const routes = [{
     path: "/my-info",
     component: myInformationComponent,
     children: [{
-        path: "/user-info",
+        path: "/userInfo",
         component: UserInfoComponent
     },
     {
-        path: "/registered-products",
+        path: "/registeredProducts",
         component: RegisteredProductsComponent
     },
     {
-        path: "/registered-reviews",
+        path: "/registeredReviews",
         component: RegisteredReviewsComponent
     },
     {
         path: "/updateProduct",
         component: updateProductComponent
     },
+    {
+        path: "/updateReview",
+        component: updateReviewComponent
+    }
     ]
 }
 ];

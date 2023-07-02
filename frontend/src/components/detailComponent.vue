@@ -160,8 +160,6 @@ export default {
 
         await this.ratingSave();
         this.reviews = await this.loadProductReviews(this.product.productId);
-
-        console.log("마운트가 실행되는지 볼까요?");
     },
 };
 </script>

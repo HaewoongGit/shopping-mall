@@ -98,7 +98,6 @@ export default {
         },
 
         cartChangeAndList(productId, quantity) {
-            console.log("cartChangeAndList called");
             this.cartChange({ productId, quantity })
                 .then((response) => {
                     if (response === "success") this.loadCartList();
@@ -109,12 +108,9 @@ export default {
         },
 
         cartDeleteAndList(productId) {
-            console.log("cartDeleteAndList called");
             this.cartDelete(productId)
                 .then((response) => {
-                    console.log("cartDelete resolved");
                     if (response === "success") {
-                        console.log("calling loadCartList");
                         this.loadCartList();
                     }
                 })

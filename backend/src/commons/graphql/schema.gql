@@ -54,6 +54,7 @@ type Product {
 }
 
 type Dibs {
+  dibsId: String!
   user: User!
   product: Product!
   createdAt: DateTime!
@@ -65,6 +66,7 @@ type LoginResponse {
 }
 
 type Review {
+  reviewId: String!
   user: User!
   product: Product!
   reviewContent: String!
@@ -92,6 +94,7 @@ enum POINT_TRANSACTION_STATUS_ENUM {
 }
 
 type Cart {
+  cartId: String!
   user: User!
   product: Product!
   quantity: Int!
@@ -121,7 +124,7 @@ type Query {
   fetchProducts(findProductsInput: FindProductsInput!): [Product!]!
   fetchProductTag(productTagId: String!): ProductTag!
   fetchProductTags: [ProductTag!]!
-  fetchReview(findOneReviewInput: FindOneReviewInput!): Review!
+  fetchReview(findOneReviewInput: FindOneReviewInput!): Review
   fetchReviews(findReviewsInput: FindReviewsInput!): [Review!]!
   fetchPayments: [Payment!]!
   fetchCart(findOneCartInput: FindOneCartInput!): Cart!
