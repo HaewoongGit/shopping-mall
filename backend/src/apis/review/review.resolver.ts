@@ -49,7 +49,7 @@ export class ReviewResolver {
         @Context()
         context: IContext
     ): Promise<Review> {
-        return this.reviewService.update(updateReviewInput, context.req.user.userId);
+        return this.reviewService.update(updateReviewInput);
     }
 
     @UseGuards(GqlAuthGuard("access"))

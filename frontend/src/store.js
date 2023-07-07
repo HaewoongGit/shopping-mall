@@ -41,11 +41,21 @@ const store = createStore({
             user: {},
             userId: "",
             productForReview: {},
-            review: {}
+            review: {},
+            dibs: {},
+            dibses: []
         };
     },
 
     mutations: {
+        setDibs(state, dibs) {
+            state.dibs = dibs;
+        },
+
+        setDibses(state, dibses) {
+            state.dibses = dibses;
+        },
+
         setReview(state, review) {
             state.review = review;
         },
@@ -200,8 +210,10 @@ const store = createStore({
                     },
                 });
                 if (Object.prototype.hasOwnProperty.call(response.data, 'errors')) {
-                    throw new Error('로그인 인증이 되지 않습니다.')
+                    throw new Error(response.data.errors[0].message)
                 }
+
+                return response;
             } catch (error) {
                 if (error.response) {
                     console.log("서버에서 반환하는 에러메세지: ", error.response.data);
@@ -409,11 +421,10 @@ const store = createStore({
         },
 
         async signUp(_, { email, password, phoneNumber, age, userName }) {
-            age = parseInt(age);
             try {
                 await apolloClient.mutate({
                     mutation: gql`
-                    mutation($email: String!, $password: String!, $phoneNumber: String!, $age: Int!, $userName: String!) {
+                    mutation($email: String!, $password: String!, $phoneNumber: String!, $age: Int, $userName: String!) {
                         createUser(
                             createUserInput: {
                                 email: $email
@@ -437,6 +448,11 @@ const store = createStore({
                 });
                 return "success";
             } catch (error) {
+                console.log(error);
+                if (error.networkError && error.networkError.result) {
+                    const messages = error.networkError.result.message;
+                    throw new Error(messages);
+                }
                 throw new Error(error.message);
             }
         },
@@ -497,13 +513,14 @@ const store = createStore({
                             password,
                             phoneNumber,
                             userName,
-                            age
+                            age: age || null
                         },
                     },
                 });
                 return "success";
             } catch (error) {
-                throw new Error(error.message);
+                const errorMessage = error.extensions ? error.extensions.response.message : error.message;
+                throw new Error(errorMessage);
             }
         },
 
@@ -596,7 +613,6 @@ const store = createStore({
         },
 
         async reviewRegist(_, { productId, reviewContent, rating }) {
-            console.log("reviewRegist확인", productId, reviewContent, rating);
             try {
                 await apolloClient.mutate({
                     mutation: gql`
@@ -628,28 +644,22 @@ const store = createStore({
             }
         },
 
-        async reviewUpdate(_, { productId, reviewContent, rating }) {
+        async reviewUpdate(_, { reviewId, reviewContent, rating }) {
             try {
                 await apolloClient.mutate({
                     mutation: gql`
-                    mutation($productId: String!, $reviewContent: String!, $rating: Int!) {
+                    mutation($reviewId: String!, $reviewContent: String!, $rating: Int!) {
                         updateReview(updateReviewInput:{
-                            productId: $productId
+                            reviewId: $reviewId
                             reviewContent: $reviewContent
                             rating: $rating
                         }) {
-                            user {
-                                userId
-                            }
-                            product {
-                                productId
-                            }
                             reviewContent
                             rating
                         }
                     }`,
                     variables: {
-                        productId,
+                        reviewId,
                         reviewContent,
                         rating
                     }
@@ -718,7 +728,6 @@ const store = createStore({
 
         async loadMyReviews(context) {
             const userId = context.state.userId;
-            console.log("loadMyReviews에서 userId: ", userId);
             try {
                 const result = await apolloClient.query({
                     query: gql`
@@ -728,6 +737,10 @@ const store = createStore({
                                 userId: $userId
                             }
                         ){
+                            reviewId
+                            reviewContent
+                            rating
+                            createdAt
                             user {
                                 userId
                                 userName
@@ -740,9 +753,6 @@ const store = createStore({
                                     fileURL
                                 }
                             }
-                            reviewContent
-                            rating
-                            createdAt
                         }
                     }`,
                     variables: {
@@ -770,6 +780,100 @@ const store = createStore({
                         productId
                     }
                 });
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async dibsOn({ commit }, productId) {
+            try {
+                const result = await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($productId: String!) {
+                        createDibs(productId: $productId) {
+                            isDibs
+                        }
+                    }`,
+                    variables: {
+                        productId
+                    }
+                });
+                commit('setDibs', result.data.createDibs);
+                return "success";
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+
+        async loadDibs({ commit }, productId) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query($productId: String!) {
+                        fetchDibs(
+                            productId: $productId
+                        ){
+                            isDibs
+                        }
+                    }`,
+                    variables: {
+                        productId
+                    },
+                    fetchPolicy: 'no-cache',
+                })
+                commit('setDibs', result.data.fetchDibs);
+
+                return "success";
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async loadDibses({ commit }) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query {
+                        fetchDibses {
+                            product {
+                                productId
+                                productName
+                                files {
+                                    fileURL
+                                }
+                            }
+                            isDibs
+                            createdAt
+                        }
+                    }`,
+                    fetchPolicy: 'no-cache',
+                })
+                commit('setDibses', result.data.fetchDibses);
+
+                return "success";
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        async updateDibs({ commit }, { productId, isDibs }) {
+            try {
+                const result = await apolloClient.mutate({
+                    mutation: gql`
+                    mutation($updateDibsInput: UpdateDibsInput!) {
+                        updateDibs(updateDibsInput: $updateDibsInput) {
+                            isDibs
+                        }   
+                    }`,
+                    variables: {
+                        updateDibsInput: {
+                            productId,
+                            isDibs
+                        },
+                    },
+                });
+                commit('setDibs', result.data.updateDibs);
+                return "success";
             } catch (error) {
                 throw new Error(error.message);
             }

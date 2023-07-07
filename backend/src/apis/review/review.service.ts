@@ -17,7 +17,6 @@ export class ReviewService {
 
     async findOne(findOneReviewInput: FindOneReviewInput): Promise<Review | null> {
         const { productId, userId } = findOneReviewInput;
-        console.log(productId, userId);
 
         const result = await this.reviewRepository
             .createQueryBuilder("review")
@@ -54,8 +53,6 @@ export class ReviewService {
                 .where("reviewProduct.productId = :productId", { productId })
                 .getMany();
         } else if (userId && !productId) {
-            console.log("이거 실행됐음?");
-
             result = await this.reviewRepository
                 .createQueryBuilder("review")
                 .leftJoinAndSelect("review.product", "reviewProduct")
@@ -68,8 +65,6 @@ export class ReviewService {
                 relations: ["product", "user", "product.files"],
             });
         }
-
-        console.log("findReviews의 결과: ", result);
 
         return result;
     }
@@ -104,21 +99,21 @@ export class ReviewService {
         return result;
     }
 
-    async update(updateReviewInput: UpdateReviewInput, userId: string): Promise<Review> {
-        const { productId, reviewContent, rating } = updateReviewInput;
-        const findData = await this.findOne({
-            productId,
-            userId,
+    async update(updateReviewInput: UpdateReviewInput): Promise<Review> {
+        const { reviewId, reviewContent, rating } = updateReviewInput;
+        const findData = await this.reviewRepository.findOne({
+            where: { reviewId },
         });
 
         if (!findData) throw new NotFoundException("해당하는 리뷰를 찾을 수 없습니다.");
 
         const result = await this.reviewRepository.save({
-            product: { productId },
-            user: { userId },
+            reviewId,
             reviewContent,
             rating,
         });
+
+        console.log(result);
 
         return result;
     }

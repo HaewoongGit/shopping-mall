@@ -31,9 +31,7 @@
             </div>
             <hr class="mb-4" />
             <div class="d-flex justify-content-center">
-                <button @click="submitReview(review.product.productId, reviewContent)" class="btn btn-primary">
-                    리뷰 변경
-                </button>
+                <button @click="submitReview(review.reviewId, reviewContent)" class="btn btn-primary">리뷰 변경</button>
             </div>
         </div>
     </div>
@@ -50,14 +48,15 @@ export default {
     },
     methods: {
         ...mapActions(["reviewUpdate"]),
-        submitReview(productId, reviewContent) {
+        submitReview(reviewId, reviewContent) {
             if (this.rating === 0) {
                 alert("별점을 매겨주세요!");
                 return;
             }
-            this.reviewUpdate({ productId, reviewContent, rating: this.rating })
+            this.reviewUpdate({ reviewId, reviewContent, rating: this.rating })
                 .then((response) => {
                     if (response === "success") alert("리뷰 변경 완료");
+                    this.$router.push("/registeredReviews");
                 })
                 .catch((error) => {
                     alert(error.message);

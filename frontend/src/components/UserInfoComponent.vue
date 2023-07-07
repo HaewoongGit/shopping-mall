@@ -65,15 +65,10 @@
 
             <div class="form-group d-flex mb-3">
                 <label for="age" class="mr-3" style="width: 25%">나이</label>
-                <input
-                    v-model="age"
-                    @input="validateAge()"
-                    type="number"
-                    class="form-control"
-                    id="age"
-                    :placeholder="user.age"
-                    style="width: 75%"
-                />
+                <select v-model.number="age" class="form-control" id="age" style="width: 75%">
+                    <option value="">선택하세요</option>
+                    <option v-for="n in 150" :key="n" :value="n">{{ n }}</option>
+                </select>
             </div>
         </form>
     </div>
@@ -106,29 +101,18 @@ export default {
                 return;
             }
 
+            const age = this.age === "" ? null : this.age;
+
             this.userInfoChange({
                 password: this.password,
                 phoneNumber: this.phoneNumber,
                 userName: this.userName,
-                age: this.age,
+                age,
             })
                 .then(() => alert("변경 완료"))
                 .catch((err) => {
                     alert(err);
                 });
-        },
-
-        validateAge() {
-            const parsedAge = parseInt(this.age);
-            if (isNaN(parsedAge)) {
-                this.age = "";
-                alert("숫자를 입력해주세요!");
-            }
-
-            if (parsedAge < 1) {
-                this.age = "";
-                alert("0보다 큰 숫자를 입력하세요.");
-            }
         },
     },
 

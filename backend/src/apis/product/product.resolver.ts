@@ -5,7 +5,7 @@ import { Product } from "./entities/product.entity";
 import { CreateProductInput } from "./dto/createProduct.input";
 import { FindProductsInput } from "./dto/findProducts.input";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
-import { UseGuards } from "@nestjs/common";
+import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { IContext } from "src/commons/interfaces/context";
 
 @Resolver()

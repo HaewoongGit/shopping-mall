@@ -7,9 +7,10 @@ import { Product } from "../product/entities/product.entity";
 import { ProductTag } from "../productTag/entities/productTag.entity";
 import { UserModule } from "../user/user.module";
 import { User } from "../user/entities/user.entity";
+import { ProductModule } from "../product/product.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Cart, Product, ProductTag, User]), UserModule],
+    imports: [TypeOrmModule.forFeature([Cart, Product, ProductTag, User]), UserModule, ProductModule],
     providers: [CartResolver, CartService],
     exports: [CartService],
 })

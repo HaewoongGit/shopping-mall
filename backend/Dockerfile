@@ -1,10 +1,10 @@
 # Dockerfile
 
 FROM node:18
-WORKDIR /campmoa/
-COPY ./package.json /campmoa/
-COPY ./yarn.lock /campmoa/
+WORKDIR /shopping-mall/
+COPY ./package.json /shopping-mall/
+COPY ./yarn.lock /shopping-mall/
 RUN yarn install
 
-COPY . /campmoa/
+COPY . /shopping-mall/
 CMD yarn start:dev

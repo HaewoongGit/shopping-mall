@@ -1,6 +1,6 @@
 # docker-compose.yaml
 
-version: '3.7'
+version: "3.7"
 
 services:
   campmoa-backend:
@@ -12,10 +12,10 @@ services:
     ports:
       - 3000:3000
 
-  campmoa-database:
-    image: mysql:latest
-    ports:
-      - 3306:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: campmoa
+    docker-database:
+        image: mysql:latest
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: 1234
+            MYSQL_DATABASE: shopping-mall

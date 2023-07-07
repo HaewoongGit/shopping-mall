@@ -7,8 +7,8 @@
         "
     >
         <div class="card h-100 d-flex flex-row">
-            <img :src="product.files[0].fileURL" alt="product image" id="product-image" style="border-radius: 5px" />
-            <div class="card-body d-flex flex-column justify-content-center">
+            <img :src="product.files[0].fileURL" alt="product image" id="product-image" />
+            <div class="card-body d-flex flex-column justify-content-center ms-3">
                 <h5 class="card-title">{{ product.productName }}</h5>
                 <span v-if="rating !== 0" class="mb-3"
                     ><font-awesome-icon icon="star" style="color: rgb(226, 0, 0)" /> {{ rating }}</span
@@ -68,8 +68,8 @@ export default {
 
 <style scoped>
 #product-image {
-    width: 280px;
     height: 230px;
-    object-fit: contain;
+    width: auto;
+    border-radius: 5px;
 }
 </style>

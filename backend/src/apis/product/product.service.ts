@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
 import { Product } from "./entities/product.entity";
@@ -31,6 +31,11 @@ export class ProductService {
         await queryRunner.startTransaction("READ COMMITTED");
 
         const { categoryName, productTags, file, ...product } = createProductInput;
+
+        console.log("file의 내용: ", file);
+        console.log("file의 타입: ", typeof file);
+        // console.log("filePromise의 타입: ", typeof filePromise);
+        console.log("file.createReadStream의 타입", typeof file.createReadStream);
 
         try {
             const user = await this.userService.findOneByEmail({ email });
@@ -80,10 +85,14 @@ export class ProductService {
             return result;
         } catch (error) {
             await queryRunner.rollbackTransaction();
-            await this.fileService.deleteFile(file.filename);
+
+            let fileObj = await file;
+            await this.fileService.deleteFile(fileObj.filename);
             if (error instanceof NotFoundException) {
                 throw error;
             }
+
+            throw new InternalServerErrorException(error);
         } finally {
             await queryRunner.release();
         }
@@ -100,7 +109,6 @@ export class ProductService {
 
     async findAll(findProductsInput: FindProductsInput): Promise<Product[]> {
         const { userId, categoryName } = findProductsInput;
-        console.log("userId가 뭘로 왔을까? ", userId);
 
         const where = {};
         if (userId) {

@@ -69,29 +69,33 @@
                                 type="tel"
                                 class="form-control"
                                 id="phoneNumber"
-                                placeholder="010-xxxx-xxxx"
+                                placeholder="'-'없이 입력하세요."
                                 style="width: 75%"
                             />
                         </div>
 
                         <div class="form-group d-flex mb-3">
                             <label for="age" class="mr-3" style="width: 25%">나이</label>
-                            <input
-                                v-model="age"
-                                @input="validateAge"
-                                type="text"
-                                class="form-control"
-                                id="age"
-                                placeholder="나이를 입력하세요."
-                                style="width: 75%"
-                            />
+                            <select v-model.number="age" class="form-control" id="age" style="width: 75%">
+                                <option value="">선택하세요</option>
+                                <option v-for="n in 150" :key="n" :value="n">{{ n }}</option>
+                            </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                     <button
-                        @click="signUpAndClose({ email, age, phoneNumber, userName, password, confirmPassword })"
+                        @click="
+                            signUpAndClose({
+                                email,
+                                age,
+                                phoneNumber,
+                                userName,
+                                password,
+                                confirmPassword,
+                            })
+                        "
                         type="button"
                         class="btn btn-primary"
                     >
@@ -124,6 +128,9 @@ export default {
                 alert("비밀번호가 다릅니다.");
                 return;
             }
+
+            obj.age = obj.age === "" ? null : this.age;
+
             this.signUp(obj)
                 .then((res) => {
                     if (res === "success") {
@@ -135,18 +142,6 @@ export default {
                 .catch((error) => {
                     alert(error.message);
                 });
-        },
-        validateAge() {
-            const parsedAge = parseInt(this.age);
-            if (isNaN(parsedAge)) {
-                this.age = "";
-                alert("숫자를 입력해주세요!");
-            }
-
-            if (parsedAge < 1) {
-                this.age = "";
-                alert("0보다 큰 숫자를 입력하세요.");
-            }
         },
     },
 };

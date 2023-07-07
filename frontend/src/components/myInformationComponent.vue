@@ -13,6 +13,9 @@
                         <router-link to="/registeredReviews" class="list-group-item list-group-item-action" exact
                             >등록한 리뷰</router-link
                         >
+                        <router-link to="/registeredDibses" class="list-group-item list-group-item-action" exact
+                            >찜한 상품</router-link
+                        >
                     </div>
                 </div>
                 <div class="col-9">

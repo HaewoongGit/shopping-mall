@@ -2,7 +2,7 @@
 
 import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { User } from "./entities/user.entity";
-import { UseGuards } from "@nestjs/common";
+import { BadRequestException, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { IContext } from "src/commons/interfaces/context";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { CreateUserInput } from "./dto/createUser.input";
@@ -36,12 +36,28 @@ export class UserResolver {
         return this.userService.findOne(email);
     }
 
+    @UsePipes(
+        new ValidationPipe({
+            exceptionFactory: (errors) => {
+                const messages = errors.map((error) => Object.values(error.constraints).join(", "));
+                return new BadRequestException(messages.join(" "));
+            },
+        })
+    )
     @Mutation(() => User)
     createUser(@Args("createUserInput") createUserInput: CreateUserInput): Promise<User> {
         return this.userService.create(createUserInput);
     }
 
     @UseGuards(GqlAuthGuard("access"))
+    @UsePipes(
+        new ValidationPipe({
+            exceptionFactory: (errors) => {
+                const messages = errors.map((error) => Object.values(error.constraints).join(", "));
+                return new BadRequestException(messages.join(" "));
+            },
+        })
+    )
     @Mutation(() => User)
     updateUser(@Args("updateUserInput") updateUserInput: UpdateUserInput, @Context() context: IContext): Promise<User> {
         return this.userService.update(updateUserInput, context.req.user.userId);

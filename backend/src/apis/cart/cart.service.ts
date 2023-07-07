@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueryRunner, Repository } from "typeorm";
 import { Cart } from "./entities/cart.entity";
@@ -8,12 +8,15 @@ import { DeleteCartInput } from "./dto/deleteCart.input";
 import { FindOneCartInput } from "./dto/findOneCart.input";
 import { UpdateCartInput } from "./dto/updateCart.input";
 import { IContext } from "src/commons/interfaces/context";
+import { ProductService } from "../product/product.service";
 
 @Injectable()
 export class CartService {
     constructor(
         @InjectRepository(Cart)
-        private readonly cartRepository: Repository<Cart>
+        private readonly cartRepository: Repository<Cart>,
+
+        private readonly productService: ProductService
     ) {}
 
     async findOne(findOneCartInput: FindOneCartInput): Promise<Cart> {
@@ -81,6 +84,10 @@ export class CartService {
     async update(updateCartInput: UpdateCartInput, context: IContext): Promise<Cart> {
         const { productId, quantity } = updateCartInput;
 
+        const productCheck = await this.productService.findOne(productId);
+
+        if (!productCheck) throw new NotFoundException("해당 제품을 찾을 수 없습니다.");
+
         const result = await this.cartRepository.save({
             product: {
                 productId,
@@ -95,7 +102,7 @@ export class CartService {
     }
 
     async delete(productId: string, context: IContext): Promise<boolean> {
-        const result = await this.cartRepository.softDelete({
+        const result = await this.cartRepository.delete({
             product: { productId },
             user: { userId: context.req.user.userId },
         });
@@ -104,7 +111,7 @@ export class CartService {
     }
 
     async deleteForTransaction(userId: string, queryRunner: QueryRunner): Promise<boolean> {
-        const result = await queryRunner.manager.getRepository(Cart).softDelete({
+        const result = await queryRunner.manager.getRepository(Cart).delete({
             user: { userId },
         });
 

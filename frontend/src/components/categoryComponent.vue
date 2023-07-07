@@ -1,5 +1,5 @@
 <template>
-    <div class="wrap" style="background-color: #eff5fb">
+    <div class="wrap">
         <div class="form-group row mb-4" id="category">
             <label for="categorySelect" class="col-form-label w-25">카테고리</label>
             <select
@@ -64,8 +64,8 @@ export default {
 }
 
 .wrap {
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    /* border: 1px solid #ccc;
+    border-radius: 5px; */
     padding: 10px;
 }
 </style>

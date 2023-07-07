@@ -8,10 +8,11 @@ import reviewComponent from "./components/reviewComponent";
 import createProductComponent from "./components/createProductComponent";
 import updateProductComponent from "./components/updateProductComponent";
 import myInformationComponent from "./components/myInformationComponent";
-import UserInfoComponent from "./components/UserInfoComponent";
-import RegisteredProductsComponent from "./components/RegisteredProductsComponent";
-import RegisteredReviewsComponent from "./components/RegisteredReviewsComponent";
+import userInfoComponent from "./components/userInfoComponent";
+import registeredProductsComponent from "./components/registeredProductsComponent";
+import registeredReviewsComponent from "./components/registeredReviewsComponent";
 import updateReviewComponent from "./components/updateReviewComponent";
+import registeredDibsesComponent from "./components/registeredDibsesComponent";
 
 const routes = [{
     path: "/",
@@ -46,15 +47,19 @@ const routes = [{
     component: myInformationComponent,
     children: [{
         path: "/userInfo",
-        component: UserInfoComponent
+        component: userInfoComponent
     },
     {
         path: "/registeredProducts",
-        component: RegisteredProductsComponent
+        component: registeredProductsComponent
     },
     {
         path: "/registeredReviews",
-        component: RegisteredReviewsComponent
+        component: registeredReviewsComponent
+    },
+    {
+        path: "/registeredDibses",
+        component: registeredDibsesComponent
     },
     {
         path: "/updateProduct",
@@ -63,7 +68,7 @@ const routes = [{
     {
         path: "/updateReview",
         component: updateReviewComponent
-    }
+    },
     ]
 }
 ];

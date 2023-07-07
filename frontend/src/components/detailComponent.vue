@@ -8,7 +8,19 @@
                 <div class="col-6 pl-3">
                     <div id="viewCount" class="text-end small">조회수 {{ product.hits }}</div>
 
-                    <h4 id="productName" class="text-start">{{ product.productName }}</h4>
+                    <!-- <h4 id="productName" class="text-start">{{ product.productName }}</h4> -->
+                    <h4 id="productName" class="d-flex justify-content-between align-items-center">
+                        <span>{{ product.productName }}</span>
+                        <span
+                            v-if="token.length !== 0"
+                            :style="{
+                                color: dibs !== null && dibs.isDibs ? 'red' : 'gray',
+                                cursor: 'pointer',
+                            }"
+                            @click="dibsClick()"
+                            >찜 <font-awesome-icon icon="fa-heart"
+                        /></span>
+                    </h4>
                     <span v-if="rating !== 0" class="mb-3"
                         ><font-awesome-icon icon="star" style="color: rgb(226, 0, 0)" /> {{ rating }}</span
                     >
@@ -123,10 +135,19 @@ export default {
         };
     },
     computed: {
-        ...mapState(["token", "product"]),
+        ...mapState(["token", "product", "dibs"]),
     },
     methods: {
-        ...mapActions(["cartRegist", "increaseHits", "loadProduct", "loadRating", "loadProductReviews"]),
+        ...mapActions([
+            "cartRegist",
+            "increaseHits",
+            "loadProduct",
+            "loadRating",
+            "loadProductReviews",
+            "loadDibs",
+            "dibsOn",
+            "updateDibs",
+        ]),
         ...mapMutations(["setWaitingListForPurchase"]),
         ratingSave() {
             this.loadRating(this.product.productId)
@@ -142,6 +163,20 @@ export default {
                     this.rating = parseFloat(result.toFixed(2));
                 })
                 .catch((err) => console.log(err));
+        },
+
+        async dibsClick() {
+            try {
+                if (this.dibs === null) {
+                    await this.dibsOn(this.product.productId);
+                } else if (this.dibs.isDibs === true) {
+                    await this.updateDibs({ productId: this.product.productId, isDibs: false });
+                } else {
+                    await this.updateDibs({ productId: this.product.productId, isDibs: true });
+                }
+            } catch (error) {
+                alert(error);
+            }
         },
     },
 
@@ -159,6 +194,7 @@ export default {
         }
 
         await this.ratingSave();
+        if (this.token.length !== 0) await this.loadDibs(this.product.productId);
         this.reviews = await this.loadProductReviews(this.product.productId);
     },
 };

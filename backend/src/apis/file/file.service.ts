@@ -30,12 +30,12 @@ export class FileService {
         const timestamp = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
         let publicURL = "";
 
-        let file;
-        if (filePromise instanceof Promise) {
-            file = await filePromise;
-        } else {
-            file = filePromise;
-        }
+        let file = await filePromise;
+
+        // console.log("file의 내용: ", file);
+        // console.log("file의 타입: ", typeof file);
+        // console.log("filePromise의 타입: ", typeof filePromise);
+        // console.log("file.createReadStream의 타입", typeof file.createReadStream);
 
         file.filename = emailAddress[0] + timestamp;
 
@@ -43,7 +43,7 @@ export class FileService {
         const bucketName = "shopping-mall";
         const storage = new Storage({
             projectId: "utility-operand-388205",
-            keyFilename: "/Users/lhw/Documents/GitHub/gcp-file-storage.json",
+            keyFilename: "./gcp-file-storage.json",
         }).bucket(bucketName);
 
         // 1-2) 스토리지에 파일 올리기
@@ -72,7 +72,7 @@ export class FileService {
         const bucketName = "shopping-mall";
         const storage = new Storage({
             projectId: "utility-operand-388205",
-            keyFilename: "/Users/lhw/Documents/GitHub/gcp-file-storage.json",
+            keyFilename: "./gcp-file-storage.json",
         }).bucket(bucketName);
 
         const file = storage.file(fileName);
@@ -96,7 +96,7 @@ export class FileService {
         const bucketName = "shopping-mall";
         const storage = new Storage({
             projectId: "utility-operand-388205",
-            keyFilename: "/Users/lhw/Documents/GitHub/gcp-file-storage.json",
+            keyFilename: "./gcp-file-storage.json",
         }).bucket(bucketName);
 
         const file = storage.file(fileName);

@@ -54,9 +54,9 @@ type Product {
 }
 
 type Dibs {
-  dibsId: String!
   user: User!
   product: Product!
+  isDibs: Boolean!
   createdAt: DateTime!
 }
 
@@ -94,7 +94,6 @@ enum POINT_TRANSACTION_STATUS_ENUM {
 }
 
 type Cart {
-  cartId: String!
   user: User!
   product: Product!
   quantity: Int!
@@ -118,8 +117,8 @@ type Query {
   fetchUser: String!
   fetchLoginUser: User!
   findUser(email: String!): User!
-  fetchDibs(findOneDibsInput: FindOneDibsInput!): Dibs!
-  fetchDibses(findDibsInput: FindDibsInput!): [Dibs!]!
+  fetchDibs(productId: String!): Dibs
+  fetchDibses(productId: String): [Dibs!]!
   fetchProduct(productId: String!): Product!
   fetchProducts(findProductsInput: FindProductsInput!): [Product!]!
   fetchProductTag(productTagId: String!): ProductTag!
@@ -130,16 +129,6 @@ type Query {
   fetchCart(findOneCartInput: FindOneCartInput!): Cart!
   fetchCarts(productId: String): [Cart!]!
   fetchOrderList: [OrderList!]!
-}
-
-input FindOneDibsInput {
-  productId: String!
-  userId: String!
-}
-
-input FindDibsInput {
-  productId: String
-  userId: String
 }
 
 input FindProductsInput {
@@ -167,8 +156,9 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
   updateUserPwd(updateUserPwdInput: UpdateUserPwdInput!): User!
   deleteLoginUser: Boolean!
-  createDibs(createDibsInput: CreateDibsInput!): Dibs!
-  deleteDibs(deleteDibsInput: DeleteDibsInput!): Boolean!
+  createDibs(productId: String!): Dibs!
+  updateDibs(updateDibsInput: UpdateDibsInput!): Dibs!
+  deleteDibs(productId: String!): Boolean!
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
   increaseHits(productId: String!): Product!
@@ -194,7 +184,7 @@ input CreateUserInput {
   password: String!
   phoneNumber: String!
   userName: String!
-  age: Int!
+  age: Int
 }
 
 input UpdateUserInput {
@@ -210,14 +200,9 @@ input UpdateUserPwdInput {
   phoneNumber: String!
 }
 
-input CreateDibsInput {
+input UpdateDibsInput {
   productId: String!
-  userId: String!
-}
-
-input DeleteDibsInput {
-  productId: String!
-  userId: String!
+  isDibs: Boolean!
 }
 
 input CreateProductInput {
@@ -249,7 +234,7 @@ input CreateReviewInput {
 }
 
 input UpdateReviewInput {
-  productId: String!
+  reviewId: String!
   reviewContent: String!
   rating: Int!
 }

@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h2 class="my-3 font-weight-bold">등록한 상품</h2>
+        <h2 class="text-center my-3 font-weight-bold">등록한 상품</h2>
 
         <div v-if="products.length === 0" class="text-center">
             <h2>Empty</h2>

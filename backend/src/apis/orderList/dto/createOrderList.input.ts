@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { IsPositive } from "class-validator";
+import { IsPositive, Min } from "class-validator";
 
 @InputType()
 export class CreateOrderListInput {
@@ -10,11 +10,11 @@ export class CreateOrderListInput {
     impUid: string;
 
     @Field(() => Int)
-    @IsPositive()
+    @Min(1, { message: "개수는 1 이상이어야 합니다." })
     orderQuantity: number;
 
     @Field(() => Int)
-    @IsPositive()
+    @Min(1, { message: "가격은 1 이상이어야 합니다." })
     price: number;
 
     @Field(() => String)

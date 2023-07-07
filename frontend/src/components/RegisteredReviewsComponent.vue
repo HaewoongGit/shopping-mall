@@ -1,11 +1,10 @@
 <template>
-    <div v-if="reviews.length === 0" class="text-center">
-        <h2>empty</h2>
-    </div>
-
-    <div v-else class="container">
+    <div class="container">
         <h2 class="text-center fw-bold my-5">리뷰 관리</h2>
-        <div v-for="review in reviews" :key="review.reviewContent" class="mb-5">
+        <div v-if="reviews.length === 0" class="text-center">
+            <h2>empty</h2>
+        </div>
+        <div v-else v-for="review in reviews" :key="review.reviewContent" class="mb-5">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <img

@@ -12,7 +12,7 @@ import { IsIn } from "class-validator";
 @InputType()
 export class UpdateReviewInput {
     @Field(() => String)
-    productId: string;
+    reviewId: string;
 
     @Field(() => String)
     reviewContent: string;
