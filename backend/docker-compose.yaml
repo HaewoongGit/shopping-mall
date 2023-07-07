@@ -3,14 +3,14 @@
 version: "3.7"
 
 services:
-  campmoa-backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./src:/campmoa/src
-    ports:
-      - 3000:3000
+    shopping-mall-backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./src:/shopping-mall/src
+        ports:
+            - 3000:3000
 
     docker-database:
         image: mysql:latest

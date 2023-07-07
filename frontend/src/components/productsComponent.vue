@@ -6,9 +6,12 @@
             $router.push(`/detail/${product.productId}`);
         "
     >
-        <div class="card h-100 d-flex flex-row">
-            <img :src="product.files[0].fileURL" alt="product image" id="product-image" />
-            <div class="card-body d-flex flex-column justify-content-center ms-3">
+        <div class="card h-100 d-flex flex-row" style="height: 300px; width: 600px">
+            <div class="d-flex justify-content-center align-items-center" style="width: 50%">
+                <img :src="product.files[0].fileURL" alt="product image" id="product-image" />
+            </div>
+
+            <div class="card-body d-flex flex-column justify-content-center ms-3" style="width: 50%">
                 <h5 class="card-title">{{ product.productName }}</h5>
                 <span v-if="rating !== 0" class="mb-3"
                     ><font-awesome-icon icon="star" style="color: rgb(226, 0, 0)" /> {{ rating }}</span
@@ -69,7 +72,7 @@ export default {
 <style scoped>
 #product-image {
     height: 230px;
-    width: auto;
+    max-width: 300px;
     border-radius: 5px;
 }
 </style>
