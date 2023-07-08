@@ -86,6 +86,11 @@ export default {
             let productTags = null;
             if (this.tags !== "") productTags = this.tags.split(",").map((tag) => "#" + tag.trim());
 
+            if (!this.categoryName) {
+                alert("카테고리를 지정하세요.");
+                return;
+            }
+
             this.productUpdate({
                 file: this.file,
                 productId: this.productId,

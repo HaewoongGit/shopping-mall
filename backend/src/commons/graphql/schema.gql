@@ -121,6 +121,7 @@ type Query {
   fetchDibses(productId: String): [Dibs!]!
   fetchProduct(productId: String!): Product!
   fetchProducts(findProductsInput: FindProductsInput!): [Product!]!
+  searchProducts(keyword: String!): [Product!]!
   fetchProductTag(productTagId: String!): ProductTag!
   fetchProductTags: [ProductTag!]!
   fetchReview(findOneReviewInput: FindOneReviewInput!): Review

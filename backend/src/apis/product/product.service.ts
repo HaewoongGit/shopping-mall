@@ -32,11 +32,6 @@ export class ProductService {
 
         const { categoryName, productTags, file, ...product } = createProductInput;
 
-        console.log("file의 내용: ", file);
-        console.log("file의 타입: ", typeof file);
-        // console.log("filePromise의 타입: ", typeof filePromise);
-        console.log("file.createReadStream의 타입", typeof file.createReadStream);
-
         try {
             const user = await this.userService.findOneByEmail({ email });
 
@@ -78,7 +73,14 @@ export class ProductService {
                 productTags: tags,
             });
 
-            await this.fileService.uploadFileForTransaction({ file, email, productId: result.productId, userId: user.userId }, queryRunner);
+            try {
+                const resolvedFile = await file;
+                await this.fileService.uploadFileForTransaction({ file: resolvedFile, email, productId: result.productId, userId: user.userId }, queryRunner);
+            } catch (error) {
+                console.log("파일 업로드 오류 발생: ", error);
+
+                throw new InternalServerErrorException("파일 업로드 오류 발생. 파일을 제대로 업로드 했는지 확인해주세요.");
+            }
 
             await queryRunner.commitTransaction();
 
@@ -86,16 +88,21 @@ export class ProductService {
         } catch (error) {
             await queryRunner.rollbackTransaction();
 
-            let fileObj = await file;
-            await this.fileService.deleteFile(fileObj.filename);
-            if (error instanceof NotFoundException) {
-                throw error;
-            }
-
-            throw new InternalServerErrorException(error);
+            throw error;
         } finally {
             await queryRunner.release();
         }
+    }
+
+    async search(keyword: string): Promise<Product[]> {
+        const result = this.productRepository
+            .createQueryBuilder("product")
+            .leftJoinAndSelect("product.productTags", "productTag")
+            .where("product.productName LIKE :keyword", { keyword: `%${keyword}%` })
+            .orWhere("productTag.tagName LIKE :keyword", { keyword: `%${keyword}%` })
+            .getMany();
+
+        return result;
     }
 
     async findOne(productId): Promise<Product> {
@@ -161,7 +168,7 @@ export class ProductService {
 
             let tags = [];
 
-            if (productTags !== undefined) {
+            if (productTags !== undefined && productTags !== null) {
                 const tagNames = productTags.map((elem) => elem.replace("#", ""));
                 const prevTags = await this.productTagService.findByNames(tagNames);
 
@@ -190,11 +197,17 @@ export class ProductService {
                 productTags: tags,
             });
 
-            if (file) {
-                await this.fileService.uploadFileForTransaction(
-                    { file, email: foundProduct.user.email, productId: result.productId, userId: foundProduct.user.userId },
+            try {
+                const resolvedFile = await file;
+                await this.fileService.updateFileForTransaction(
+                    { file: resolvedFile, email: foundProduct.user.email, productId: result.productId, userId: foundProduct.user.userId },
                     queryRunner
                 );
+            } catch (error) {
+                if (error.name !== "BadRequestError") {
+                    console.error("파일 업로드 에러 내용:", error);
+                    throw new InternalServerErrorException("파일 업로드 오류 발생. 파일을 확인해주세요.");
+                }
             }
 
             await queryRunner.commitTransaction();
@@ -202,14 +215,7 @@ export class ProductService {
             return result;
         } catch (error) {
             await queryRunner.rollbackTransaction();
-
-            if (file) {
-                await this.fileService.deleteFile(file.filename);
-            }
-
-            if (error instanceof NotFoundException) {
-                throw error;
-            }
+            throw error;
         } finally {
             await queryRunner.release();
         }

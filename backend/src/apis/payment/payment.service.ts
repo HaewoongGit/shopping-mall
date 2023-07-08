@@ -117,7 +117,7 @@ export class PaymentService {
             return payment;
         } catch (error) {
             await queryRunner.rollbackTransaction();
-            if (error instanceof NotFoundException || error instanceof InternalServerErrorException) throw error;
+            // if (error instanceof NotFoundException || error instanceof InternalServerErrorException) throw error;
 
             iamport.payment.cancel({
                 imp_uid: impUid,

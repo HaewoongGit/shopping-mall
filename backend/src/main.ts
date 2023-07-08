@@ -11,14 +11,15 @@ async function bootstrap() {
     //     credentials: true,
     // });
     app.useGlobalFilters(new HttpExceptionFilter());
-    // app.useGlobalPipes(
-    //     new ValidationPipe({
-    //         exceptionFactory: (errors) => {
-    //             const messages = errors.map((error) => Object.values(error.constraints).join(", "));
-    //             return new BadRequestException(messages.join(" "));
-    //         },
-    //     })
-    // );
+    app
+        .useGlobalPipes
+        // new ValidationPipe({
+        //     exceptionFactory: (errors) => {
+        //         const messages = errors.map((error) => Object.values(error.constraints).join(", "));
+        //         return new BadRequestException(messages.join(" "));
+        //     },
+        // })
+        ();
     app.use(graphqlUploadExpress());
     await app.listen(3000);
 }

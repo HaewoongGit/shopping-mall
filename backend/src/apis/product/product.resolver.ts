@@ -32,6 +32,11 @@ export class ProductResolver {
         return this.productService.findAll(findProductsInput);
     }
 
+    @Query(() => [Product])
+    searchProducts(@Args("keyword") keyword: string): Promise<Product[]> {
+        return this.productService.search(keyword);
+    }
+
     @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Product)
     updateProduct(

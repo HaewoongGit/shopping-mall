@@ -237,22 +237,21 @@ const store = createStore({
                 }));
                 formData.append("0", file);
 
-                const response = await axios.post('http://localhost:3000/graphql', formData, {
+                await axios.post('http://localhost:3000/graphql', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Apollo-Require-Preflight': 'true',
                         'Authorization': `Bearer ${this.state.token}`
                     },
+                }).then((response) => {
+                    if (response.data.errors) {
+                        console.error("GraphQL errors:", response.data.errors);
+                        throw new Error(response.data.errors[0].message);
+                    }
                 });
-                if (Object.prototype.hasOwnProperty.call(response.data, 'errors')) {
-                    throw new Error('로그인 인증이 되지 않습니다.')
-                }
             } catch (error) {
-                if (error.response) {
-                    console.log("서버에서 반환하는 에러메세지: ", error.response.data);
-                }
 
-                throw error.message;
+                throw new Error(error);
             }
         },
 
