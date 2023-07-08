@@ -97,6 +97,8 @@ export class ProductService {
     async search(keyword: string): Promise<Product[]> {
         const result = this.productRepository
             .createQueryBuilder("product")
+            .leftJoinAndSelect("product.files", "productFiles")
+            .leftJoinAndSelect("product.productCategory", "productCategory")
             .leftJoinAndSelect("product.productTags", "productTag")
             .where("product.productName LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("productTag.tagName LIKE :keyword", { keyword: `%${keyword}%` })

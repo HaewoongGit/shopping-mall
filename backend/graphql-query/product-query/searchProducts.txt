@@ -1,0 +1,22 @@
+query {
+  searchProducts(
+    keyword: "맥북"
+  ) {
+    productId
+    productName
+    description
+    price
+    isSoldOut
+    hits
+    files {
+      fileName
+      fileURL
+    }
+    productCategory {
+      categoryName
+    }
+    productTags {
+      tagName
+    }
+  }
+}

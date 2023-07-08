@@ -100,6 +100,43 @@ const store = createStore({
     },
 
     actions: {
+        async searchProducts({ commit }, keyword) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query($keyword: String!) {
+                        searchProducts(
+                            keyword: $keyword) {
+                           productId
+                            productName
+                            description
+                            price
+                            isSoldOut
+                            hits
+                            files {
+                                fileName
+                                fileURL
+                            }
+                            productCategory {
+                                categoryName   
+                            }
+                            productTags {
+                                tagName
+                            }
+                        }
+                    }`,
+                    variables: {
+                        keyword
+                    },
+                    fetchPolicy: 'no-cache',
+                });
+                commit('setProducts', result.data.searchProducts);
+            } catch (error) {
+                console.error("Failed to search products: ", error);
+                throw new Error(error.message);
+            }
+        },
+
         async loadProducts({ commit }, { userId = '', categoryName = '' }) {
             try {
                 const result = await apolloClient.query({

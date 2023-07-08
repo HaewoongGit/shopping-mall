@@ -7,14 +7,15 @@
         </div>
 
         <div v-else>
-            <div v-for="(groupedProducts, date) in groupedByDate" :key="date" class="card mb-3">
+            <div v-for="(groupedProducts, date) in groupedByDate" :key="date" class="card mb-5">
                 <div class="card-header">등록 날짜: {{ date }}</div>
 
                 <div class="card-body">
                     <div
                         v-for="product in groupedProducts"
                         :key="product.productId"
-                        class="d-flex align-items-center mb-2 justify-content-between"
+                        class="d-flex align-items-center mb-2 justify-content-between me-1"
+                        id="product"
                     >
                         <img :src="product.files[0].fileURL" class="product-image" alt="Product Image" />
                         <h5 class="ms-5">{{ product.productName }}</h5>
@@ -88,5 +89,11 @@ export default {
 .product-image {
     width: 200px;
     height: 170px;
+}
+
+#product {
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 5px;
+    padding: 5px;
 }
 </style>
