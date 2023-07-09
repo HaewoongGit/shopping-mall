@@ -77,7 +77,7 @@ export default {
     watch: {
         userId: {
             handler(newUserId) {
-                this.loadProducts({ userId: newUserId });
+                this.loadProducts({ userId: newUserId, page: 1 });
             },
             immediate: true,
         },

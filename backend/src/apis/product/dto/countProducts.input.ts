@@ -1,13 +1,10 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
-export class FindProductsInput {
+export class CountProductsInput {
     @Field(() => String, { nullable: true })
     userId?: string;
 
     @Field(() => String, { nullable: true })
     categoryName?: string;
-
-    @Field(() => Int)
-    page: number;
 }

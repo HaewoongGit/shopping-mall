@@ -3,7 +3,8 @@
         <div class="form-group row mb-4" id="category">
             <label for="categorySelect" class="col-form-label w-25">카테고리</label>
             <select
-                @change="loadProducts({ categoryName: $event.target.value })"
+                v-model="categoryName"
+                @change="handleCategoryChange($event)"
                 class="form-select w-75"
                 id="categorySelect"
             >
@@ -20,6 +21,24 @@
         <div class="d-flex flex-column align-items-center">
             <productsComponent v-for="(product, i) in products" :key="i" :product="product" :i="i" />
         </div>
+
+        <div class="d-flex justify-content-center">
+            <button @click="prevPage" :disabled="page === 1" class="btn btn-outline-primary me-2">
+                <font-awesome-icon icon="fa-solid fa-arrow-left" />
+            </button>
+            <button
+                v-for="n in pages"
+                :key="n"
+                @click="goToPage(n)"
+                class="btn btn-outline-primary me-1"
+                :class="{ active: n === page }"
+            >
+                {{ n }}
+            </button>
+            <button @click="nextPage" :disabled="page === maxPage" class="btn btn-outline-primary ms-2">
+                <font-awesome-icon icon="fa-solid fa-arrow-right" />
+            </button>
+        </div>
     </div>
 </template>
 
@@ -28,17 +47,62 @@ import productsComponent from "./productsComponent.vue";
 import { mapActions, mapMutations, mapState } from "vuex";
 export default {
     components: { productsComponent },
+    data() {
+        return {
+            page: 1,
+            maxPage: 10,
+            categoryName: "",
+            pages: [],
+        };
+    },
     computed: {
-        ...mapState(["products"]),
+        ...mapState(["products", "productsCount"]),
     },
 
     methods: {
-        ...mapActions(["loadProducts", "loadUser"]),
+        ...mapActions(["loadProducts", "loadUser", "loadProductsCount"]),
         ...mapMutations(["setToken"]),
+
+        async handleCategoryChange(event) {
+            const categoryName = event.target.value;
+            await this.loadProducts({ categoryName, page: 1 });
+            await this.loadProductsCount({ categoryName });
+            this.maxPage = Math.ceil(this.productsCount / 10);
+            this.pageButtons();
+        },
+
+        pageButtons() {
+            let start = this.page - 5;
+            if (start < 1) start = 1;
+            let end = start + 9;
+            if (end > this.maxPage) end = this.maxPage;
+            this.pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+        },
+
+        prevPage() {
+            if (this.page > 1) {
+                this.page--;
+                this.loadProducts({ categoryName: this.categoryName, page: this.page });
+            }
+        },
+        nextPage() {
+            if (this.page < this.maxPage) {
+                this.page++;
+                this.loadProducts({ categoryName: this.categoryName, page: this.page });
+            }
+        },
+        goToPage(n) {
+            this.page = n;
+            this.loadProducts({ categoryName: this.categoryName, page: this.page });
+        },
     },
 
-    beforeMount() {
-        this.loadProducts({});
+    async beforeMount() {
+        await this.loadProductsCount({});
+        await this.loadProducts({ page: 1 });
+        this.pageButtons();
+
+        this.maxPage = Math.ceil(this.productsCount / 10);
 
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -67,5 +131,10 @@ export default {
     /* border: 1px solid #ccc;
     border-radius: 5px; */
     padding: 10px;
+}
+
+.btn.active {
+    background-color: #0d6efd;
+    color: white;
 }
 </style>

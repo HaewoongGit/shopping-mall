@@ -122,6 +122,7 @@ type Query {
   fetchProduct(productId: String!): Product!
   fetchProducts(findProductsInput: FindProductsInput!): [Product!]!
   searchProducts(keyword: String!): [Product!]!
+  countProducts(countProductsInput: CountProductsInput!): Float!
   fetchProductTag(productTagId: String!): ProductTag!
   fetchProductTags: [ProductTag!]!
   fetchReview(findOneReviewInput: FindOneReviewInput!): Review
@@ -133,6 +134,12 @@ type Query {
 }
 
 input FindProductsInput {
+  userId: String
+  categoryName: String
+  page: Int!
+}
+
+input CountProductsInput {
   userId: String
   categoryName: String
 }

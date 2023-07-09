@@ -7,6 +7,7 @@ import { FindProductsInput } from "./dto/findProducts.input";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { IContext } from "src/commons/interfaces/context";
+import { CountProductsInput } from "./dto/countProducts.input";
 
 @Resolver()
 export class ProductResolver {
@@ -35,6 +36,11 @@ export class ProductResolver {
     @Query(() => [Product])
     searchProducts(@Args("keyword") keyword: string): Promise<Product[]> {
         return this.productService.search(keyword);
+    }
+
+    @Query(() => Number)
+    countProducts(@Args("countProductsInput") countProductsInput: CountProductsInput): Promise<number> {
+        return this.productService.count(countProductsInput);
     }
 
     @UseGuards(GqlAuthGuard("access"))

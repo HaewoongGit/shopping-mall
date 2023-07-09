@@ -43,11 +43,16 @@ const store = createStore({
             productForReview: {},
             review: {},
             dibs: {},
-            dibses: []
+            dibses: [],
+            productsCount: 0
         };
     },
 
     mutations: {
+        setProductsCount(state, productsCount) {
+            state.productsCount = productsCount;
+        },
+
         setDibs(state, dibs) {
             state.dibs = dibs;
         },
@@ -137,14 +142,15 @@ const store = createStore({
             }
         },
 
-        async loadProducts({ commit }, { userId = '', categoryName = '' }) {
+        async loadProducts({ commit }, { userId = '', categoryName = '', page }) {
             try {
                 const result = await apolloClient.query({
                     query: gql`
-                    query($userId: String, $categoryName: String) {
+                    query($userId: String, $categoryName: String, $page: Int!) {
                         fetchProducts(findProductsInput:{
                             userId: $userId
                             categoryName: $categoryName
+                            page: $page
                         }) {
                             productId
                             productName
@@ -175,13 +181,36 @@ const store = createStore({
                     }`,
                     variables: {
                         userId: userId || null,
-                        categoryName: categoryName || null
+                        categoryName: categoryName || null,
+                        page
                     },
                     fetchPolicy: 'no-cache',
                 });
                 commit('setProducts', result.data.fetchProducts);
             } catch (error) {
                 console.error("Failed to load products: ", error);
+            }
+        },
+
+        async loadProductsCount({ commit }, { userId = '', categoryName = '' }) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query($userId: String, $categoryName: String) {
+                        countProducts(countProductsInput:{
+                            userId: $userId
+                            categoryName: $categoryName
+                        }) 
+                    }`,
+                    variables: {
+                        userId: userId || null,
+                        categoryName: categoryName || null,
+                    },
+                    fetchPolicy: 'no-cache',
+                });
+                commit('setProductsCount', result.data.countProducts);
+            } catch (error) {
+                console.error("Failed to load productsCount: ", error);
             }
         },
 

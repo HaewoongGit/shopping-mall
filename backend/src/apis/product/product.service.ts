@@ -10,6 +10,7 @@ import { ProductCategoryService } from "../productCategory/productCategory.servi
 import { FindProductsInput } from "./dto/findProducts.input";
 import { ProductCategory } from "../productCategory/entities/productCategory.entity";
 import { FileService } from "../file/file.service";
+import { CountProductsInput } from "./dto/countProducts.input";
 
 @Injectable()
 export class ProductService {
@@ -117,7 +118,9 @@ export class ProductService {
     }
 
     async findAll(findProductsInput: FindProductsInput): Promise<Product[]> {
-        const { userId, categoryName } = findProductsInput;
+        const { userId, categoryName, page } = findProductsInput;
+        const take = 10;
+        const skip = (page - 1) * take;
 
         const where = {};
         if (userId) {
@@ -127,10 +130,35 @@ export class ProductService {
             where["productCategory"] = { categoryName };
         }
 
-        return await this.productRepository.find({
+        const result = await this.productRepository.find({
             where,
             relations: ["productCategory", "user", "productTags", "files"],
+            take,
+            skip,
         });
+
+        return result;
+    }
+
+    async count(countProductsInput: CountProductsInput) {
+        const { userId, categoryName } = countProductsInput;
+
+        const where = {};
+
+        if (userId) {
+            where["user"] = { userId };
+        }
+
+        if (categoryName) {
+            where["productCategory"] = { categoryName };
+        }
+
+        const result = await this.productRepository.count({
+            where,
+            relations: ["productCategory"],
+        });
+
+        return result;
     }
 
     async increaseHits(productId: string): Promise<Product> {
