@@ -27,8 +27,11 @@ export class DibsService {
         return result;
     }
 
-    async find(userId?: string, productId?: string): Promise<Dibs[]> {
+    async find(userId?: string, page: number = 1, productId?: string): Promise<Dibs[]> {
         let result = [];
+        const limit = 10;
+        const skip = (page - 1) * limit;
+
         if (productId && userId) {
             result = await this.dibsRepository
                 .createQueryBuilder("dibs")
@@ -37,6 +40,8 @@ export class DibsService {
                 .leftJoinAndSelect("dibs.user", "dibsUser")
                 .where("dibsProduct.productId = :productId", { productId })
                 .andWhere("dibsuser.userId = :userId", { userId })
+                .skip(skip)
+                .take(limit)
                 .getMany();
         } else if (productId) {
             result = await this.dibsRepository
@@ -45,6 +50,8 @@ export class DibsService {
                 .leftJoinAndSelect("dibsProduct.files", "productFiles")
                 .leftJoinAndSelect("dibs.user", "dibsUser")
                 .where("dibsProduct.productId = :productId", { productId })
+                .skip(skip)
+                .take(limit)
                 .getMany();
         } else if (userId) {
             result = await this.dibsRepository
@@ -53,12 +60,27 @@ export class DibsService {
                 .leftJoinAndSelect("dibsProduct.files", "productFiles")
                 .leftJoinAndSelect("dibs.user", "dibsuser")
                 .where("dibsuser.userId = :userId", { userId })
+                .skip(skip)
+                .take(limit)
                 .getMany();
         } else {
             result = await this.dibsRepository.find({
                 relations: ["product", "user", "product.files"],
+                skip,
+                take: limit,
             });
         }
+        return result;
+    }
+
+    async count(userId: string): Promise<number> {
+        const result = await this.dibsRepository
+            .createQueryBuilder("dibs")
+            .innerJoin("dibs.user", "user")
+            .where("user.userId = :userId", { userId })
+            .andWhere("dibs.isDibs = :isDibs", { isDibs: true })
+            .getCount();
+
         return result;
     }
 

@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { ProductService } from "./product.service";
 import { UpdateProductInput } from "./dto/updateProduct.input";
 import { Product } from "./entities/product.entity";
@@ -31,11 +31,6 @@ export class ProductResolver {
     @Query(() => [Product])
     fetchProducts(@Args("findProductsInput") findProductsInput: FindProductsInput): Promise<Product[]> {
         return this.productService.findAll(findProductsInput);
-    }
-
-    @Query(() => [Product])
-    searchProducts(@Args("keyword") keyword: string): Promise<Product[]> {
-        return this.productService.search(keyword);
     }
 
     @Query(() => Number)

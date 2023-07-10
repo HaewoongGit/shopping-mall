@@ -118,10 +118,10 @@ type Query {
   fetchLoginUser: User!
   findUser(email: String!): User!
   fetchDibs(productId: String!): Dibs
-  fetchDibses(productId: String): [Dibs!]!
+  fetchDibses(page: Int!, productId: String): [Dibs!]!
+  countDibses: Float!
   fetchProduct(productId: String!): Product!
   fetchProducts(findProductsInput: FindProductsInput!): [Product!]!
-  searchProducts(keyword: String!): [Product!]!
   countProducts(countProductsInput: CountProductsInput!): Float!
   fetchProductTag(productTagId: String!): ProductTag!
   fetchProductTags: [ProductTag!]!
@@ -136,12 +136,14 @@ type Query {
 input FindProductsInput {
   userId: String
   categoryName: String
+  keyword: String
   page: Int!
 }
 
 input CountProductsInput {
   userId: String
   categoryName: String
+  keyword: String
 }
 
 input FindOneReviewInput {

@@ -95,19 +95,6 @@ export class ProductService {
         }
     }
 
-    async search(keyword: string): Promise<Product[]> {
-        const result = this.productRepository
-            .createQueryBuilder("product")
-            .leftJoinAndSelect("product.files", "productFiles")
-            .leftJoinAndSelect("product.productCategory", "productCategory")
-            .leftJoinAndSelect("product.productTags", "productTag")
-            .where("product.productName LIKE :keyword", { keyword: `%${keyword}%` })
-            .orWhere("productTag.tagName LIKE :keyword", { keyword: `%${keyword}%` })
-            .getMany();
-
-        return result;
-    }
-
     async findOne(productId): Promise<Product> {
         const result = await this.productRepository.findOne({
             where: { productId },
@@ -118,45 +105,58 @@ export class ProductService {
     }
 
     async findAll(findProductsInput: FindProductsInput): Promise<Product[]> {
-        const { userId, categoryName, page } = findProductsInput;
+        const { userId, categoryName, keyword, page } = findProductsInput;
         const take = 10;
         const skip = (page - 1) * take;
 
-        const where = {};
+        const queryBuilder = this.productRepository.createQueryBuilder("product");
+        queryBuilder.leftJoinAndSelect("product.user", "user");
+        queryBuilder.leftJoinAndSelect("product.productCategory", "productCategory");
+        queryBuilder.leftJoinAndSelect("product.productTags", "productTag");
+        queryBuilder.leftJoinAndSelect("product.files", "productFiles");
+
         if (userId) {
-            where["user"] = { userId };
-        }
-        if (categoryName) {
-            where["productCategory"] = { categoryName };
+            queryBuilder.andWhere("user.userId = :userId", { userId });
         }
 
-        const result = await this.productRepository.find({
-            where,
-            relations: ["productCategory", "user", "productTags", "files"],
-            take,
-            skip,
-        });
+        if (categoryName) {
+            queryBuilder.andWhere("productCategory.categoryName = :categoryName", { categoryName });
+        }
+
+        if (keyword) {
+            queryBuilder.andWhere("(product.productName LIKE :keyword OR productTag.tagName LIKE :keyword)", { keyword: `%${keyword}%` });
+        }
+
+        queryBuilder.skip(skip);
+        queryBuilder.take(take);
+
+        const result = await queryBuilder.getMany();
 
         return result;
     }
 
-    async count(countProductsInput: CountProductsInput) {
-        const { userId, categoryName } = countProductsInput;
+    async count(countProductsInput: CountProductsInput): Promise<number> {
+        const { userId, categoryName, keyword } = countProductsInput;
 
-        const where = {};
+        const queryBuilder = this.productRepository.createQueryBuilder("product");
+
+        queryBuilder.leftJoin("product.user", "user");
+        queryBuilder.leftJoin("product.productCategory", "productCategory");
+        queryBuilder.leftJoin("product.productTags", "productTag");
 
         if (userId) {
-            where["user"] = { userId };
+            queryBuilder.andWhere("user.userId = :userId", { userId });
         }
 
         if (categoryName) {
-            where["productCategory"] = { categoryName };
+            queryBuilder.andWhere("productCategory.categoryName = :categoryName", { categoryName });
         }
 
-        const result = await this.productRepository.count({
-            where,
-            relations: ["productCategory"],
-        });
+        if (keyword) {
+            queryBuilder.andWhere("(product.productName LIKE :keyword OR productTag.tagName LIKE :keyword)", { keyword: `%${keyword}%` });
+        }
+
+        const result = await queryBuilder.getCount();
 
         return result;
     }

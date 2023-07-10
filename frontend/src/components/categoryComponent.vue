@@ -51,22 +51,30 @@ export default {
         return {
             page: 1,
             maxPage: 10,
-            categoryName: "",
             pages: [],
         };
     },
     computed: {
-        ...mapState(["products", "productsCount"]),
+        ...mapState(["products", "productsCount", "keyword", "categoryName"]),
+        localCategoryName: {
+            get() {
+                return this.categoryName; // Vuex 상태를 반환
+            },
+            set(value) {
+                this.setCategoryName(value); // Vuex 상태를 업데이트
+            },
+        },
     },
 
     methods: {
         ...mapActions(["loadProducts", "loadUser", "loadProductsCount"]),
-        ...mapMutations(["setToken"]),
+        ...mapMutations(["setToken", "setCategoryName"]),
 
         async handleCategoryChange(event) {
-            const categoryName = event.target.value;
-            await this.loadProducts({ categoryName, page: 1 });
-            await this.loadProductsCount({ categoryName });
+            this.localCategoryName = event.target.value;
+            const categoryInput = event.target.value;
+            await this.loadProducts({ categoryName: categoryInput, keyword: this.keyword, page: 1 });
+            await this.loadProductsCount({ categoryName: categoryInput, keyword: this.keyword });
             this.maxPage = Math.ceil(this.productsCount / 10);
             this.pageButtons();
         },
@@ -82,37 +90,27 @@ export default {
         prevPage() {
             if (this.page > 1) {
                 this.page--;
-                this.loadProducts({ categoryName: this.categoryName, page: this.page });
+                this.loadProducts({ categoryName: this.categoryName, keyword: this.keyword, page: this.page });
             }
         },
         nextPage() {
             if (this.page < this.maxPage) {
                 this.page++;
-                this.loadProducts({ categoryName: this.categoryName, page: this.page });
+                this.loadProducts({ categoryName: this.categoryName, keyword: this.keyword, page: this.page });
             }
         },
         goToPage(n) {
             this.page = n;
-            this.loadProducts({ categoryName: this.categoryName, page: this.page });
+            this.loadProducts({ categoryName: this.categoryName, keyword: this.keyword, page: this.page });
         },
     },
 
     async beforeMount() {
-        await this.loadProductsCount({});
-        await this.loadProducts({ page: 1 });
-        this.pageButtons();
+        await this.loadProductsCount({ keyword: this.keyword });
+        await this.loadProducts({ keyword: this.keyword, page: 1 });
 
         this.maxPage = Math.ceil(this.productsCount / 10);
-
-        window.onload = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get("token");
-
-            if (token) {
-                this.setToken(token);
-                this.loadUser();
-            }
-        };
+        this.pageButtons();
     },
 };
 </script>

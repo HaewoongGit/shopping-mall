@@ -2,7 +2,13 @@
     <!-- 상단바 코드 -->
     <nav class="navbar navbar-expand-lg bg-topBar">
         <div class="container-fluid">
-            <a class="navbar-brand" @click="$router.push('/')" style="cursor: pointer"
+            <a
+                class="navbar-brand"
+                @click="
+                    keywordReset();
+                    $router.push('/');
+                "
+                style="cursor: pointer"
                 ><img src="./assets/shopping.png" width="30" height="30" /> 아는 사람만 아는 스토어</a
             >
 
@@ -106,7 +112,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import logoutModal from "./components/logoutModal.vue";
 import logInModal from "./components/logInModal.vue";
 import signupModal from "./components/signupModal.vue";
@@ -114,23 +120,35 @@ import signupModal from "./components/signupModal.vue";
 export default {
     name: "App",
 
-    data() {
-        return {
-            keyword: "",
-        };
-    },
     components: { logoutModal, logInModal, signupModal },
     computed: {
         ...mapState(["token"]),
     },
     methods: {
-        ...mapActions(["searchProducts"]),
+        ...mapMutations(["setToken", "setKeyword", "setCategoryName"]),
+        ...mapActions(["loadProducts", "loadUser"]),
 
         searchAndResult(keyword) {
-            this.searchProducts(keyword).catch((err) => {
+            this.setCategoryName("");
+            this.setKeyword(keyword);
+            this.loadProducts({ keyword, page: 1 }).catch((err) => {
                 alert(err);
             });
         },
+
+        keywordReset() {
+            this.setKeyword("");
+        },
+    },
+
+    beforeMount() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
+
+        if (token) {
+            this.setToken(token);
+            this.loadUser();
+        }
     },
 };
 </script>

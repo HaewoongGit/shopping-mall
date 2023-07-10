@@ -36,6 +36,24 @@
                     </div>
                 </div>
             </div>
+
+            <div class="d-flex justify-content-center">
+                <button @click="prevPage" :disabled="page === 1" class="btn btn-outline-primary me-2">
+                    <font-awesome-icon icon="fa-solid fa-arrow-left" />
+                </button>
+                <button
+                    v-for="n in pages"
+                    :key="n"
+                    @click="goToPage(n)"
+                    class="btn btn-outline-primary me-1"
+                    :class="{ active: n === page }"
+                >
+                    {{ n }}
+                </button>
+                <button @click="nextPage" :disabled="page === maxPage" class="btn btn-outline-primary ms-2">
+                    <font-awesome-icon icon="fa-solid fa-arrow-right" />
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -44,8 +62,15 @@
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
+    data() {
+        return {
+            page: 1,
+            maxPage: 10,
+            pages: [],
+        };
+    },
     computed: {
-        ...mapState(["userId", "products"]),
+        ...mapState(["userId", "products", "productsCount"]),
         groupedByDate() {
             return this.products.reduce((groups, product) => {
                 const date = product.createdAt.split("T")[0];
@@ -59,7 +84,7 @@ export default {
     },
 
     methods: {
-        ...mapActions(["loadProducts", "productDelete"]),
+        ...mapActions(["loadProducts", "productDelete", "loadProductsCount"]),
         ...mapMutations(["setProduct"]),
 
         productDeleteAndResult(productId) {
@@ -72,6 +97,31 @@ export default {
                     alert(err);
                 });
         },
+
+        pageButtons() {
+            let start = this.page - 5;
+            if (start < 1) start = 1;
+            let end = start + 9;
+            if (end > this.maxPage) end = this.maxPage;
+            this.pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+        },
+
+        prevPage() {
+            if (this.page > 1) {
+                this.page--;
+                this.loadProducts({ userId: this.userId, page: this.page });
+            }
+        },
+        nextPage() {
+            if (this.page < this.maxPage) {
+                this.page++;
+                this.loadProducts({ userId: this.userId, page: this.page });
+            }
+        },
+        goToPage(n) {
+            this.page = n;
+            this.loadProducts({ userId: this.userId, page: this.page });
+        },
     },
 
     watch: {
@@ -81,6 +131,13 @@ export default {
             },
             immediate: true,
         },
+    },
+
+    async beforeMount() {
+        await this.loadProductsCount({ userId: this.userId });
+        await this.loadProducts({ userId: this.userId, page: 1 });
+        this.maxPage = Math.ceil(this.productsCount / 10);
+        this.pageButtons();
     },
 };
 </script>

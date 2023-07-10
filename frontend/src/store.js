@@ -44,11 +44,22 @@ const store = createStore({
             review: {},
             dibs: {},
             dibses: [],
-            productsCount: 0
+            productsCount: 0,
+            dibsesCount: 0,
+            keyword: "",
+            categoryName: ""
         };
     },
 
     mutations: {
+        setCategoryName(state, categoryName) {
+            state.categoryName = categoryName;
+        },
+
+        setKeyword(state, keyword) {
+            state.keyword = keyword;
+        },
+
         setProductsCount(state, productsCount) {
             state.productsCount = productsCount;
         },
@@ -101,55 +112,22 @@ const store = createStore({
         },
         setOrderList(state, orderList) {
             state.orderList = orderList
+        },
+        setDibsesCount(state, dibsesCount) {
+            state.dibsesCount = dibsesCount
         }
     },
 
     actions: {
-        async searchProducts({ commit }, keyword) {
+        async loadProducts({ commit }, { userId = '', categoryName = '', keyword = '', page }) {
             try {
                 const result = await apolloClient.query({
                     query: gql`
-                    query($keyword: String!) {
-                        searchProducts(
-                            keyword: $keyword) {
-                           productId
-                            productName
-                            description
-                            price
-                            isSoldOut
-                            hits
-                            files {
-                                fileName
-                                fileURL
-                            }
-                            productCategory {
-                                categoryName   
-                            }
-                            productTags {
-                                tagName
-                            }
-                        }
-                    }`,
-                    variables: {
-                        keyword
-                    },
-                    fetchPolicy: 'no-cache',
-                });
-                commit('setProducts', result.data.searchProducts);
-            } catch (error) {
-                console.error("Failed to search products: ", error);
-                throw new Error(error.message);
-            }
-        },
-
-        async loadProducts({ commit }, { userId = '', categoryName = '', page }) {
-            try {
-                const result = await apolloClient.query({
-                    query: gql`
-                    query($userId: String, $categoryName: String, $page: Int!) {
+                    query($userId: String, $categoryName: String, $keyword: String,$page: Int!) {
                         fetchProducts(findProductsInput:{
                             userId: $userId
                             categoryName: $categoryName
+                            keyword: $keyword
                             page: $page
                         }) {
                             productId
@@ -182,6 +160,7 @@ const store = createStore({
                     variables: {
                         userId: userId || null,
                         categoryName: categoryName || null,
+                        keyword: keyword || null,
                         page
                     },
                     fetchPolicy: 'no-cache',
@@ -192,19 +171,21 @@ const store = createStore({
             }
         },
 
-        async loadProductsCount({ commit }, { userId = '', categoryName = '' }) {
+        async loadProductsCount({ commit }, { userId = '', categoryName = '', keyword = '' }) {
             try {
                 const result = await apolloClient.query({
                     query: gql`
-                    query($userId: String, $categoryName: String) {
+                    query($userId: String, $categoryName: String, $keyword: String) {
                         countProducts(countProductsInput:{
                             userId: $userId
                             categoryName: $categoryName
+                            keyword: $keyword
                         }) 
                     }`,
                     variables: {
                         userId: userId || null,
                         categoryName: categoryName || null,
+                        keyword: keyword || null
                     },
                     fetchPolicy: 'no-cache',
                 });
@@ -894,12 +875,14 @@ const store = createStore({
             }
         },
 
-        async loadDibses({ commit }) {
+        async loadDibses({ commit }, page) {
             try {
                 const result = await apolloClient.query({
                     query: gql`
-                    query {
-                        fetchDibses {
+                    query($page: Int!) {
+                        fetchDibses(
+                            page: $page
+                        ) {
                             product {
                                 productId
                                 productName
@@ -911,6 +894,9 @@ const store = createStore({
                             createdAt
                         }
                     }`,
+                    variables: {
+                        page
+                    },
                     fetchPolicy: 'no-cache',
                 })
                 commit('setDibses', result.data.fetchDibses);
@@ -942,7 +928,22 @@ const store = createStore({
             } catch (error) {
                 throw new Error(error.message);
             }
-        }
+        },
+
+        async loadDibsesCount({ commit }) {
+            try {
+                const result = await apolloClient.query({
+                    query: gql`
+                    query {
+                        countDibses
+                    }`,
+                    fetchPolicy: 'no-cache',
+                });
+                commit('setDibsesCount', result.data.countDibses);
+            } catch (error) {
+                console.error("Failed to load countDibses: ", error);
+            }
+        },
     },
 });
 

@@ -8,6 +8,9 @@ export class FindProductsInput {
     @Field(() => String, { nullable: true })
     categoryName?: string;
 
+    @Field(() => String, { nullable: true })
+    keyword?: string;
+
     @Field(() => Int)
     page: number;
 }

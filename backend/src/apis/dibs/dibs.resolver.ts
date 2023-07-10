@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { DibsService } from "./dibs.service";
 import { Dibs } from "./entities/dibs.entity";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
@@ -18,8 +18,18 @@ export class DibsResolver {
 
     @UseGuards(GqlAuthGuard("access"))
     @Query(() => [Dibs])
-    fetchDibses(@Context() context: IContext, @Args("productId", { nullable: true }) productId?: string): Promise<Dibs[]> {
-        return this.dibsService.find(context.req.user.userId, productId);
+    fetchDibses(
+        @Context() context: IContext,
+        @Args("page", { type: () => Int }) page: number,
+        @Args("productId", { nullable: true }) productId?: string
+    ): Promise<Dibs[]> {
+        return this.dibsService.find(context.req.user.userId, page, productId);
+    }
+
+    @UseGuards(GqlAuthGuard("access"))
+    @Query(() => Number)
+    countDibses(@Context() context: IContext): Promise<number> {
+        return this.dibsService.count(context.req.user.userId);
     }
 
     @UseGuards(GqlAuthGuard("access"))
