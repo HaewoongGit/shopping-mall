@@ -71,7 +71,7 @@ export default {
         ...mapMutations(["setToken", "setCategoryName"]),
 
         async handleCategoryChange(event) {
-            this.localCategoryName = event.target.value;
+            this.localCategoryName = event.targe2t.value;
             const categoryInput = event.target.value;
             await this.loadProducts({ categoryName: categoryInput, keyword: this.keyword, page: 1 });
             await this.loadProductsCount({ categoryName: categoryInput, keyword: this.keyword });
