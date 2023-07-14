@@ -32,18 +32,18 @@ export class CartService {
             .getOne();
     }
 
-    async find(context: IContext, productId?: string): Promise<Cart[]> {
+    async find(userId?: string, productId?: string): Promise<Cart[]> {
         let result = [];
-        if (productId && context.req.user.userId) {
+        if (productId && userId) {
             result = await this.cartRepository
                 .createQueryBuilder("cart")
                 .leftJoinAndSelect("cart.product", "cartProduct")
                 .leftJoinAndSelect("cartProduct.files", "productFiles")
                 .leftJoinAndSelect("cart.user", "cartUser")
                 .where("cartProduct.productId = :productId", { productId })
-                .andWhere("cartUser.userId = :userId", { userId: context.req.user.userId })
+                .andWhere("cartUser.userId = :userId", { userId })
                 .getMany();
-        } else if (productId && !context.req.user.userId) {
+        } else if (productId && !userId) {
             result = await this.cartRepository
                 .createQueryBuilder("cart")
                 .leftJoinAndSelect("cart.product", "cartProduct")
@@ -51,13 +51,13 @@ export class CartService {
                 .leftJoinAndSelect("cart.user", "cartUser")
                 .where("cartProduct.productId = :productId", { productId })
                 .getMany();
-        } else if (context.req.user.userId && !productId) {
+        } else if (userId && !productId) {
             result = await this.cartRepository
                 .createQueryBuilder("cart")
                 .leftJoinAndSelect("cart.product", "cartProduct")
                 .leftJoinAndSelect("cartProduct.files", "productFiles")
                 .leftJoinAndSelect("cart.user", "cartUser")
-                .where("cartUser.userId = :userId", { userId: context.req.user.userId })
+                .where("cartUser.userId = :userId", { userId })
                 .getMany();
         } else {
             result = await this.cartRepository.find({
@@ -67,21 +67,21 @@ export class CartService {
         return result;
     }
 
-    async create(createCartInput: CreateCartInput, context: IContext): Promise<Cart> {
+    async create(createCartInput: CreateCartInput, userId: string): Promise<Cart> {
         const { productId, quantity } = createCartInput;
         await this.cartRepository.save({
             product: { productId },
-            user: { userId: context.req.user.userId },
+            user: { userId },
             quantity,
             deletedAt: null,
         });
 
-        const result = await this.findOne({ productId, userId: context.req.user.userId });
+        const result = await this.findOne({ productId, userId });
 
         return result;
     }
 
-    async update(updateCartInput: UpdateCartInput, context: IContext): Promise<Cart> {
+    async update(updateCartInput: UpdateCartInput, userId: string): Promise<Cart> {
         const { productId, quantity } = updateCartInput;
 
         const productCheck = await this.productService.findOne(productId);
@@ -93,7 +93,7 @@ export class CartService {
                 productId,
             },
             user: {
-                userId: context.req.user.userId,
+                userId,
             },
             quantity,
         });
@@ -101,10 +101,10 @@ export class CartService {
         return result;
     }
 
-    async delete(productId: string, context: IContext): Promise<boolean> {
+    async delete(productId: string, userId): Promise<boolean> {
         const result = await this.cartRepository.delete({
             product: { productId },
-            user: { userId: context.req.user.userId },
+            user: { userId },
         });
 
         return result.affected ? true : false;

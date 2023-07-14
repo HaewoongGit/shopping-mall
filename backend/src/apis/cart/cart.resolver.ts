@@ -22,19 +22,19 @@ export class CartResolver {
     @UseGuards(GqlAuthGuard("access"))
     @Query(() => [Cart])
     fetchCarts(@Context() context: IContext, @Args("productId", { nullable: true }) productId?: string): Promise<Cart[]> {
-        return this.cartService.find(context, productId);
+        return this.cartService.find(context.req.user.userId, productId);
     }
 
     @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Cart)
     createCart(@Args("createCartInput") createCartInput: CreateCartInput, @Context() context: IContext): Promise<Cart> {
-        return this.cartService.create(createCartInput, context);
+        return this.cartService.create(createCartInput, context.req.user.userId);
     }
 
     @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Cart)
     updateCart(@Args("updateCartInput") updateCartInput: UpdateCartInput, @Context() context: IContext): Promise<Cart> {
-        return this.cartService.update(updateCartInput, context);
+        return this.cartService.update(updateCartInput, context.req.user.userId);
     }
 
     @UseGuards(GqlAuthGuard("access"))

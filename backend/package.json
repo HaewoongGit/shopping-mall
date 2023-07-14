@@ -38,6 +38,7 @@
         "graphql": "^16.6.0",
         "graphql-upload": "13.0.0",
         "iamport": "^0.3.4",
+        "jest-mock-express": "^0.1.1",
         "mysql2": "^3.1.0",
         "passport": "^0.6.0",
         "passport-google-oauth20": "^2.0.0",
@@ -82,7 +83,7 @@
             "json",
             "ts"
         ],
-        "rootDir": "src",
+        "rootDir": ".",
         "testRegex": ".*\\.spec\\.ts$",
         "transform": {
             "^.+\\.(t|j)s$": "ts-jest"
@@ -91,6 +92,9 @@
             "**/*.(t|j)s"
         ],
         "coverageDirectory": "../coverage",
-        "testEnvironment": "node"
+        "testEnvironment": "node",
+        "moduleNameMapper": {
+            "^src/(.*)$": "<rootDir>/src/$1"
+        }
     }
 }
