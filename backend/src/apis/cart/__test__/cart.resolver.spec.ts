@@ -13,14 +13,15 @@ describe("CartResolver", () => {
             email: "testEmail@example.com",
             userId: "testUserId",
         },
-        headers: {},
+        headers: {
+            "x-custom-header": "custom value",
+        },
     };
 
     const context = {
         req: res.req,
         res,
     };
-    res.req.headers["x-custom-header"] = "custom value";
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -76,16 +77,8 @@ describe("CartResolver", () => {
             quantity: 1,
         });
 
-        expect(service.create).toHaveBeenCalledWith(
-            createCartInput,
-            expect.objectContaining({
-                req: expect.objectContaining({
-                    headers: expect.objectContaining({
-                        "x-custom-header": "custom value",
-                    }),
-                }),
-            })
-        );
+        expect(context.req.headers["x-custom-header"]).toEqual("custom value");
+        expect(service.create).toHaveBeenCalledWith(createCartInput, context.req.user.userId);
     });
 
     it("fetchCart", async () => {
@@ -114,7 +107,8 @@ describe("CartResolver", () => {
             },
         ]);
 
-        expect(service.find).toHaveBeenCalledWith(context, productId);
+        expect(context.req.headers["x-custom-header"]).toEqual("custom value");
+        expect(service.find).toHaveBeenCalledWith(context.req.user.userId, productId);
     });
 
     it("updateCart", async () => {
@@ -128,30 +122,13 @@ describe("CartResolver", () => {
             productName: "상품",
         });
 
-        expect(service.update).toHaveBeenCalledWith(
-            updateCartInput,
-            expect.objectContaining({
-                req: expect.objectContaining({
-                    headers: expect.objectContaining({
-                        "x-custom-header": "custom value",
-                    }),
-                }),
-            })
-        );
+        expect(context.req.headers["x-custom-header"]).toEqual("custom value");
+        expect(service.update).toHaveBeenCalledWith(updateCartInput, context.req.user.userId);
     });
 
     it("deleteCart", async () => {
         expect(await resolver.deleteCart(productId, context)).toEqual(true);
-
-        expect(service.delete).toHaveBeenCalledWith(
-            productId,
-            expect.objectContaining({
-                req: expect.objectContaining({
-                    headers: expect.objectContaining({
-                        "x-custom-header": "custom value",
-                    }),
-                }),
-            })
-        );
+        expect(context.req.headers["x-custom-header"]).toEqual("custom value");
+        expect(service.delete).toHaveBeenCalledWith(productId, context.req.user.userId);
     });
 });

@@ -101,7 +101,7 @@ export class CartService {
         return result;
     }
 
-    async delete(productId: string, userId): Promise<boolean> {
+    async delete(productId: string, userId: string): Promise<boolean> {
         const result = await this.cartRepository.delete({
             product: { productId },
             user: { userId },

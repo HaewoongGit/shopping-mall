@@ -40,6 +40,6 @@ export class CartResolver {
     @UseGuards(GqlAuthGuard("access"))
     @Mutation(() => Boolean)
     deleteCart(@Args("productId") productId: string, @Context() context: IContext): Promise<boolean> {
-        return this.cartService.delete(productId, context);
+        return this.cartService.delete(productId, context.req.user.userId);
     }
 }
