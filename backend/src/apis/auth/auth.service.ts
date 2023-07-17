@@ -1,3 +1,5 @@
+// auth.service.ts
+
 import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import {
@@ -44,7 +46,7 @@ export class AuthService {
 
         const token = await this.getAccessToken({ user });
         await this.setRefreshToken({ user, res });
-        res.redirect(`http://localhost:8080/?token=${token}`);
+        res.redirect(`http://localhost:3000/?token=${token}`);
 
         return user;
     }
@@ -56,15 +58,7 @@ export class AuthService {
     setRefreshToken({ user, res }: IAuthServiceSetRefreshToken): void {
         const refreshToken = this.jwtService.sign({ email: user.email, sub: user.userId }, { secret: process.env.JWT_REFRESH_KEY, expiresIn: "2w" });
 
-        // 개발환경
-        // res.setHeader("Set-Cookie", `refreshToken=${refreshToken}; path=/;`);
-
-        // 배포환경
-        // res.setHeader("set-Cookie", `refreshToken=${refreshToken}; path=/; SameSite=None; Secure; httpOnly`); // domain=.mybacksite.com; 제거
-        // res.setHeader("Access-Control-Allow-Origin", "http://locahost:8080");
-
         res.setHeader("Set-Cookie", `refreshToken=${refreshToken}; path=/;`);
-        // res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
     }
 
     getAccessToken({ user }: IAuthServiceGetAccessToken): string {

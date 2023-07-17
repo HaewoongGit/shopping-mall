@@ -4,5 +4,6 @@ module.exports = defineConfig({
 });
 
 module.exports = {
-    outputDir: "../back/public",
+    productionSourceMap: false,
+    outputDir: "../backend/public",
 };
