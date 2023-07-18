@@ -39,7 +39,7 @@ describe("DibsResolver", () => {
         service = module.get<DibsService>(DibsService);
     });
 
-    it("dibs init", () => {
+    it("dibsResolver init", () => {
         expect(resolver).toBeDefined();
     });
 

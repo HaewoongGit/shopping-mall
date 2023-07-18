@@ -13,6 +13,6 @@ export class OrderListResolver {
     @UseGuards(GqlAuthGuard("access"))
     @Query(() => [OrderList])
     fetchOrderList(@Context() context: IContext): Promise<OrderList[]> {
-        return this.orderListService.find(context);
+        return this.orderListService.find(context.req.user.userId);
     }
 }

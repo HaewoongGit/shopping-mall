@@ -12,10 +12,10 @@ export class OrderListService {
         private readonly orderListRepository: Repository<OrderList>
     ) {}
 
-    async find(context: IContext): Promise<OrderList[]> {
+    async find(userId: string): Promise<OrderList[]> {
         const orderList = await this.orderListRepository.find({
             withDeleted: true,
-            where: { user: { userId: context.req.user.userId } },
+            where: { user: { userId } },
             relations: ["product", "user", "payment", "product.files"],
         });
 
