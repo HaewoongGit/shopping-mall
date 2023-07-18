@@ -44,9 +44,9 @@ export class PaymentService {
         private readonly dataSource: DataSource
     ) {}
 
-    async find(context: IContext): Promise<Payment[]> {
+    async find(userId: string): Promise<Payment[]> {
         const payments = await this.paymentRepository.find({
-            where: { user: { userId: context.req.user.userId } },
+            where: { user: { userId } },
             relations: ["user"],
         });
 

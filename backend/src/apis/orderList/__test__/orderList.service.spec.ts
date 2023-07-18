@@ -50,12 +50,12 @@ describe("OrderListService", () => {
         repository = module.get<Repository<OrderList>>(getRepositoryToken(OrderList));
     });
 
-    it("should be defined", () => {
+    it("orderList init", () => {
         expect(service).toBeDefined();
     });
 
     describe("find", () => {
-        it("should return an array of order lists", async () => {
+        it("", async () => {
             mockRepository.find.mockResolvedValue(orderListArray);
             const result = await service.find(userId);
             expect(result).toEqual(orderListArray);
@@ -63,7 +63,7 @@ describe("OrderListService", () => {
     });
 
     describe("createForTransaction", () => {
-        it("should create and return an order list", async () => {
+        it("", async () => {
             mockRepository.create.mockReturnValue(orderList);
             mockRepository.save.mockResolvedValue(orderList);
 
@@ -84,7 +84,7 @@ describe("OrderListService", () => {
     });
 
     describe("deleteForTransaction", () => {
-        it("should delete an order list and return true", async () => {
+        it("", async () => {
             mockRepository.softDelete.mockResolvedValue({ affected: 1 });
 
             const result = await service.deleteForTransaction(impUid, mockQueryRunner);

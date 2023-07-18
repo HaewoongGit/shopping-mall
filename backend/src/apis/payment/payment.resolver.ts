@@ -13,7 +13,7 @@ export class PaymentResolver {
     @UseGuards(GqlAuthGuard("access"))
     @Query(() => [Payment])
     fetchPayments(@Context() context: IContext): Promise<Payment[]> {
-        return this.paymentService.find(context);
+        return this.paymentService.find(context.req.user.userId);
     }
 
     @UseGuards(GqlAuthGuard("access"))
