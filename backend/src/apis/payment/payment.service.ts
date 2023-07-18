@@ -23,6 +23,8 @@ async function verifyPayment(impUid, expectedAmount) {
     }
 
     if (paymentData.amount !== expectedAmount) {
+        console.log("얼만데 씨발", paymentData.amount, expectedAmount);
+
         throw new NotFoundException("결제 금액이 일치하지 않습니다.");
     }
 
@@ -116,6 +118,7 @@ export class PaymentService {
 
             return payment;
         } catch (error) {
+            console.error(error);
             await queryRunner.rollbackTransaction();
             // if (error instanceof NotFoundException || error instanceof InternalServerErrorException) throw error;
 
@@ -148,6 +151,7 @@ export class PaymentService {
 
             return (await result).affected;
         } catch (error) {
+            console.error(error);
             await queryRunner.rollbackTransaction();
             if (error instanceof InternalServerErrorException) throw error;
         } finally {
