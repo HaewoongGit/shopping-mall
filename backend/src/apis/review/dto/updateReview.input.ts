@@ -2,13 +2,6 @@ import { Field, InputType, Int, OmitType } from "@nestjs/graphql";
 import { CreateReviewInput } from "./createReview.input";
 import { IsIn } from "class-validator";
 
-// @InputType()
-// export class UpdateReviewInput extends OmitType(
-//     CreateReviewInput,
-//     [],
-//     InputType,
-// ) {}
-
 @InputType()
 export class UpdateReviewInput {
     @Field(() => String)

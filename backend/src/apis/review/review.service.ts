@@ -70,8 +70,6 @@ export class ReviewService {
     }
 
     async create(createReviewInput: CreateReviewInput, userId: string): Promise<Review> {
-        console.log(createReviewInput, userId);
-
         const { productId, reviewContent, rating } = createReviewInput;
         const isData = await this.findOne({
             productId,
@@ -80,21 +78,14 @@ export class ReviewService {
 
         if (isData) throw new ConflictException("이미 해당 상품의 리뷰가 존재합니다.");
 
-        const createResult = await this.reviewRepository.save({
+        const result = await this.reviewRepository.save({
             product: { productId },
             user: { userId },
             reviewContent,
             rating,
         });
 
-        if (!createResult) throw new InternalServerErrorException("리뷰 데이터 생성 실패");
-
-        const result = await this.findOne({
-            productId,
-            userId,
-        });
-
-        if (!result) throw new NotFoundException("리뷰를 생성했으나 조회가 되지 않습니다.");
+        if (!result) throw new InternalServerErrorException("리뷰 데이터 생성 실패");
 
         return result;
     }
@@ -112,8 +103,6 @@ export class ReviewService {
             reviewContent,
             rating,
         });
-
-        console.log(result);
 
         return result;
     }
