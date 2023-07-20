@@ -11,6 +11,8 @@ services:
             - ./src:/shopping-mall/src
         ports:
             - 3000:3000
+        env_file:
+            - .env.docker
 
     docker-database:
         image: mysql:latest
