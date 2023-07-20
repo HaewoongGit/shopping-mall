@@ -143,7 +143,7 @@ describe("DibsService", () => {
             const productId = "testProductId";
             const userId = "testUserId";
 
-            jest.spyOn(repo, "save").mockResolvedValue(undefined);
+            jest.spyOn(repo, "save").mockResolvedValue(testDibs);
             jest.spyOn(service, "findOne").mockResolvedValue(testDibs);
 
             expect(await service.create(productId, userId)).toEqual(testDibs);
