@@ -7,12 +7,12 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        volumes:
-            - ./src:/shopping-mall/src
+        # volumes:
+        #     - ./src:/shopping-mall/src
         ports:
             - 3000:3000
         env_file:
-            - .env.docker
+            - .env.prod
 
     # docker-database:
     #     image: mysql:latest
