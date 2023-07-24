@@ -78,7 +78,8 @@
 
 ## 프로젝트 아키텍처
 
-![프로젝트 아키텍처](https://github.com/HaewoongGit/shopping-mall/assets/107612118/c3e311e2-445f-48e9-8426-b85a7c1bca72)
+![프로젝트 아키텍처](https://github.com/HaewoongGit/shopping-mall/assets/107612118/d98e774b-15f1-427c-a2ee-9d8c9a673dec)
+
 
 <br>
 
