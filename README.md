@@ -64,10 +64,8 @@
 | `apollo-link-http` | `^1.5.17` | 네트워크 인터페이스로 HTTP를 사용하는 GraphQL 연결을 생성 |
 | `axios` | `^1.2.2` | HTTP 통신을 위한 Promise 기반의 라이브러리 |
 | `bootstrap` | `^5.2.3` | 웹사이트 디자인을 쉽게 만들 수 있도록 돕는 CSS 프레임워크 |
-| `core-js` | `^3.8.3` | ECMAScript의 새로운 기능을 구형 JavaScript 엔진에서 사용 가능하게 하는 모듈 |
 | `graphql` | `15.8.0` | GraphQL 쿼리 및 스키마 정의를 위한 JavaScript 라이브러리 |
 | `graphql-tag` | `^2.12.6` | GraphQL 쿼리를 JavaScript에서 파싱하는 데 사용되는 라이브러리 |
-| `jquery` | `^3.6.0` | JavaScript 라이브러리로서, HTML 문서 탐색, 이벤트 핸들링, 애니메이션 및 Ajax와 같은 기능 제공 |
 | `popper.js` | `^1.16.1` | 웹사이트에서 툴팁, 팝오버, 드롭다운 등의 위치를 관리하는 라이브러리 |
 | `prettier` | `^2.8.8` | 코드 포매터로써, 코드의 스타일과 일관성을 유지 |
 | `vue` | `^3.2.13` | 사용자 인터페이스를 구축하기 위한 프로그레시브 프레임워크 |
