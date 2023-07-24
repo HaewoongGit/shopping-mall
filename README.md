@@ -43,6 +43,7 @@
 | `serve-static` | `^1.15.0` | 정적 파일 서비스를 위한 미들웨어 |
 | `typeorm` | `^0.3.10` | TypeScript와 JavaScript(ES7, ES6, ES5)를 위한 ORM |
 
+<br>
 
 #### 프론트엔드 모듈
 | 모듈 이름 | 버전 | 설명 |
