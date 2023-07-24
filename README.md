@@ -4,6 +4,10 @@
 
 <br>
 
+프로젝트의 상세한 설명은 [Wiki](https://github.com/HaewoongGit/shopping-mall/wiki)를 참고해주세요.
+
+<br>
+
 ## 프로젝트 기간
 2023년 3월 ~ 2023년 7월
 
