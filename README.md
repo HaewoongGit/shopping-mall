@@ -78,4 +78,5 @@
 
 ## 프로젝트 아키텍처
 
-![프로젝트 아키텍처 drawio](https://github.com/HaewoongGit/shopping-mall/assets/107612118/7b90776b-1107-46c7-be91-3f3f0d5b8f2e)
+![프로젝트 아키텍처](https://github.com/HaewoongGit/shopping-mall/assets/107612118/c3e311e2-445f-48e9-8426-b85a7c1bca72)
+
