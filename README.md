@@ -72,3 +72,10 @@
 | `vue-apollo` | `^3.1.0` | Vue.js 애플리케이션 내에서 Apollo/GraphQL을 사용할 수 있게 하는 라이브러리 |
 | `vue-router` | `^4.1.6` | Vue.js에서 라우팅을 처리하는 공식 라이브러리 |
 | `vuex` | `^4.1.0` | Vue.js 애플리케이션의 상태 관리 라이브러리 |
+
+
+<br>
+
+## 프로젝트 아키텍처
+
+![프로젝트 아키텍처 drawio](https://github.com/HaewoongGit/shopping-mall/assets/107612118/7b90776b-1107-46c7-be91-3f3f0d5b8f2e)
