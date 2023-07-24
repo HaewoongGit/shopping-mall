@@ -7,6 +7,8 @@
 
 ## 기술 스택
 | Front-end | Bacn-end |
-| :---:         |     :---:      |
-| Cell 1       | Cell 2         |
-| Cell 4       | Cell 5         |
+| :---:     | :---:    |
+| Vue3   | nestJS   |
+| Vuex  | TypeORM  |
+| | graphQL |
+| Apollo-server |
