@@ -4,7 +4,7 @@
 
 <br>
 
-프로젝트의 상세한 설명은 [Wiki](https://github.com/HaewoongGit/shopping-mall/wiki)를 참고해주세요.
+:point_right:프로젝트의 상세한 설명은 [Wiki](https://github.com/HaewoongGit/shopping-mall/wiki)를 참고해주세요.
 
 <br>
 
