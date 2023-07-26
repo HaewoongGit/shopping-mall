@@ -4,7 +4,7 @@ import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client/core"
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = new HttpLink({
-    uri: `${process.env.DOMAIN_NAME}/graphql`,
+    uri: `${process.env.VUE_APP_DOMAIN_NAME}/graphql`,
     fetchOptions: {
         credentials: 'include',
         // credentials: 'same-origin'
@@ -249,7 +249,7 @@ const store = createStore({
                 }));
                 formData.append("0", file);
 
-                const response = await axios.post(`${process.env.DOMAIN_NAME}/graphql`, formData, {
+                const response = await axios.post(`${process.env.VUE_APP_DOMAIN_NAME}/graphql`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Apollo-Require-Preflight': 'true',
@@ -284,7 +284,7 @@ const store = createStore({
                 }));
                 formData.append("0", file);
 
-                await axios.post(`${process.env.DOMAIN_NAME}/graphql`, formData, {
+                await axios.post(`${process.env.VUE_APP_DOMAIN_NAME}/graphql`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Apollo-Require-Preflight': 'true',

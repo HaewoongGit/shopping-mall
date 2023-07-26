@@ -104,7 +104,7 @@ export default {
                 });
         },
         tryGoogleLogin() {
-            window.location.href = "https://woong-shopping.shop/login/google";
+            window.location.href = `${process.env.VUE_APP_DOMAIN_NAME}/login/google`;
 
             if (this.token) {
                 setTimeout(() => {
