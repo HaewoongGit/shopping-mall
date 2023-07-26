@@ -104,7 +104,7 @@ export default {
                 });
         },
         tryGoogleLogin() {
-            window.location.href = "http://localhost:3000/login/google";
+            window.location.href = "https://woong-shopping.shop/login/google";
 
             if (this.token) {
                 setTimeout(() => {
