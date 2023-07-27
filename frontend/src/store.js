@@ -926,7 +926,7 @@ const store = createStore({
                 commit('setDibs', result.data.updateDibs);
                 return "success";
             } catch (error) {
-                throw new Error(error.message);
+                throw new Error(error);
             }
         },
 

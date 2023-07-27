@@ -84,8 +84,10 @@ export default {
 
         updateDibsAndResult(productId, isDibs) {
             this.updateDibs({ productId, isDibs })
-                .then(() => this.loadDibses())
-                .catch((err) => alert(err));
+                .then(() => this.loadDibses(this.page))
+                .catch((err) => {
+                    alert(err.message);
+                });
         },
 
         pageButtons() {
