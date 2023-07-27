@@ -44,6 +44,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from "vuex";
+import { SweetAlert } from "sweetalert2";
 
 export default {
     data() {
@@ -106,10 +107,13 @@ export default {
                         })
                             .then((response) => {
                                 if (response === "success") {
-                                    alert(rsp.name + " 결제 완료!");
-                                    setTimeout(() => {
-                                        this.$router.push("/");
-                                    }, 2000);
+                                    SweetAlert.fire({
+                                        title: rsp.name + " 결제 완료!",
+                                        text: "결제가 완료되었습니다.",
+                                        icon: "success",
+                                        closeOnConfirm: true,
+                                    });
+                                    this.$router.push("/");
                                 }
                             })
                             .catch((err) => {

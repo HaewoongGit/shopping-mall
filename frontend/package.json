@@ -28,6 +28,7 @@
     "jquery": "^3.6.0",
     "popper.js": "^1.16.1",
     "prettier": "^2.8.8",
+    "sweetalert2": "^11.7.20",
     "vue": "^3.2.13",
     "vue-apollo": "^3.1.0",
     "vue-router": "^4.1.6",
