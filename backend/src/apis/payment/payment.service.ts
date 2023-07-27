@@ -1,10 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
 import { Payment, POINT_TRANSACTION_STATUS_ENUM } from "./entities/payment.entity";
 import { IPaymentServiceCreate } from "./interfaces/payment-transactions-service.interface";
 import { CartService } from "../cart/cart.service";
-import { IContext } from "src/commons/interfaces/context";
 import { OrderListService } from "../orderList/orderList.service";
 import { ProductService } from "../product/product.service";
 
@@ -23,8 +22,6 @@ async function verifyPayment(impUid, expectedAmount) {
     }
 
     if (paymentData.amount !== expectedAmount) {
-        console.log("얼만데 씨발", paymentData.amount, expectedAmount);
-
         throw new NotFoundException("결제 금액이 일치하지 않습니다.");
     }
 
@@ -118,14 +115,15 @@ export class PaymentService {
 
             return payment;
         } catch (error) {
-            console.error(error);
+            console.error("에러 내용 여기로 출력한거 맞지?", error);
             await queryRunner.rollbackTransaction();
-            // if (error instanceof NotFoundException || error instanceof InternalServerErrorException) throw error;
 
             iamport.payment.cancel({
                 imp_uid: impUid,
                 reason: "결제 검증 실패",
             });
+
+            throw new BadRequestException(error.response.matches);
         } finally {
             await queryRunner.release();
         }

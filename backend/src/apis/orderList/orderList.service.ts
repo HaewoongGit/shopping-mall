@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueryRunner, Repository } from "typeorm";
-import { IContext } from "src/commons/interfaces/context";
 import { OrderList } from "./entities/orderList.entity";
 import { IOrderListCreate } from "./interfaces/orderList-service.interface";
+import { validate } from "class-validator";
 
 @Injectable()
 export class OrderListService {
@@ -36,6 +36,12 @@ export class OrderListService {
             contactNumber,
             price,
         });
+
+        const errors = await validate(orderList);
+        if (errors.length > 0) {
+            // 검증에 실패한 경우, 오류를 처리합니다.
+            throw new BadRequestException(errors[0].constraints);
+        }
 
         await queryRunner.manager.getRepository(OrderList).save(orderList);
 

@@ -598,7 +598,7 @@ const store = createStore({
                 });
                 return "success";
             } catch (error) {
-                throw new Error(error.message);
+                throw new Error(error);
             }
         },
 

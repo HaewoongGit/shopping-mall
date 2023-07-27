@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { IsPositive } from "class-validator";
+import { IsPositive, Matches } from "class-validator";
 import { Payment } from "src/apis/payment/entities/payment.entity";
 import { Product } from "src/apis/product/entities/product.entity";
 import { User } from "src/apis/user/entities/user.entity";
@@ -35,6 +35,9 @@ export class OrderList {
     @Field(() => String)
     deliveryAddress: string;
 
+    @Matches(/^010\d{8}$/, {
+        message: "올바른 번호를 입력해주세요!",
+    })
     @Column()
     @Field(() => String)
     contactNumber: string;

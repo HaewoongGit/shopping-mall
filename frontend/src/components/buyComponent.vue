@@ -13,7 +13,7 @@
                     type="text"
                     class="form-control"
                     id="contactNumber"
-                    placeholder="010-xxx-xxxx"
+                    placeholder="010xxxxxxxx"
                 />
             </div>
             <div class="col-12 mb-3">
@@ -105,11 +105,14 @@ export default {
                             orderInformation: rsp.name,
                         })
                             .then((response) => {
-                                if (response === "success") alert(rsp.name + " 결제 완료!");
-                                this.$router.push("/");
+                                if (response === "success") {
+                                    alert(rsp.name + " 결제 완료!");
+                                    setTimeout(() => {
+                                        this.$router.push("/");
+                                    }, 2000);
+                                }
                             })
                             .catch((err) => {
-                                console.log(err.message);
                                 alert(err.message);
                             });
                     } else {

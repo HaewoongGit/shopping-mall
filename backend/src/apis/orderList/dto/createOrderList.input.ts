@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { IsPositive, Min } from "class-validator";
+import { Matches, Min } from "class-validator";
 
 @InputType()
 export class CreateOrderListInput {
@@ -21,5 +21,8 @@ export class CreateOrderListInput {
     deliveryAddress: string;
 
     @Field(() => String)
+    @Matches(/^010\d{8}$/, {
+        message: "적절한 전화번호를 입력해 주십시오.",
+    })
     contactNumber: string;
 }

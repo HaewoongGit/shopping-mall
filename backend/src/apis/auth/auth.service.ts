@@ -46,7 +46,7 @@ export class AuthService {
 
         const token = await this.getAccessToken({ user });
         await this.setRefreshToken({ user, res });
-        res.redirect(`${process.env.DOMAIN_NAME}/?token=${token}`);
+        res.redirect(`${process.env.FRONT_ADDRESS}/?token=${token}`);
 
         return user;
     }
