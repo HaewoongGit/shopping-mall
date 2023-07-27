@@ -6,6 +6,7 @@
                 class="navbar-brand"
                 @click="
                     keywordReset();
+                    productsReset();
                     $router.push('/');
                 "
                 style="cursor: pointer"
@@ -14,14 +15,14 @@
 
             <div class="d-flex justify-content-center" id="search-box">
                 <input
-                    v-model="keyword"
+                    v-model="inputKeyword"
                     class="form-control me-1"
                     type="search"
                     placeholder="Search"
                     aria-label="Search"
                     style="width: 300px"
                 />
-                <button @click="searchAndResult(keyword)" class="btn btn-outline-success" type="submit">
+                <button @click="searchAndResult(inputKeyword)" class="btn btn-outline-success" type="submit">
                     <font-awesome-icon icon="fa-magnifying-glass" />
                 </button>
             </div>
@@ -119,6 +120,11 @@ import signupModal from "./components/signupModal.vue";
 
 export default {
     name: "App",
+    data() {
+        return {
+            inputKeyword: "",
+        };
+    },
 
     components: { logoutModal, logInModal, signupModal },
     computed: {
@@ -126,18 +132,27 @@ export default {
     },
     methods: {
         ...mapMutations(["setToken", "setKeyword", "setCategoryName"]),
-        ...mapActions(["loadProducts", "loadUser"]),
+        ...mapActions(["loadProducts", "loadUser", "loadProductsCount"]),
 
         searchAndResult(keyword) {
             this.setCategoryName("");
             this.setKeyword(keyword);
-            this.loadProducts({ keyword, page: 1 }).catch((err) => {
-                alert(err);
-            });
+            this.loadProducts({ keyword, page: 1 })
+                .then(() => {
+                    this.$router.push("/");
+                })
+                .catch((err) => {
+                    alert(err);
+                });
         },
 
-        keywordReset() {
-            this.setKeyword("");
+        async keywordReset() {
+            await this.setKeyword("");
+        },
+
+        async productsReset() {
+            await this.loadProductsCount({ keyword: "" });
+            await this.loadProducts({ keyword: "", page: 1 });
         },
     },
 
