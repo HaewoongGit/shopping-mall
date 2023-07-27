@@ -44,7 +44,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from "vuex";
-import { SweetAlert } from "sweetalert2";
+import Swal from "sweetalert2";
 
 export default {
     data() {
@@ -107,7 +107,7 @@ export default {
                         })
                             .then((response) => {
                                 if (response === "success") {
-                                    SweetAlert.fire({
+                                    Swal.fire({
                                         title: rsp.name + " 결제 완료!",
                                         text: "결제가 완료되었습니다.",
                                         icon: "success",
