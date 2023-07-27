@@ -23,7 +23,7 @@ export class ReviewService {
             .leftJoinAndSelect("review.product", "reviewProduct")
             .leftJoinAndSelect("review.user", "reviewUser")
             .where("reviewProduct.productId = :productId", { productId })
-            .andWhere("reviewuser.userId = :userId", { userId })
+            .andWhere("reviewUser.userId = :userId", { userId })
             .getOne();
 
         console.log(result);
@@ -42,7 +42,7 @@ export class ReviewService {
                 .leftJoinAndSelect("reviewProduct.files", "productFiles")
                 .leftJoinAndSelect("review.user", "reviewUser")
                 .where("reviewProduct.productId = :productId", { productId })
-                .andWhere("reviewuser.userId = :userId", { userId })
+                .andWhere("reviewUser.userId = :userId", { userId })
                 .getMany();
         } else if (productId && !userId) {
             result = await this.reviewRepository

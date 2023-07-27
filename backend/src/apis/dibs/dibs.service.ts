@@ -21,7 +21,7 @@ export class DibsService {
             .leftJoinAndSelect("dibsProduct.files", "productFiles")
             .leftJoinAndSelect("dibs.user", "dibsUser")
             .where("dibsProduct.productId = :productId", { productId })
-            .andWhere("dibsuser.userId = :userId", { userId })
+            .andWhere("dibsUser.userId = :userId", { userId })
             .getOne();
 
         return result;

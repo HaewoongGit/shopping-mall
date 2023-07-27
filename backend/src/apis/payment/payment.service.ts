@@ -115,7 +115,6 @@ export class PaymentService {
 
             return payment;
         } catch (error) {
-            console.error("에러 내용 여기로 출력한거 맞지?", error);
             await queryRunner.rollbackTransaction();
 
             iamport.payment.cancel({
