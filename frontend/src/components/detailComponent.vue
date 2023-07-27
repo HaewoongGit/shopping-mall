@@ -27,6 +27,8 @@
 
                     <hr class="border-secondary my-2" />
 
+                    <div id="productDescription" class="mb-3">{{ product.description }}</div>
+
                     <span class="badge bg-primary">{{ product.productCategory.categoryName }}</span>
 
                     <div id="tagContainer">
@@ -34,8 +36,6 @@
                             #{{ tag.tagName }}
                         </span>
                     </div>
-
-                    <div id="productDescription">{{ product.description }}</div>
 
                     <span id="productPrice">{{ product.price }}원</span>
 
