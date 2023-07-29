@@ -5,6 +5,7 @@
 <br>
 
  👉 프로젝트의 상세한 설명은 [Wiki](https://github.com/HaewoongGit/shopping-mall/wiki)를 참고해주세요.
+ 👉 프로젝트 사이트 주소: https://woong-shopping.shop/
 
 <br>
 
