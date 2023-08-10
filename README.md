@@ -98,4 +98,4 @@ https://www.erdcloud.com/d/G3t4Q554YAN4qrazx
 <br>
 
 ## API 문서
-[https://woong-shopping.shop/graph](https://woong-shopping.shop/graphQL)https://woong-shopping.shop/graphQL
+https://woong-shopping.shop/graphQL
