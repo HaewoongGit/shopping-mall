@@ -93,3 +93,9 @@
 ## 데이터베이스 ERD
 https://www.erdcloud.com/d/G3t4Q554YAN4qrazx
 ![image](https://github.com/HaewoongGit/shopping-mall/assets/107612118/4a69526a-24ce-4fb6-9bb4-a57d825ff5d9)
+
+
+<br>
+
+## API 문서
+[https://woong-shopping.shop/graph](https://woong-shopping.shop/graphQL)https://woong-shopping.shop/graphQL
